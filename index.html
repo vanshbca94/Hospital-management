@@ -1,113 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hospital Management - Home</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HMS by Vansh - Hospital Management</title>
 
-  <!-- Link to CSS -->
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css" />
+
+  <style>
+    /* --- Rich Animated Homepage Enhancements --- */
+    body {
+      background: radial-gradient(circle at top left, #071229, #040a18);
+      overflow-x: hidden;
+    }
+
+    .hero {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 60px auto;
+      padding: 40px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, rgba(6,182,212,0.08), rgba(167,139,250,0.05));
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      animation: fadeIn 1.2s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-text {
+      flex: 1 1 520px;
+      padding-right: 30px;
+    }
+
+    .hero-text h1 {
+      font-size: 2.4rem;
+      background: linear-gradient(90deg, #06b6d4, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+      animation: slideDown 1.4s ease-out;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .typing {
+      font-weight: 600;
+      color: #94a3b8;
+      height: 24px;
+      overflow: hidden;
+      border-right: 2px solid #06b6d4;
+      white-space: nowrap;
+      animation: blink 0.9s step-end infinite alternate;
+    }
+    @keyframes blink { 50% { border-color: transparent; } }
+
+    .cta-buttons {
+      display: flex;
+      gap: 16px;
+      margin-top: 25px;
+    }
+
+    .cta-buttons a {
+      padding: 14px 28px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      border-radius: 12px;
+      text-decoration: none;
+      color: white;
+      background: linear-gradient(90deg, #06b6d4, #3b82f6, #a78bfa);
+      background-size: 200% auto;
+      transition: transform 0.4s ease, background-position 0.6s;
+      box-shadow: 0 6px 18px rgba(6,182,212,0.35);
+    }
+    .cta-buttons a:hover {
+      background-position: right center;
+      transform: scale(1.08) translateY(-4px);
+      box-shadow: 0 12px 36px rgba(167,139,250,0.5);
+    }
+
+    .illustration {
+      flex: 1 1 420px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      animation: floaty 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes floaty {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-20px); }
+    }
+
+    /* Feature cards */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 50px auto;
+      padding: 0 30px;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.05);
+      padding: 24px;
+      text-align: center;
+      transition: all 0.4s ease;
+      box-shadow: 0 6px 22px rgba(0,0,0,0.15);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 14px 40px rgba(6,182,212,0.25);
+      border-color: rgba(6,182,212,0.5);
+    }
+
+    .feature-card h4 {
+      margin-bottom: 10px;
+      color: #fff;
+    }
+    .feature-card p {
+      color: #cbd5e1;
+      font-size: 0.95rem;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #94a3b8;
+      padding-bottom: 20px;
+    }
+  </style>
 </head>
+
 <body>
   <!-- Header -->
   <header class="navbar">
-    <div class="logo" tabindex="0" role="link" aria-label="Home link">🏥 <span>HMS</span></div>
-
+    <div class="logo" role="link" aria-label="Home">🏥 <span>HMS by Vansh</span></div>
     <div class="nav-right">
       <nav>
         <ul class="nav-links" id="nav-links">
-          <li><a href="index.html">Home</a></li>
+          <li><a href="index.html" aria-current="page">Home</a></li>
           <li><a href="about.html">About</a></li>
           <li><a href="doctors.html">Doctors</a></li>
           <li><a href="appointment.html">Appointments</a></li>
-          <li><a href="attendance.html" aria-current="page">Attendance</a></li>
+          <li><a href="attendance.html">Attendance</a></li>
         </ul>
       </nav>
-      <div class="hamburger" id="hamburger" aria-label="Open menu" role="button" tabindex="0">☰</div>
+      <div class="hamburger" id="hamburger" role="button">☰</div>
     </div>
   </header>
 
   <!-- Hero Section -->
   <section class="hero">
-    <div class="card">
-      <h1 class="title">Modern Hospital Management System</h1>
-      <p class="lead">
-        Welcome to a secure, animated, and responsive hospital management portal.
-        Book appointments, track doctor attendance, and explore our digital-first healthcare system.
+    <div class="hero-text">
+      <h1>Smart Hospital Management System</h1>
+      <div class="typing" id="typed"></div>
+      <p style="margin-top:10px; color:#cbd5e1;">
+        A modern, fully animated, responsive hospital management portal that connects doctors, patients, and admin all in one system.
       </p>
 
-      <!-- Buttons -->
-      <div style="display:flex;gap:16px;margin-top:20px">
-        <a class="btn" id="appt-cta" href="appointment.html">✨ Book Appointment</a>
-        <a class="btn ghost" href="attendance.html">🩺 Doctor Attendance</a>
-      </div>
-
-      <!-- Highlight Cards -->
-      <div class="grid" style="margin-top:24px">
-        <div class="card-compact">
-          <h4>👩‍⚕️ Patient Portal</h4>
-          <p class="small">Register, schedule appointments, access records & billing.</p>
-        </div>
-        <div class="card-compact">
-          <h4>🧑‍⚕️ Doctor Dashboard</h4>
-          <p class="small">Manage schedules, upload reports, and prescribe medicines.</p>
-        </div>
-        <div class="card-compact">
-          <h4>📊 Admin Panel</h4>
-          <p class="small">Control staff, monitor hospital analytics, and generate reports.</p>
-        </div>
-      </div>
-
-      <!-- Shimmer Bar -->
-      <div style="margin-top:20px">
-        <div class="pulse" aria-hidden="true"></div>
+      <div class="cta-buttons">
+        <a href="appointment.html">✨ Book Appointment</a>
+        <a href="doctors.html">👨‍⚕️ View Doctors</a>
+        <a href="attendance.html">🩺 Doctor Attendance</a>
       </div>
     </div>
 
-    <!-- Floating Illustration -->
-    <aside class="card float-wrap">
-      <div class="doctor">
-        <!-- Animated SVG Illustration -->
-        <svg viewBox="0 0 120 120" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="g1" x1="0" x2="1">
-              <stop offset="0" stop-color="#06b6d4"/>
-              <stop offset="1" stop-color="#a78bfa"/>
-            </linearGradient>
-          </defs>
-          <rect x="6" y="14" width="108" height="92" rx="12" fill="url(#g1)" opacity="0.12"/>
-          <g transform="translate(10,8)">
-            <circle cx="50" cy="36" r="18" fill="#fff" opacity="0.95"/>
-            <circle cx="50" cy="36" r="16" fill="#021124"/>
-            <g transform="translate(22,14)">
-              <rect x="4" y="34" width="44" height="20" rx="6" fill="#fff" opacity="0.95"/>
-              <rect x="6" y="34" width="40" height="18" rx="6" fill="#0b1220"/>
-            </g>
-            <path d="M10 80 q40 -30 80 0" stroke="#fff" stroke-opacity="0.8" stroke-width="4" fill="none" stroke-linecap="round"/>
-          </g>
-        </svg>
-      </div>
-    </aside>
+    <div class="illustration">
+      <img src="https://cdn-icons-png.flaticon.com/512/2966/2966485.png" width="280" alt="Hospital Illustration" style="filter:drop-shadow(0 0 16px rgba(167,139,250,0.5));border-radius:50%;">
+    </div>
   </section>
 
-  <!-- Highlights -->
-  <section class="card" style="max-width:1120px;margin:30px auto;text-align:center;">
-    <h3 style="margin:0 0 12px 0">🌟 Project Highlights</h3>
-    <p class="small">
-      ✨ Built with HTML, CSS & JS • 🎨 Animated UI • ⚡ Responsive Layout •  
-      🧑‍⚕️ Appointment & Attendance Modules • ☁️ Ready for GitHub Pages
-    </p>
-    <div style="margin-top:20px">
-      <a href="about.html" class="btn">Read Abstract ➝</a>
+  <!-- Feature Cards -->
+  <section class="features">
+    <div class="feature-card">
+      <h4>🧾 Appointment Scheduling</h4>
+      <p>Quickly book and manage patient appointments with animated confirmations and real-time updates.</p>
+    </div>
+    <div class="feature-card">
+      <h4>📋 Attendance Tracking</h4>
+      <p>Doctors can mark attendance seamlessly; the system keeps daily and monthly logs automatically.</p>
+    </div>
+    <div class="feature-card">
+      <h4>📊 Admin Analytics</h4>
+      <p>Visual dashboard with data-driven insights, charts, and performance reports — powered by local storage.</p>
+    </div>
+    <div class="feature-card">
+      <h4>⚙️ Fully Responsive</h4>
+      <p>Works beautifully across desktop, tablet, and mobile with sleek transitions and fluid animations.</p>
     </div>
   </section>
 
   <!-- Footer -->
   <footer>
-    <p>© 2025 Hospital Management System • Animated Project Prototype</p>
+    <p>© 2025 HMS by Vansh • Advanced Animated Interface</p>
   </footer>
 
-  <!-- Link to JS -->
   <script src="js/main.js"></script>
+  <script>
+    // Auto typing animation for tagline
+    const lines = ["Manage Patients 👨‍⚕️", "Track Attendance 🩺", "Book Appointments 💊"];
+    let lineIndex = 0, charIndex = 0;
+    const typingEl = document.getElementById("typed");
+    function typeEffect(){
+      if(!typingEl) return;
+      if(charIndex < lines[lineIndex].length){
+        typingEl.textContent += lines[lineIndex].charAt(charIndex);
+        charIndex++;
+        setTimeout(typeEffect, 100);
+      } else {
+        setTimeout(() => {
+          typingEl.textContent = "";
+          lineIndex = (lineIndex + 1) % lines.length;
+          charIndex = 0;
+          typeEffect();
+        }, 1600);
+      }
+    }
+    typeEffect();
+  </script>
 </body>
 </html>
