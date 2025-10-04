@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctors - Hospital Management System</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #f8fafc;
+      color: #111827;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 60px 20px 30px;
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #1e3a8a;
+    }
+    .hero p {
+      font-size: 1rem;
+      margin-top: 10px;
+      color: #475569;
+    }
+
+    /* Search & Filter Bar */
+    .search-filter {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 20px auto;
+      max-width: 900px;
+    }
+    .search-filter input, .search-filter select {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      font-size: 0.95rem;
+      outline: none;
+      min-width: 200px;
+    }
+
+    /* Doctor Grid */
+    .doctor-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .doctor-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      padding: 20px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .doctor-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    .doctor-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .doctor-header img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: 2px solid #1e3a8a;
+      object-fit: cover;
+    }
+    .doctor-header h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      color: #1e293b;
+    }
+    .doctor-header p {
+      margin: 2px 0 0;
+      font-size: 0.9rem;
+      color: #475569;
+    }
+
+    .status {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .status.available { color: #16a34a; }
+    .status.busy { color: #dc2626; }
+
+    .doctor-card .btn {
+      margin-top: 15px;
+      display: block;
+      text-align: center;
+      background: #1e3a8a;
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+    .doctor-card .btn:hover {
+      background: #2563eb;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #f1f5f9;
+      margin-top: 40px;
+      font-size: 0.85rem;
+      color: #475569;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">🏥 <span>HMS</span></div>
+    <div class="hamburger" id="hamburger">☰</div>
+    <nav>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="doctors.html" class="active">Doctors</a></li>
+        <li><a href="appointment.html">Appointments</a></li>
+        <li><a href="attendance.html">Attendance</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>Our Doctors</h1>
+    <p>Browse our specialists and book an appointment with the right doctor for your needs.</p>
+  </section>
+
+  <!-- Search & Filter -->
+  <div class="search-filter">
+    <input type="text" id="searchDoctor" placeholder="🔍 Search by name...">
+    <select id="filterSpecialty">
+      <option value="">All Specialties</option>
+      <option value="Cardiologist">Cardiologist</option>
+      <option value="Neurologist">Neurologist</option>
+      <option value="Pediatrician">Pediatrician</option>
+      <option value="Orthopedic Surgeon">Orthopedic Surgeon</option>
+    </select>
+  </div>
+
+  <!-- Doctors Grid -->
+  <section class="doctor-grid" id="doctorGrid">
+    <div class="doctor-card" data-name="Ayesha Singh" data-specialty="Cardiologist">
+      <div class="doctor-header">
+        <img src="assets/images/doctor1.jpg" alt="Doctor 1">
+        <div>
+          <h3>Dr. Ayesha Singh</h3>
+          <p>Cardiologist</p>
+        </div>
+      </div>
+      <p class="status available">✔ Available</p>
+      <a href="appointment.html" class="btn">Book Appointment</a>
+    </div>
+
+    <div class="doctor-card" data-name="Raj Mehta" data-specialty="Neurologist">
+      <div class="doctor-header">
+        <img src="assets/images/doctor2.jpg" alt="Doctor 2">
+        <div>
+          <h3>Dr. Raj Mehta</h3>
+          <p>Neurologist</p>
+        </div>
+      </div>
+      <p class="status busy">✖ Busy</p>
+      <a href="appointment.html" class="btn">Book Appointment</a>
+    </div>
+
+    <div class="doctor-card" data-name="Priya Kapoor" data-specialty="Pediatrician">
+      <div class="doctor-header">
+        <img src="assets/images/doctor3.jpg" alt="Doctor 3">
+        <div>
+          <h3>Dr. Priya Kapoor</h3>
+          <p>Pediatrician</p>
+        </div>
+      </div>
+      <p class="status available">✔ Available</p>
+      <a href="appointment.html" class="btn">Book Appointment</a>
+    </div>
+
+    <div class="doctor-card" data-name="Vikram Sharma" data-specialty="Orthopedic Surgeon">
+      <div class="doctor-header">
+        <img src="assets/images/doctor4.jpg" alt="Doctor 4">
+        <div>
+          <h3>Dr. Vikram Sharma</h3>
+          <p>Orthopedic Surgeon</p>
+        </div>
+      </div>
+      <p class="status busy">✖ Busy</p>
+      <a href="appointment.html" class="btn">Book Appointment</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 Hospital Management System • Doctors Directory by Vansh</p>
+  </footer>
+
+  <!-- Script -->
+  <script src="js/main.js"></script>
+  <script>
+    // Search + Filter Functionality
+    const searchInput = document.getElementById("searchDoctor");
+    const filterSelect = document.getElementById("filterSpecialty");
+    const doctorCards = document.querySelectorAll(".doctor-card");
+
+    function filterDoctors() {
+      const search = searchInput.value.toLowerCase();
+      const specialty = filterSelect.value;
+
+      doctorCards.forEach(card => {
+        const name = card.dataset.name.toLowerCase();
+        const spec = card.dataset.specialty;
+
+        const matchesSearch = name.includes(search);
+        const matchesFilter = specialty === "" || spec === specialty;
+
+        if (matchesSearch && matchesFilter) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    }
+
+    searchInput.addEventListener("input", filterDoctors);
+    filterSelect.addEventListener("change", filterDoctors);
+  </script>
+</body>
+</html>
