@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Attendance — Hospital Management System</title>
+<link rel="stylesheet" href="css/style.css" />
+<style>
+  :root{
+    --bg1:#071029;
+    --bg2:#0b1224;
+    --glass: rgba(255,255,255,0.06);
+    --accent1:#06b6d4;
+    --accent2:#a78bfa;
+    --muted:#94a3b8;
+    --card-radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: "Inter", "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: radial-gradient(1200px 600px at 10% 10%, rgba(6,182,212,0.06), transparent 8%),
+                linear-gradient(180deg,var(--bg1),var(--bg2));
+    color:#e6eef8;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    overflow-y:auto;
+  }
+
+  .navbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    padding:14px 28px;
+    position:sticky;
+    top:0;
+    z-index:60;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-bottom:1px solid rgba(255,255,255,0.04);
+    backdrop-filter: blur(8px);
+    animation: slideDown .6s ease;
+  }
+  @keyframes slideDown{from{transform:translateY(-12px);opacity:0}to{transform:none;opacity:1}}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--accent1);font-size:1.1rem;cursor:pointer}
+  .logo span{color:#fff}
+  .nav-right{display:flex;align-items:center;gap:18px}
+  .nav-links{display:flex;gap:18px;align-items:center;list-style:none;margin:0;padding:0}
+  .nav-links a{color:#dbeafe;text-decoration:none;font-weight:600;padding:6px 4px;position:relative}
+  .nav-links a::after{content:"";position:absolute;left:0;bottom:-6px;height:2px;width:100%;background:linear-gradient(90deg,var(--accent1),var(--accent2));transform:scaleX(0);transform-origin:right;transition:transform .35s}
+  .nav-links a:hover::after{transform:scaleX(1);transform-origin:left}
+  .hamburger{display:none;font-size:1.6rem;cursor:pointer;user-select:none;color:#fff;padding:8px;border-radius:8px;transition:transform .25s}
+  .hamburger:active{transform:scale(.96)}
+  @media(max-width:860px){ .nav-links{display:none;position:absolute;right:12px;top:64px;background:rgba(2,6,23,0.9);flex-direction:column;padding:16px;border-radius:12px;width:220px} .hamburger{display:block}}
+
+  .page{
+    max-width:1200px;
+    margin:26px auto;
+    padding:0 20px 80px;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr 420px;
+    gap:20px;
+    align-items:start;
+  }
+  @media(max-width:980px){ .grid{grid-template-columns:1fr} }
+
+  .main-card{
+    padding:22px;
+    border-radius:var(--card-radius);
+    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+    border:1px solid rgba(255,255,255,0.04);
+    box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+    position:relative;
+    overflow:visible;
+  }
+
+  .header-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+  .page-title{font-size:1.6rem;font-weight:800;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .subtle{color:var(--muted);font-size:.95rem}
+
+  .clock{
+    display:flex;flex-direction:column;align-items:flex-end;gap:4px;text-align:right;
+  }
+  .clock .time{font-weight:700;font-size:1.15rem}
+  .clock .date{font-size:.9rem;color:var(--muted)}
+
+  .kpi-row{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap}
+  .kpi{
+    background:linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.02));
+    border-radius:12px;padding:12px 14px;flex:1;min-width:140px;border:1px solid rgba(255,255,255,0.03);
+    display:flex;flex-direction:column;gap:6px;align-items:flex-start;
+  }
+  .kpi .label{color:var(--muted);font-size:.85rem}
+  .kpi .value{font-size:1.2rem;font-weight:800}
+
+  form.attendance-form{margin-top:18px;display:flex;flex-direction:column;gap:12px}
+  .field-row{display:flex;gap:12px;align-items:center}
+  @media(max-width:700px){ .field-row{flex-direction:column;align-items:stretch} }
+
+  .input, select{
+    width:100%;padding:12px 14px;border-radius:10px;border:none;background:rgba(0,0,0,0.25);color:#fff;font-weight:600;
+    outline:none;box-shadow:inset 0 -6px 18px rgba(255,255,255,0.02);
+    transition:box-shadow .25s,transform .18s;
+  }
+  .input:focus,select:focus{box-shadow:0 6px 30px rgba(6,182,212,0.12);transform:translateY(-2px)}
+  .big-btn{
+    padding:12px 14px;border-radius:12px;border:none;background:linear-gradient(90deg,var(--accent1),var(--accent2));font-weight:800;color:#031124;cursor:pointer;
+    transition:transform .18s,box-shadow .18s;box-shadow:0 8px 32px rgba(6,182,212,0.12)
+  }
+  .big-btn:hover{transform:translateY(-4px);box-shadow:0 18px 48px rgba(6,182,212,0.18)}
+
+  .panel{
+    position:relative;padding:18px;border-radius:var(--card-radius);
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border:1px solid rgba(255,255,255,0.03);
+    height:fit-content;
+  }
+
+  .chart-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;padding-bottom:8px}
+  #donut{width:220px;height:220px}
+
+  .controls{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+  .search{flex:1}
+  .history{margin-top:14px;border-radius:10px;padding:8px;max-height:420px;overflow:auto}
+  table{width:100%;border-collapse:collapse;font-size:.95rem}
+  th,td{padding:10px;border-bottom:1px dashed rgba(255,255,255,0.03);text-align:left}
+  th{position:sticky;top:0;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent)}
+  tr.row-anim{transform:translateY(10px);opacity:0;animation:rowIn .45s forwards}
+  @keyframes rowIn{to{transform:none;opacity:1}}
+
+  .small-muted{color:var(--muted);font-size:.9rem}
+
+  .panel .actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .action-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:8px;border-radius:8px;cursor:pointer}
+  .action-ghost:hover{color:#fff}
+
+  .modal-back{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:flex;align-items:center;justify-content:center;z-index:120;opacity:0;pointer-events:none;transition:opacity .18s}
+  .modal{background:linear-gradient(180deg,#021124, #06102a);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);width:360px;max-width:92%}
+  .modal.show{transform:translateY(0);opacity:1}
+  .modal-back.show{opacity:1;pointer-events:auto}
+
+  .confetti{position:fixed;width:8px;height:10px;border-radius:2px;opacity:.95;z-index:200;pointer-events:none}
+
+  a:focus,button:focus,input:focus,select:focus{outline:3px solid rgba(6,182,212,0.18);outline-offset:2px}
+</style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="logo" tabindex="0" role="link" aria-label="Home link">🏥 <span>HMS</span></div>
+
+    <div class="nav-right">
+      <nav>
+        <ul class="nav-links" id="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="doctors.html">Doctors</a></li>
+          <li><a href="appointment.html">Appointments</a></li>
+          <li><a href="attendance.html" aria-current="page">Attendance</a></li>
+        </ul>
+      </nav>
+      <div class="hamburger" id="hamburger" aria-label="Open menu" role="button" tabindex="0">☰</div>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="grid">
+
+      <section class="main-card" aria-labelledby="attendanceTitle">
+        <div class="header-row">
+          <div>
+            <div id="attendanceTitle" class="page-title">Doctor Attendance</div>
+            <div class="subtle">Mark attendance & review history — advanced tools for admins</div>
+          </div>
+
+          <div class="clock" aria-hidden="false">
+            <div class="time" id="liveTime">--:--</div>
+            <div class="date" id="liveDate">Loading date...</div>
+          </div>
+        </div>
+
+        <div class="kpi-row" aria-hidden="false">
+          <div class="kpi">
+            <div class="label">Total Records</div>
+            <div class="value" id="kpiTotal">0</div>
+            <div class="small-muted">All time</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Today Present</div>
+            <div class="value" id="kpiTodayPresent">0</div>
+            <div class="small-muted">Marked present today</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Today Absent</div>
+            <div class="value" id="kpiTodayAbsent">0</div>
+            <div class="small-muted">Marked absent today</div>
+          </div>
+          <div class="kpi">
+            <div class="label">% Present</div>
+            <div class="value" id="kpiPercent">0%</div>
+            <div class="small-muted">Today ratio</div>
+          </div>
+        </div>
+
+        <form id="attendance-form" class="attendance-form" autocomplete="off" aria-label="Attendance form">
+          <div class="field-row">
+            <select id="doctor_name" class="input" required aria-label="Doctor name">
+              <option value="">Select Doctor — type to quick select</option>
+              <option>Dr. Ayesha Singh</option>
+              <option>Dr. Raj Mehta</option>
+              <option>Dr. Priya Kapoor</option>
+              <option>Dr. Vikram Sharma</option>
+            </select>
+
+            <select id="status" class="input" required aria-label="Attendance status">
+              <option value="">Status</option>
+              <option value="Present">Present</option>
+              <option value="Absent">Absent</option>
+            </select>
+          </div>
+
+          <div class="field-row">
+            <input id="note" class="input" placeholder="Optional note (ward, remark)" aria-label="Note"/>
+            <button type="submit" class="big-btn" id="markBtn">✔ Mark Attendance</button>
+          </div>
+        </form>
+
+        <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+          <button class="action-ghost" id="exportCsv">Export CSV</button>
+          <label for="importCsv" class="action-ghost" style="cursor:pointer">Import CSV</label>
+          <input type="file" id="importCsv" accept=".csv" style="display:none" />
+          <button class="action-ghost" id="clearAll">Clear All</button>
+          <button class="action-ghost" id="bulkPresent">Mark All Present (Test)</button>
+        </div>
+      </section>
+
+      <aside class="panel" aria-label="Attendance panel">
+        <div class="chart-wrap">
+          <canvas id="donut" width="220" height="220" aria-hidden="true"></canvas>
+          <div class="small-muted">Present vs Absent (Today)</div>
+        </div>
+
+        <div class="controls" style="margin-top:8px">
+          <input id="historySearch" class="input search" placeholder="Search name / note..." aria-label="Search attendance history"/>
+          <input id="dateFilter" type="date" class="input" style="max-width:170px" aria-label="Filter by date"/>
+          <select id="sortBy" class="input" style="max-width:170px" aria-label="Sort by">
+            <option value="new">Newest</option>
+            <option value="old">Oldest</option>
+            <option value="name">Name (A→Z)</option>
+            <option value="status">Status (Present first)</option>
+          </select>
+        </div>
+
+        <div class="history">
+          <table aria-describedby="attendance history">
+            <thead><tr><th>Name</th><th>Status</th><th>Note</th><th>Time</th></tr></thead>
+            <tbody id="attendance-list"></tbody>
+          </table>
+        </div>
+
+        <div class="actions">
+          <button class="action-ghost" id="refreshBtn">Refresh</button>
+          <div style="flex:1"></div>
+          <div class="small-muted" id="lastSync">Last update: —</div>
+        </div>
+      </aside>
+
+    </div>
+  </main>
+
+  <div id="modal" class="modal-back" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document">
+      <div style="font-weight:800;margin-bottom:8px" id="modalTitle">Confirm</div>
+      <div id="modalBody" class="small-muted">Are you sure?</div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px">
+        <button id="modalCancel" class="action-ghost">Cancel</button>
+        <button id="modalConfirm" class="big-btn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    if (window.__attendance_inited) return;
+    window.__attendance_inited = true;
+
+    const KEY = "hms_attendance_v1";
+
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => Array.from(document.querySelectorAll(sel));
+    const fmtNow = (d=new Date()) => {
+      const pad = n=>String(n).padStart(2,'0');
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    };
+    const todayKey = (d=new Date()) => {
+      const pad = n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    }
+
+    const form = $("#attendance-form");
+    const doctorEl = $("#doctor_name");
+    const statusEl = $("#status");
+    const noteEl = $("#note");
+    const markBtn = $("#markBtn");
+    const listBody = $("#attendance-list");
+    const kpiTotal = $("#kpiTotal");
+    const kpiTodayPresent = $("#kpiTodayPresent");
+    const kpiTodayAbsent = $("#kpiTodayAbsent");
+    const kpiPercent = $("#kpiPercent");
+    const liveTime = $("#liveTime");
+    const liveDate = $("#liveDate");
+    const donut = document.getElementById("donut");
+    const historySearch = $("#historySearch");
+    const dateFilter = $("#dateFilter");
+    const sortBy = $("#sortBy");
+    const exportCsv = $("#exportCsv");
+    const importCsv = $("#importCsv");
+    const clearAll = $("#clearAll");
+    const refreshBtn = $("#refreshBtn");
+    const bulkPresent = $("#bulkPresent");
+    const lastSync = $("#lastSync");
+
+    const modalBack = $("#modal");
+    const modalTitle = $("#modalTitle");
+    const modalBody = $("#modalBody");
+    const modalConfirm = $("#modalConfirm");
+    const modalCancel = $("#modalCancel");
+
+    const hamburger = $("#hamburger");
+    const navLinks = $("#nav-links");
+    if(hamburger && navLinks){
+      const toggle = ()=> navLinks.classList.toggle("show");
+      hamburger.addEventListener("click", toggle);
+      hamburger.addEventListener("keypress", e=>{ if(e.key==='Enter') toggle(); });
+    }
+
+    function loadAll(){ return JSON.parse(localStorage.getItem(KEY) || "[]"); }
+    function saveAll(arr){ localStorage.setItem(KEY, JSON.stringify(arr)); }
+
+    function pushRecord(rec){
+      const arr = loadAll();
+      arr.push(rec);
+      saveAll(arr);
+      render();
+    }
+
+    function clearRecords(){
+      saveAll([]);
+      render();
+    }
+
+    function toCSV(arr){
+      const header = ["id","name","status","note","time","dateKey"];
+      const rows = arr.map(r => header.map(h => `"${String(r[h]||'').replace(/"/g,'""')}"`).join(","));
+      return header.join(",") + "\n" + rows.join("\n");
+    }
+
+    function downloadCSV(text, filename="attendance_export.csv"){
+      const blob = new Blob([text], {type:"text/csv;charset=utf-8;"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = filename; document.body.appendChild(a); a.click();
+      setTimeout(()=>{ a.remove(); URL.revokeObjectURL(url); }, 500);
+    }
+
+    function importCSVFile(file){
+      const reader = new FileReader();
+      reader.onload = e => {
+        try{
+          const text = e.target.result;
+          const lines = text.split(/\r?\n/).filter(Boolean);
+          const header = lines.shift().split(",").map(h=>h.replace(/"/g,'').trim());
+          const arr = loadAll();
+          lines.forEach(line=>{
+            const cols = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
+            const obj = {};
+            header.forEach((h,i)=> obj[h]= (cols[i]||"").replace(/^"|"$/g,''));
+            const rec = {
+              id: obj.id || ("C"+Date.now()+Math.floor(Math.random()*1000)),
+              name: obj.name || "Unknown",
+              status: obj.status || "Present",
+              note: obj.note || "",
+              time: obj.time || fmtNow(),
+              dateKey: obj.dateKey || todayKey()
+            };
+            arr.push(rec);
+          });
+          saveAll(arr);
+          render();
+          showToast("Import completed");
+        }catch(err){
+          console.error(err);
+          showToast("Import failed");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function drawDonut(presentCount, absentCount){
+      if(!donut) return;
+      const ctx = donut.getContext("2d");
+      const w = donut.width; const h = donut.height;
+      ctx.clearRect(0,0,w,h);
+      const total = presentCount + absentCount || 1;
+      const presentAngle = (presentCount/total) * Math.PI*2;
+      const cx = w/2, cy=h/2, r = Math.min(w,h)/2 - 18;
+      ctx.lineWidth = 18;
+      ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
+      const grad = ctx.createLinearGradient(0,0,w,h);
+      grad.addColorStop(0, getComputedStyle(document.documentElement).getPropertyValue('--accent1').trim() || "#06b6d4");
+      grad.addColorStop(1, getComputedStyle(document.documentElement).getPropertyValue('--accent2').trim() || "#a78bfa");
+      ctx.strokeStyle = grad;
+      ctx.beginPath(); ctx.arc(cx,cy,r,-Math.PI/2, -Math.PI/2 + presentAngle); ctx.stroke();
+      ctx.fillStyle = "#e6eef8"; ctx.font = "700 18px Inter, Poppins, sans-serif"; ctx.textAlign="center";
+      ctx.fillText(`${presentCount}`, cx, cy-2);
+      ctx.fillStyle = "rgba(255,255,255,0.65)"; ctx.font="400 12px Inter, sans-serif";
+      ctx.fillText("Present", cx, cy+16);
+    }
+
+    function render(){
+      const arr = loadAll();
+      const search = historySearch.value.toLowerCase();
+      const dateF = dateFilter.value;
+      const sort = sortBy.value;
+      let shown = arr.slice();
+      if(dateF){
+        shown = shown.filter(r=> (r.dateKey||r.time?.slice(0,10)) === dateF );
+      }
+      if(search){
+        shown = shown.filter(r=> (r.name||"").toLowerCase().includes(search) || (r.note||"").toLowerCase().includes(search));
+      }
+      if(sort==="new") shown.sort((a,b)=> new Date(b.time) - new Date(a.time));
+      else if(sort==="old") shown.sort((a,b)=> new Date(a.time) - new Date(b.time));
+      else if(sort==="name") shown.sort((a,b)=> (a.name||"").localeCompare(b.name||""));
+      else if(sort==="status") shown.sort((a,b)=> (b.status=== "Present") - (a.status==="Present"));
+      listBody.innerHTML = "";
+      shown.forEach((r,i)=>{
+        const tr = document.createElement("tr");
+        tr.className = "row-anim";
+        tr.innerHTML = `<td>${escapeHTML(r.name)}</td>
+                        <td class="small-muted ${r.status === 'Present' ? 'status present' : 'status absent'}">${r.status}</td>
+                        <td>${escapeHTML(r.note || '—')}</td>
+                        <td class="small-muted">${escapeHTML(r.time)}</td>`;
+        listBody.appendChild(tr);
+      });
+      kpiTotal.textContent = arr.length;
+      const today = todayKey();
+      const todayRecords = arr.filter(r=> (r.dateKey || (r.time && r.time.slice(0,10))) === today);
+      const presentCount = todayRecords.filter(r=> r.status==='Present').length;
+      const absentCount = todayRecords.filter(r=> r.status==='Absent').length;
+      kpiTodayPresent.textContent = presentCount;
+      kpiTodayAbsent.textContent = absentCount;
+      const pc = todayRecords.length ? Math.round((presentCount / todayRecords.length) * 100) : 0;
+      kpiPercent.textContent = pc + "%";
+      drawDonut(presentCount, absentCount);
+      lastSync.textContent = "Last update: " + new Date().toLocaleString();
+    }
+
+    function escapeHTML(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+    function showToast(msg){
+      const t = document.createElement("div");
+      t.textContent = msg;
+      t.style.position="fixed"; t.style.bottom="22px"; t.style.left="50%"; t.style.transform="translateX(-50%)";
+      t.style.background="linear-gradient(90deg,var(--accent1),var(--accent2))"; t.style.padding="10px 16px"; t.style.borderRadius="12px";
+      t.style.zIndex=300; t.style.boxShadow="0 8px 24px rgba(0,0,0,0.5)";
+      document.body.appendChild(t); setTimeout(()=> t.style.opacity='0',2100); setTimeout(()=>t.remove(),2600);
+    }
+
+    function burst(){
+      for(let i=0;i<28;i++){
+        const p = document.createElement("div"); p.className="confetti";
+        p.style.left = (30 + Math.random()*40) + "%";
+        p.style.top = (10 + Math.random()*20) + "%";
+        p.style.background = ["#06b6d4","#a78bfa","#34d399","#f472b6"][Math.floor(Math.random()*4)];
+        const size = 6 + Math.random()*10; p.style.width = size + "px"; p.style.height = (size+4)+"px";
+        document.body.appendChild(p);
+        const dx = (Math.random()*800 - 400), dy = (200 + Math.random()*400);
+        p.animate([{transform:'translate(0,0) rotate(0deg)',opacity:1},{transform:`translate(${dx}px,${dy}px) rotate(${Math.random()*720}deg)`,opacity:0}],{duration:1000+Math.random()*800,easing:'cubic-bezier(.12,.8,.2,1)'});
+        setTimeout(()=> p.remove(),1800);
+      }
+    }
+
+    form.addEventListener("submit", e=>{
+      e.preventDefault();
+      const name = doctorEl.value.trim(); const status = statusEl.value; const note = noteEl.value.trim();
+      if(!name || !status) { showToast("Name & status required"); return; }
+      modalTitle.textContent = "Mark attendance";
+      modalBody.textContent = `Mark ${name} as ${status}?`;
+      modalBack.classList.add("show"); modalBack.setAttribute("aria-hidden","false");
+      modalConfirm.focus();
+      const onConfirm = ()=>{
+        const rec = {
+          id: "AT"+Date.now()+Math.floor(Math.random()*999),
+          name, status, note,
+          time: fmtNow(new Date()),
+          dateKey: todayKey(new Date())
+        };
+        pushRecord(rec);
+        modalBack.classList.remove("show"); modalBack.setAttribute("aria-hidden","true");
+        modalConfirm.removeEventListener("click", onConfirm);
+        modalCancel.removeEventListener("click", onCancel);
+        burst(); showToast("Attendance saved");
+        statusEl.value = ""; noteEl.value = "";
+      };
+      const onCancel = ()=> {
+        modalBack.classList.remove("show"); modalBack.setAttribute("aria-hidden","true");
+        modalConfirm.removeEventListener("click", onConfirm);
+        modalCancel.removeEventListener("click", onCancel);
+      };
+      modalConfirm.addEventListener("click", onConfirm);
+      modalCancel.addEventListener("click", onCancel);
+    });
+
+    importCsv.addEventListener("change", e=>{
+      const f = e.target.files[0];
+      if(f) importCSVFile(f);
+      e.target.value = "";
+    });
+
+    exportCsv.addEventListener("click", ()=> {
+      const arr = loadAll();
+      if(!arr.length){ showToast("No records to export"); return; }
+      downloadCSV(toCSV(arr), "hms_attendance_export.csv");
+      showToast("CSV exported");
+    });
+
+    clearAll.addEventListener("click", ()=>{
+      modalTitle.textContent = "Clear all records";
+      modalBody.textContent = "This will permanently remove all attendance records. Continue?";
+      modalBack.classList.add("show"); modalBack.setAttribute("aria-hidden","false");
+      modalConfirm.focus();
+      const onConfirm = ()=>{ clearRecords(); modalBack.classList.remove("show"); modalConfirm.removeEventListener("click",onConfirm); modalCancel.removeEventListener("click",onCancel); showToast("All records cleared"); };
+      const onCancel = ()=>{ modalBack.classList.remove("show"); modalConfirm.removeEventListener("click",onConfirm); modalCancel.removeEventListener("click",onCancel); };
+      modalConfirm.addEventListener("click",onConfirm);
+      modalCancel.addEventListener("click",onCancel);
+    });
+
+    refreshBtn.addEventListener("click", ()=> render());
+    bulkPresent.addEventListener("click", ()=>{
+      const names = ["Dr. Ayesha Singh","Dr. Raj Mehta","Dr. Priya Kapoor","Dr. Vikram Sharma"];
+      names.forEach(n=> pushRecord({id:"B"+Date.now()+Math.random(), name:n, status:"Present", note:"Auto bulk", time:fmtNow(new Date()), dateKey:todayKey()}));
+      showToast("Bulk present added"); render();
+    });
+
+    historySearch.addEventListener("input", render);
+    dateFilter.addEventListener("change", render);
+    sortBy.addEventListener("change", render);
+
+    function tickClock(){
+      const d = new Date();
+      liveTime.textContent = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+      liveDate.textContent = d.toLocaleDateString([], {weekday:'short', year:'numeric', month:'short', day:'numeric'});
+    }
+    tickClock(); setInterval(tickClock, 1000);
+
+    noteEl.addEventListener("keydown", e=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); markBtn.click(); } });
+
+    (function autoSelect(){
+      const params = new URLSearchParams(location.search);
+      const d = params.get("doctor");
+      if(d && doctorEl){
+        const target = decodeURIComponent(d);
+        for(const opt of doctorEl.options){
+          if(opt.value === target || opt.textContent === target || opt.value.includes(target) || opt.textContent.includes(target)){
+            opt.selected = true; break;
+          }
+        }
+      }
+    })();
+
+    render();
+    setTimeout(()=>{ $$(".row-anim").forEach((r,i)=> r.style.animationDelay = (i*0.06)+'s'); }, 80);
+    window.addEventListener("storage", e=>{ if(e.key===KEY) render(); });
+    document.addEventListener("keydown", e=> { if(e.key==='Escape'){ modalBack.classList.remove('show'); modalBack.setAttribute('aria-hidden','true'); } });
+    window.attendanceRender = render;
+  })();
+  </script>
+</body>
+</html>
