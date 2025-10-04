@@ -150,17 +150,20 @@
 
   <!-- Navbar -->
   <header class="navbar">
-    <div class="logo">🏥 <span>HMS</span></div>
-    <div class="hamburger" id="hamburger">☰</div>
-    <nav>
-      <ul class="nav-links" id="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="about.html" class="active">About</a></li>
-        <li><a href="doctors.html">Doctors</a></li>
-        <li><a href="appointment.html">Appointments</a></li>
-        <li><a href="attendance.html">Attendance</a></li>
-      </ul>
-    </nav>
+    <div class="logo" tabindex="0" role="link" aria-label="Home link">🏥 <span>HMS</span></div>
+
+    <div class="nav-right">
+      <nav>
+        <ul class="nav-links" id="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="doctors.html">Doctors</a></li>
+          <li><a href="appointment.html">Appointments</a></li>
+          <li><a href="attendance.html" aria-current="page">Attendance</a></li>
+        </ul>
+      </nav>
+      <div class="hamburger" id="hamburger" aria-label="Open menu" role="button" tabindex="0">☰</div>
+    </div>
   </header>
 
   <!-- Hero Section -->
