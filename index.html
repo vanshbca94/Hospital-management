@@ -173,10 +173,26 @@
       </p>
 
       <div class="cta-buttons">
-        <a href="appointment.html">✨ Book Appointment</a>
-        <a href="doctors.html">👨‍⚕️ View Doctors</a>
-        <a href="attendance.html">🩺 Doctor Attendance</a>
-      </div>
+  <a href="appointment.html">✨ Book Appointment</a>
+  <a href="doctors.html">👨‍⚕️ View Doctors</a>
+  <a href="attendance.html">🩺 Doctor Attendance</a>
+</div>
+
+<style>
+.cta-buttons {
+  display: flex;
+  flex-wrap: wrap; /* ✅ allows buttons to wrap instead of overflowing */
+  gap: 16px;
+  justify-content: center; /* ✅ keeps them centered horizontally */
+  margin-top: 25px;
+}
+
+.cta-buttons a {
+  flex: 1 1 220px; /* ✅ each button can shrink/grow nicely */
+  text-align: center;
+  min-width: 180px;
+}
+</style>
     </div>
 
     <div class="illustration">
