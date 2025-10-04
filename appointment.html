@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Appointment - Hospital Management</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <h2 style="color:white">🏥 HMS</h2>
+    </div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="doctors.html">Doctors</a>
+      <a href="appointment.html">Appointments</a>
+      <a href="attendance.html">Attendance</a>
+    </nav>
+  </header>
+
+  <!-- Appointment Section -->
+  <main class="hero">
+    <!-- Form Card -->
+    <section class="card">
+      <h2 class="title">📅 Book an Appointment</h2>
+      <p class="lead">Fill in your details to schedule an appointment with our doctors.</p>
+
+      <form id="appointment-form" style="margin-top:15px">
+        <label class="small">Full Name</label><br>
+        <input name="name" required placeholder="Your name" class="form-input"><br>
+
+        <label class="small">Email</label><br>
+        <input type="email" name="email" required placeholder="you@example.com" class="form-input"><br>
+
+        <label class="small">Doctor</label><br>
+        <select name="doctor" class="form-input" required>
+          <option value="">Select Doctor</option>
+          <option>Dr. Asha Patel — Cardiology</option>
+          <option>Dr. Raj Verma — General</option>
+          <option>Dr. Leena Iyer — Pediatrics</option>
+        </select><br>
+
+        <div style="display:flex; gap:10px; margin-top:10px;">
+          <div style="flex:1">
+            <label class="small">Date</label><br>
+            <input type="date" name="date" required class="form-input">
+          </div>
+          <div style="flex:1">
+            <label class="small">Time</label><br>
+            <input type="time" name="time" required class="form-input">
+          </div>
+        </div>
+
+        <label class="small" style="margin-top:10px;">Notes (optional)</label><br>
+        <textarea name="note" class="form-input" placeholder="Any special instructions..."></textarea><br>
+
+        <div style="margin-top:15px">
+          <button class="btn" type="submit">✨ Confirm Appointment</button>
+          <a href="index.html" class="btn ghost">⬅ Back</a>
+        </div>
+      </form>
+    </section>
+
+    <!-- Saved Appointments -->
+    <aside class="card">
+      <h3 class="title">📌 Your Appointments</h3>
+      <div id="appointments-list" style="margin-top:15px">
+        <p class="small">No appointments yet.</p>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 Hospital Management System • Appointments Module</p>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
