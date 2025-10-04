@@ -21,10 +21,11 @@ body {
 }
 
 /* ---------------- Navbar ---------------- */
+/* ---------------- NAVBAR ---------------- */
 .navbar {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: space-between;  /* logo left, links right */
+  align-items: center;             /* vertically center both */
   padding: 16px 40px;
   background: rgba(255,255,255,0.03);
   backdrop-filter: blur(10px);
@@ -40,8 +41,9 @@ body {
   to { transform: translateY(0); opacity: 1; }
 }
 
+/* Logo */
 .logo {
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   font-weight: 800;
   color: var(--accent1);
   display: flex;
@@ -49,18 +51,30 @@ body {
   gap: 8px;
   cursor: pointer;
   transition: transform 0.3s ease;
+  line-height: 1;
 }
 .logo span { color: #fff; }
 .logo:hover { transform: scale(1.1) rotate(-2deg); }
 
-.nav-links { display: flex; gap: 28px; }
+/* Navigation Links */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 28px;
+  margin: 0;
+  padding: 0;
+}
+.nav-links li { display: flex; align-items: center; }
 .nav-links a {
   text-decoration: none;
   font-weight: 600;
   color: #e5e7eb;
   position: relative;
   transition: color 0.3s ease;
+  padding: 6px 0;
 }
+
+/* Hover underline animation */
 .nav-links a::after {
   content: "";
   position: absolute;
