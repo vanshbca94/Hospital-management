@@ -1,39 +1,60 @@
-{% extends "hospital/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hospital Management - Home</title>
 
-{% block title %}Hospital Management - Home{% endblock %}
+  <!-- Link to CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <h2 style="color:white">🏥 HMS</h2>
+    </div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="doctors.html">Doctors</a>
+      <a href="appointment.html">Appointments</a>
+      <a href="attendance.html">Attendance</a>
+    </nav>
+  </header>
 
-{% block content %}
   <!-- Hero Section -->
   <section class="hero">
     <div class="card">
-      <h1 class="title">🏥 Modern Hospital Management System</h1>
+      <h1 class="title">Modern Hospital Management System</h1>
       <p class="lead">
-        Experience a digital-first healthcare platform built with <strong>Django</strong>.  
-        Secure, animated, and responsive — with appointment booking, doctor attendance,  
-        role-based dashboards, and smooth UI animations.
+        Welcome to a secure, animated, and responsive hospital management portal.
+        Book appointments, track doctor attendance, and explore our digital-first healthcare system.
       </p>
 
+      <!-- Buttons -->
       <div style="display:flex;gap:16px;margin-top:20px">
-        <a class="btn" id="appt-cta" href="{% url 'appointment' %}">✨ Book Appointment</a>
-        <a class="btn ghost" href="{% url 'attendance' %}">🩺 Doctor Attendance</a>
+        <a class="btn" id="appt-cta" href="appointment.html">✨ Book Appointment</a>
+        <a class="btn ghost" href="attendance.html">🩺 Doctor Attendance</a>
       </div>
 
       <!-- Highlight Cards -->
       <div class="grid" style="margin-top:24px">
         <div class="card-compact">
           <h4>👩‍⚕️ Patient Portal</h4>
-          <p class="small">Register online, schedule appointments, access records & billing — all in one place.</p>
+          <p class="small">Register, schedule appointments, access records & billing.</p>
         </div>
         <div class="card-compact">
           <h4>🧑‍⚕️ Doctor Dashboard</h4>
-          <p class="small">Manage patient schedules, upload reports, and issue prescriptions seamlessly.</p>
+          <p class="small">Manage schedules, upload reports, and prescribe medicines.</p>
         </div>
         <div class="card-compact">
           <h4>📊 Admin Panel</h4>
-          <p class="small">Control staff records, monitor hospital analytics, and generate reports with ease.</p>
+          <p class="small">Control staff, monitor hospital analytics, and generate reports.</p>
         </div>
       </div>
 
+      <!-- Shimmer Bar -->
       <div style="margin-top:20px">
         <div class="pulse" aria-hidden="true"></div>
       </div>
@@ -42,7 +63,8 @@
     <!-- Floating Illustration -->
     <aside class="card float-wrap">
       <div class="doctor">
-        <svg viewBox="0 0 120 120" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+        <!-- Animated SVG Illustration -->
+        <svg viewBox="0 0 120 120" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="g1" x1="0" x2="1">
               <stop offset="0" stop-color="#06b6d4"/>
@@ -64,15 +86,24 @@
     </aside>
   </section>
 
-  <!-- Animated Highlights -->
+  <!-- Highlights -->
   <section class="card" style="max-width:1120px;margin:30px auto;text-align:center;">
     <h3 style="margin:0 0 12px 0">🌟 Project Highlights</h3>
     <p class="small">
-      ✨ Built with Django & SQLite • 🎨 Animated UI • ⚡ Responsive Layout • 🧑‍⚕️ Appointment & Attendance Modules •  
-      ☁️ Ready for GitHub deployment
+      ✨ Built with HTML, CSS & JS • 🎨 Animated UI • ⚡ Responsive Layout •  
+      🧑‍⚕️ Appointment & Attendance Modules • ☁️ Ready for GitHub Pages
     </p>
     <div style="margin-top:20px">
-      <a href="{% url 'about' %}" class="btn">Read Abstract ➝</a>
+      <a href="about.html" class="btn">Read Abstract ➝</a>
     </div>
   </section>
-{% endblock %}
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 Hospital Management System • Animated Project Prototype</p>
+  </footer>
+
+  <!-- Link to JS -->
+  <script src="js/main.js"></script>
+</body>
+</html>
