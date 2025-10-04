@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About - Hospital Management System</title>
   <link rel="stylesheet" href="css/style.css">
-
   <style>
-    /* === EXTREME ANIMATION STYLES === */
-
-    /* Animated Gradient Background */
+    /* Background Animated Gradient */
     body {
-      background: linear-gradient(-45deg, #0f1724, #1e3a8a, #06b6d4, #9333ea);
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(-45deg, #0f172a, #1e40af, #06b6d4, #9333ea);
       background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
+      animation: gradientShift 15s ease infinite;
+      color: #fff;
       overflow-x: hidden;
     }
-    @keyframes gradientBG {
+    @keyframes gradientShift {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
@@ -29,207 +29,179 @@
       width: 100%; height: 100%;
       pointer-events: none;
       z-index: 0;
-      overflow: hidden;
     }
     .particle {
       position: absolute;
       width: 6px; height: 6px;
-      background: #fff;
+      background: rgba(255,255,255,0.7);
       border-radius: 50%;
-      opacity: 0.6;
       animation: floatUp linear infinite;
     }
     @keyframes floatUp {
-      from { transform: translateY(100vh) scale(0.5); opacity: 0; }
-      to { transform: translateY(-10vh) scale(1.2); opacity: 1; }
+      from { transform: translateY(100vh); opacity: 0; }
+      to { transform: translateY(-10vh); opacity: 1; }
     }
 
-    /* Typing + Glitch Title */
-    .typing-glitch {
-      font-size: 2rem;
-      color: #fff;
-      border-right: 3px solid #06b6d4;
-      overflow: hidden;
-      white-space: nowrap;
-      width: 0;
-      animation: typing 3s steps(30, end) forwards, blink 0.7s step-end infinite;
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 80px 20px;
       position: relative;
+      z-index: 1;
     }
-    @keyframes typing { from { width: 0 } to { width: 100% } }
-    @keyframes blink { 50% { border-color: transparent } }
-
-    /* Glitch Effect Overlay */
-    .typing-glitch::before, .typing-glitch::after {
-      content: attr(data-text);
-      position: absolute;
-      left: 0; top: 0;
-      width: 100%;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      animation: fadeInDown 1s ease forwards;
     }
-    .typing-glitch::before {
-      animation: glitchTop 2s infinite;
-      color: #06b6d4;
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-40px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    .typing-glitch::after {
-      animation: glitchBottom 2s infinite;
-      color: #9333ea;
-    }
-    @keyframes glitchTop {
-      0% { clip: rect(0, 900px, 0, 0); }
-      10% { clip: rect(10px, 900px, 40px, 0); transform: translate(-2px, -2px); }
-      20%, 100% { clip: rect(0, 900px, 0, 0); transform: none; }
-    }
-    @keyframes glitchBottom {
-      0% { clip: rect(0, 900px, 0, 0); }
-      10% { clip: rect(50px, 900px, 90px, 0); transform: translate(2px, 2px); }
-      20%, 100% { clip: rect(0, 900px, 0, 0); transform: none; }
-    }
-
-    /* Feature Cards 3D Tilt */
-    .card-compact {
-      transform-style: preserve-3d;
-      perspective: 1000px;
-      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    .hero p {
+      font-size: 1.2rem;
+      margin-top: 15px;
       opacity: 0;
-      transform: translateY(40px) scale(0.9);
+      animation: fadeIn 1.5s ease forwards;
+      animation-delay: 0.5s;
     }
-    .card-compact.visible {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-      transition: all 0.6s ease;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Feature Grid */
+    .grid {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-top: 40px;
+    }
+    .card-compact {
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 12px;
+      width: 280px;
+      text-align: center;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      cursor: pointer;
     }
     .card-compact:hover {
-      transform: rotateY(10deg) rotateX(10deg) scale(1.05);
+      transform: translateY(-10px) scale(1.05);
       box-shadow: 0 0 25px rgba(255,255,255,0.3);
     }
 
-    /* Extreme Buttons */
+    /* Buttons */
     .btn {
-      background: linear-gradient(270deg, #06b6d4, #9333ea, #3b82f6);
-      background-size: 600% 600%;
-      animation: rainbow 6s ease infinite;
+      display: inline-block;
+      margin: 10px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #06b6d4, #3b82f6, #9333ea);
+      background-size: 200% 200%;
+      color: #fff;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      animation: btnGradient 6s ease infinite;
     }
-    @keyframes rainbow {
+    @keyframes btnGradient {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
-
-    /* Neon Vansh */
-    .neon {
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: #fff;
-      text-shadow: 
-        0 0 10px #06b6d4,
-        0 0 20px #06b6d4,
-        0 0 40px #9333ea,
-        0 0 80px #9333ea;
-      animation: spinGlow 6s linear infinite;
-      display: inline-block;
+    .btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(255,255,255,0.4);
     }
-    @keyframes spinGlow {
-      0% { transform: rotate(0deg); filter: hue-rotate(0deg); }
-      100% { transform: rotate(360deg); filter: hue-rotate(360deg); }
+
+    /* Vansh Title */
+    .vansh-title {
+      font-size: 2rem;
+      font-weight: 900;
+      margin: 20px 0;
+      background: linear-gradient(90deg,#06b6d4,#9333ea);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 8px #9333ea, 0 0 16px #06b6d4;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9rem;
+      background: rgba(0,0,0,0.3);
+      margin-top: 40px;
     }
   </style>
 </head>
 <body>
 
-  <!-- ✅ Floating Particles -->
+  <!-- Floating particles -->
   <div class="particles">
-    <div class="particle" style="left:10%;animation-duration:12s;"></div>
-    <div class="particle" style="left:30%;animation-duration:18s;"></div>
-    <div class="particle" style="left:50%;animation-duration:22s;"></div>
-    <div class="particle" style="left:70%;animation-duration:15s;"></div>
-    <div class="particle" style="left:90%;animation-duration:20s;"></div>
+    <div class="particle" style="left:15%; animation-duration:12s;"></div>
+    <div class="particle" style="left:35%; animation-duration:18s;"></div>
+    <div class="particle" style="left:55%; animation-duration:22s;"></div>
+    <div class="particle" style="left:75%; animation-duration:15s;"></div>
+    <div class="particle" style="left:90%; animation-duration:20s;"></div>
   </div>
 
-  <!-- ✅ Navbar -->
+  <!-- Navbar -->
   <header class="navbar">
-  <div class="logo">
-    🏥 <span>HMS</span>
-  </div>
+    <div class="logo">🏥 <span>HMS</span></div>
+    <div class="hamburger" id="hamburger">☰</div>
+    <nav>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html" class="active">About</a></li>
+        <li><a href="doctors.html">Doctors</a></li>
+        <li><a href="appointment.html">Appointments</a></li>
+        <li><a href="attendance.html">Attendance</a></li>
+      </ul>
+    </nav>
+  </header>
 
-  <!-- Hamburger Icon -->
-  <div class="hamburger" id="hamburger">
-    ☰
-  </div>
-
-  <!-- Nav Links -->
-  <nav>
-    <ul class="nav-links" id="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="doctors.html">Doctors</a></li>
-      <li><a href="appointment.html">Appointments</a></li>
-      <li><a href="attendance.html">Attendance</a></li>
-    </ul>
-  </nav>
-</header>
-
-  <!-- ✅ About Section -->
+  <!-- Hero Section -->
   <main class="hero">
-    <section class="card">
-      <h1 class="typing-glitch" data-text="About Our Project">About Our Project</h1>
-      <p class="lead">
-        The <strong>Hospital Management System (HMS)</strong> isn’t just software, it’s an <span style="color:#06b6d4;font-weight:600;">experience</span>.  
-        Animated, interactive, and futuristic — it transforms hospitals into digital powerhouses.
-      </p>
+    <h1>About Our Project</h1>
+    <p>The <strong>Hospital Management System (HMS)</strong> is a modern solution to streamline hospital operations with <span style="color:#06b6d4;font-weight:600;">speed</span>, <span style="color:#9333ea;font-weight:600;">accuracy</span>, and <span style="color:#34d399;font-weight:600;">innovation</span>.</p>
 
-      <!-- Feature Cards -->
-      <div class="grid" style="margin-top:24px">
-        <div class="card-compact">
-          <h4>✨ Appointment Booking</h4>
-          <p class="small">Book & manage appointments with smooth animations and reminders.</p>
-        </div>
-        <div class="card-compact">
-          <h4>🩺 Doctor Attendance</h4>
-          <p class="small">Track schedules with live dashboards & glowing indicators.</p>
-        </div>
-        <div class="card-compact">
-          <h4>⚡ Admin Dashboard</h4>
-          <p class="small">AI-powered analytics with charts, colors, and futuristic visuals.</p>
-        </div>
+    <!-- Feature Cards -->
+    <div class="grid">
+      <div class="card-compact">
+        <h3>📅 Easy Appointments</h3>
+        <p>Book and manage appointments with a smooth, interactive design.</p>
       </div>
+      <div class="card-compact">
+        <h3>🩺 Doctor Attendance</h3>
+        <p>Doctors can record attendance instantly with digital accuracy.</p>
+      </div>
+      <div class="card-compact">
+        <h3>⚡ Admin Dashboard</h3>
+        <p>Admins can monitor everything from one powerful interface.</p>
+      </div>
+    </div>
 
-      <!-- Buttons -->
-      <div style="margin-top:20px">
-        <a href="appointment.html" class="btn pulse">📅 Book Appointment</a>
-        <a href="attendance.html" class="btn ghost">🧑‍⚕️ Doctor Attendance</a>
-      </div>
-    </section>
+    <!-- Buttons -->
+    <div style="margin-top:30px;">
+      <a href="appointment.html" class="btn">📅 Book Appointment</a>
+      <a href="attendance.html" class="btn">🧑‍⚕️ Doctor Attendance</a>
+    </div>
   </main>
 
-  <!-- ✅ Credits -->
-  <section class="card" style="max-width:900px;margin:30px auto;text-align:center;">
-    <h3>👨‍💻 Project Credits</h3>
-    <p class="small">This Hospital Management System was proudly</p>
-    <p class="neon">✨ Made by Vansh ✨</p>
-    <div style="margin-top:20px">
-      <a href="index.html" class="btn">⬅ Back to Home</a>
-    </div>
+  <!-- Credits -->
+  <section style="text-align:center; margin:50px 20px;">
+    <h2 class="vansh-title">✨ Made by Vansh ✨</h2>
   </section>
 
-  <!-- ✅ Footer -->
+  <!-- Footer -->
   <footer>
-    <p>© 2025 Hospital Management System • Extreme Animation Edition by Vansh</p>
+    <p>© 2025 Hospital Management System • Designed by Vansh</p>
   </footer>
 
-  <script>
-    // Scroll reveal for feature cards
-    const cards = document.querySelectorAll('.card-compact');
-    function revealCards() {
-      cards.forEach(card => {
-        const rect = card.getBoundingClientRect();
-        if (rect.top < window.innerHeight - 100) {
-          card.classList.add('visible');
-        }
-      });
-    }
-    window.addEventListener('scroll', revealCards);
-    window.addEventListener('load', revealCards);
-  </script>
+  <!-- Scripts -->
+  <script src="js/main.js"></script>
 </body>
 </html>
