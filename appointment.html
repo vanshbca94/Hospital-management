@@ -1,23 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Book Appointment - Hospital Management</title>
-  <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book Appointment - Hospital Management System</title>
+  <link rel="stylesheet" href="css/style.css" />
 
   <style>
-    /* ---------------- Extra Animations & Styling ---------------- */
-    .card { animation: fadeInUp 0.9s ease forwards; }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(40px); }
-      to { opacity: 1; transform: translateY(0); }
+    /* ---------- Page Animations ---------- */
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: radial-gradient(circle at top, #0f172a, #1e293b);
+      color: white;
+      overflow-x: hidden;
     }
 
-    /* Title underline shimmer */
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 30px;
+      animation: fadeInUp 1s ease forwards;
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     .title {
       position: relative;
       display: inline-block;
+      font-size: 1.8rem;
+      background: linear-gradient(90deg, #06b6d4, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
     .title::after {
       content: "";
@@ -31,120 +55,151 @@
       background-size: 200% auto;
     }
     @keyframes shimmer {
-      0% { background-position: -200px 0; }
-      100% { background-position: 200px 0; }
+      0% {
+        background-position: -200px 0;
+      }
+      100% {
+        background-position: 200px 0;
+      }
     }
 
-    /* Inputs */
+    .hero {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    /* ---------- Form Styling ---------- */
     .form-input {
       width: 100%;
       padding: 12px;
       margin: 12px 0;
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 10px;
-      background: rgba(255,255,255,0.02);
+      background: rgba(255, 255, 255, 0.05);
       color: white;
-      transition: all 0.3s ease;
       font-size: 1rem;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: slideUp 0.6s ease forwards;
-    }
-    @keyframes slideUp {
-      to { opacity: 1; transform: translateY(0); }
+      transition: all 0.3s ease;
     }
     .form-input:focus {
       border-color: #06b6d4;
-      box-shadow: 0 0 12px rgba(6,182,212,0.5);
-      background: rgba(255,255,255,0.05);
-    }
-    /* Placeholder color for date/time */
-    input[type="date"]:before,
-    input[type="time"]:before {
-      content: attr(placeholder);
-      position: absolute;
-      color: #9ca3af;
-    }
-    input[type="date"]:valid:before,
-    input[type="time"]:valid:before {
-      display: none;
+      box-shadow: 0 0 14px rgba(6, 182, 212, 0.5);
+      background: rgba(255, 255, 255, 0.08);
     }
 
-    /* Attractive Confirm Button */
     .btn.confirm {
       padding: 16px 36px;
       font-size: 1.1rem;
       font-weight: 700;
-      letter-spacing: 1px;
       border-radius: 14px;
       background: linear-gradient(90deg, #06b6d4, #3b82f6, #a78bfa);
       background-size: 200% auto;
       color: white;
       text-transform: uppercase;
+      letter-spacing: 1px;
       animation: pulseBig 2s infinite;
       transition: transform 0.3s ease, background-position 0.5s;
+      width: 100%;
     }
     .btn.confirm:hover {
       background-position: right center;
-      transform: scale(1.08) translateY(-3px);
-      box-shadow: 0 12px 32px rgba(167,139,250,0.5);
+      transform: scale(1.07);
+      box-shadow: 0 0 30px rgba(167, 139, 250, 0.5);
     }
     @keyframes pulseBig {
-      0% { box-shadow: 0 0 0 0 rgba(6,182,212,0.6); }
-      70% { box-shadow: 0 0 0 25px rgba(6,182,212,0); }
-      100% { box-shadow: 0 0 0 0 rgba(6,182,212,0); }
+      0% {
+        box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.6);
+      }
+      70% {
+        box-shadow: 0 0 0 25px rgba(6, 182, 212, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(6, 182, 212, 0);
+      }
     }
 
     .button-row {
       display: flex;
       gap: 24px;
       margin-top: 25px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* ---------- Doctor Banner ---------- */
+    .selected-doctor-banner {
+      display: none;
+      text-align: center;
+      padding: 14px;
+      background: linear-gradient(90deg, #06b6d4, #3b82f6);
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      margin-bottom: 20px;
+      animation: fadeInDown 0.7s ease forwards;
+    }
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card-right {
+      margin-top: 50px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.85rem;
+      color: #9ca3af;
+      margin-top: 40px;
     }
   </style>
 </head>
 <body>
-  <!-- Header -->
+  <!-- Navbar -->
   <header class="navbar">
-  <div class="logo">
-    🏥 <span>HMS</span>
-  </div>
-
-  <!-- Hamburger Icon -->
-  <div class="hamburger" id="hamburger">
-    ☰
-  </div>
-
-  <!-- Nav Links -->
-  <nav>
-    <ul class="nav-links" id="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="doctors.html">Doctors</a></li>
-      <li><a href="appointment.html">Appointments</a></li>
-      <li><a href="attendance.html">Attendance</a></li>
-    </ul>
-  </nav>
-</header>
+    <div class="logo">🏥 <span>HMS</span></div>
+    <div class="hamburger" id="hamburger">☰</div>
+    <nav>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="doctors.html">Doctors</a></li>
+        <li><a href="appointment.html" class="active">Appointments</a></li>
+        <li><a href="attendance.html">Attendance</a></li>
+      </ul>
+    </nav>
+  </header>
 
   <!-- Appointment Section -->
   <main class="hero">
-    <!-- Form Card -->
     <section class="card">
       <h2 class="title">📅 Book an Appointment</h2>
       <p class="lead">Fill in your details to schedule an appointment with our doctors.</p>
 
+      <!-- Dynamic Doctor Banner -->
+      <div id="selectedDoctorBanner" class="selected-doctor-banner"></div>
+
       <form id="appointment-form">
-        <input type="text" name="name" required placeholder="👤 Full Name" class="form-input">
-        <input type="email" name="email" required placeholder="📧 Email Address" class="form-input">
-        <select name="doctor" class="form-input" required>
+        <input type="text" name="name" required placeholder="👤 Full Name" class="form-input" />
+        <input type="email" name="email" required placeholder="📧 Email Address" class="form-input" />
+
+        <select name="doctor" id="doctor" class="form-input" required>
           <option value="">👨‍⚕️ Choose Doctor</option>
-          <option>Dr. Asha Patel — Cardiology</option>
-          <option>Dr. Raj Verma — General</option>
-          <option>Dr. Leena Iyer — Pediatrics</option>
+          <option value="Dr. Ayesha Singh">Dr. Ayesha Singh — Cardiology</option>
+          <option value="Dr. Raj Mehta">Dr. Raj Mehta — Neurology</option>
+          <option value="Dr. Priya Kapoor">Dr. Priya Kapoor — Pediatrics</option>
+          <option value="Dr. Vikram Sharma">Dr. Vikram Sharma — Orthopedic</option>
         </select>
-        <!-- Custom placeholders for date/time -->
-        <input type="date" name="date" required class="form-input" placeholder="Choose Date">
-        <input type="time" name="time" required class="form-input" placeholder="Choose Time">
+
+        <input type="date" name="date" required class="form-input" placeholder="Choose Date" />
+        <input type="time" name="time" required class="form-input" placeholder="Choose Time" />
         <textarea name="note" class="form-input" placeholder="📝 Notes (optional)"></textarea>
 
         <div class="button-row">
@@ -163,11 +218,34 @@
     </aside>
   </main>
 
-  <!-- Footer -->
   <footer>
-    <p>© 2025 Hospital Management System • Appointments Module</p>
+    <p>© 2025 Hospital Management System • Appointments Module by Vansh</p>
   </footer>
 
   <script src="js/main.js"></script>
+
+  <script>
+    // 🔹 Auto-select doctor & banner
+    const urlParams = new URLSearchParams(window.location.search);
+    const doctorName = urlParams.get("doctor");
+    const doctorSelect = document.getElementById("doctor");
+    const banner = document.getElementById("selectedDoctorBanner");
+
+    if (doctorName && doctorSelect) {
+      for (let option of doctorSelect.options) {
+        if (option.value === doctorName) {
+          option.selected = true;
+          banner.textContent = "Booking Appointment with " + doctorName;
+          banner.style.display = "block";
+          break;
+        }
+      }
+    }
+
+    // 🔹 Smooth fade for form elements
+    document.querySelectorAll(".form-input").forEach((el, i) => {
+      el.style.animationDelay = i * 0.15 + "s";
+    });
+  </script>
 </body>
 </html>
