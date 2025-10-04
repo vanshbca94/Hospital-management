@@ -14,7 +14,6 @@
       overflow-x: hidden;
     }
 
-    /* Header animation */
     .hero {
       text-align: center;
       padding: 60px 20px 30px;
@@ -37,7 +36,6 @@
       color: #cbd5e1;
     }
 
-    /* Search & Filter Bar */
     .search-filter {
       display: flex;
       justify-content: center;
@@ -60,7 +58,6 @@
       box-shadow: 0 0 12px rgba(6,182,212,0.4);
     }
 
-    /* Doctor Grid */
     .doctor-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -100,6 +97,10 @@
       border-radius: 50%;
       border: 2px solid #06b6d4;
       object-fit: cover;
+      transition: box-shadow 0.4s ease;
+    }
+    .doctor-header img:hover {
+      box-shadow: 0 0 15px rgba(6,182,212,0.8);
     }
     .doctor-header h3 {
       margin: 0;
@@ -156,32 +157,27 @@
   </style>
 </head>
 <body>
-
-  <!-- Navbar -->
   <header class="navbar">
-    <div class="logo" tabindex="0" role="link" aria-label="Home link">🏥 <span>HMS</span></div>
-
+    <div class="logo">🏥 <span>HMS</span></div>
     <div class="nav-right">
       <nav>
         <ul class="nav-links" id="nav-links">
           <li><a href="index.html">Home</a></li>
           <li><a href="about.html">About</a></li>
-          <li><a href="doctors.html">Doctors</a></li>
+          <li><a href="doctors.html" aria-current="page">Doctors</a></li>
           <li><a href="appointment.html">Appointments</a></li>
-          <li><a href="attendance.html" aria-current="page">Attendance</a></li>
+          <li><a href="attendance.html">Attendance</a></li>
         </ul>
       </nav>
-      <div class="hamburger" id="hamburger" aria-label="Open menu" role="button" tabindex="0">☰</div>
+      <div class="hamburger" id="hamburger">☰</div>
     </div>
   </header>
 
-  <!-- Hero -->
   <section class="hero">
     <h1>Our Doctors</h1>
     <p>Meet our specialists and book appointments with available professionals instantly.</p>
   </section>
 
-  <!-- Search & Filter -->
   <div class="search-filter">
     <input type="text" id="searchDoctor" placeholder="🔍 Search by name...">
     <select id="filterSpecialty">
@@ -193,11 +189,10 @@
     </select>
   </div>
 
-  <!-- Doctor Grid -->
   <section class="doctor-grid" id="doctorGrid">
     <div class="doctor-card" data-name="Dr. Ayesha Singh" data-specialty="Cardiologist" data-status="available">
       <div class="doctor-header">
-        <img src="assets/images/doctor1.jpg" alt="Doctor 1">
+        <img src="https://cdn.pixabay.com/photo/2016/10/08/18/35/doctor-1727620_1280.jpg" alt="Dr. Ayesha Singh">
         <div>
           <h3>Dr. Ayesha Singh</h3>
           <p>Cardiologist</p>
@@ -209,7 +204,7 @@
 
     <div class="doctor-card" data-name="Dr. Raj Mehta" data-specialty="Neurologist" data-status="busy">
       <div class="doctor-header">
-        <img src="assets/images/doctor2.jpg" alt="Doctor 2">
+        <img src="https://cdn.pixabay.com/photo/2017/07/24/19/18/doctor-2537832_1280.jpg" alt="Dr. Raj Mehta">
         <div>
           <h3>Dr. Raj Mehta</h3>
           <p>Neurologist</p>
@@ -221,7 +216,7 @@
 
     <div class="doctor-card" data-name="Dr. Priya Kapoor" data-specialty="Pediatrician" data-status="available">
       <div class="doctor-header">
-        <img src="assets/images/doctor3.jpg" alt="Doctor 3">
+        <img src="https://cdn.pixabay.com/photo/2016/03/31/19/56/doctor-1295559_1280.jpg" alt="Dr. Priya Kapoor">
         <div>
           <h3>Dr. Priya Kapoor</h3>
           <p>Pediatrician</p>
@@ -233,7 +228,7 @@
 
     <div class="doctor-card" data-name="Dr. Vikram Sharma" data-specialty="Orthopedic Surgeon" data-status="busy">
       <div class="doctor-header">
-        <img src="assets/images/doctor4.jpg" alt="Doctor 4">
+        <img src="https://cdn.pixabay.com/photo/2017/08/06/15/11/people-2595281_1280.jpg" alt="Dr. Vikram Sharma">
         <div>
           <h3>Dr. Vikram Sharma</h3>
           <p>Orthopedic Surgeon</p>
@@ -250,7 +245,6 @@
 
   <script src="js/main.js"></script>
   <script>
-    // Search & Filter Logic
     const searchInput = document.getElementById("searchDoctor");
     const filterSelect = document.getElementById("filterSpecialty");
     const doctorCards = document.querySelectorAll(".doctor-card");
@@ -258,7 +252,6 @@
     function filterDoctors() {
       const search = searchInput.value.toLowerCase();
       const specialty = filterSelect.value;
-
       doctorCards.forEach(card => {
         const name = card.dataset.name.toLowerCase();
         const spec = card.dataset.specialty;
@@ -267,14 +260,9 @@
         card.style.display = (matchesSearch && matchesFilter) ? "block" : "none";
       });
     }
-
     searchInput.addEventListener("input", filterDoctors);
     filterSelect.addEventListener("change", filterDoctors);
-
-    // Animated appearance delay
-    doctorCards.forEach((card, i) => {
-      card.style.animationDelay = `${i * 0.1}s`;
-    });
+    doctorCards.forEach((card, i) => { card.style.animationDelay = `${i * 0.1}s`; });
   </script>
 </body>
 </html>
