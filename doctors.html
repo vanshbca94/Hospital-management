@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Doctors - Hospital Management System</title>
-  <link rel="stylesheet" href="css/style.css">
-
+  <link rel="stylesheet" href="css/style.css" />
   <style>
     body {
       margin: 0;
@@ -36,6 +35,23 @@
       font-size: 1rem;
       margin-top: 10px;
       color: #cbd5e1;
+    }
+
+    .register-btn {
+      display: block;
+      width: fit-content;
+      margin: 15px auto 0;
+      padding: 12px 24px;
+      background: linear-gradient(90deg, #3b82f6, #a78bfa);
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.3s, background 0.3s;
+    }
+    .register-btn:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg, #06b6d4, #3b82f6);
     }
 
     .search-filter {
@@ -157,24 +173,6 @@
       color: #94a3b8;
       margin-top: 40px;
     }
-
-    .register-btn {
-      display: block;
-      width: fit-content;
-      margin: 0 auto;
-      padding: 12px 24px;
-      background: linear-gradient(90deg, #3b82f6, #a78bfa);
-      border-radius: 10px;
-      color: white;
-      font-weight: 600;
-      text-decoration: none;
-      transition: transform 0.3s, background 0.3s;
-    }
-
-    .register-btn:hover {
-      transform: scale(1.05);
-      background: linear-gradient(90deg, #06b6d4, #3b82f6);
-    }
   </style>
 </head>
 
@@ -212,16 +210,21 @@
     </select>
   </div>
 
-  <section class="doctor-grid" id="doctorGrid"></section>
+  <section class="doctor-grid" id="doctorGrid">
+    <p>Loading doctors...</p>
+  </section>
 
   <footer>
     <p>© 2025 Hospital Management System • Doctors Directory by Vansh</p>
   </footer>
 
-  <!-- --------------- 🔥 FIREBASE SDK (Step 5.1) --------------- -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-  <script>
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Import Firebase SDKs
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyCjHnNK6pc2KQlY642SqEHXpOMjx0ghfcI",
       authDomain: "hospital-management-syst-e1875.firebaseapp.com",
@@ -231,40 +234,49 @@
       appId: "1:174278534239:web:3a9312309aa4e60ea0e7ea",
       measurementId: "G-2FBFSZE4QB"
     };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-  </script>
 
-  <!-- --------------- 🔹 FETCH DOCTORS FROM FIRESTORE --------------- -->
-  <script>
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
     const doctorGrid = document.getElementById("doctorGrid");
 
     async function loadDoctors() {
-      doctorGrid.innerHTML = "<p>Loading doctors...</p>";
-      const snapshot = await db.collection("doctors").get();
-      doctorGrid.innerHTML = "";
-      snapshot.forEach(doc => {
-        const d = doc.data();
-        const card = document.createElement("div");
-        card.className = "doctor-card";
-        card.innerHTML = `
-          <div class="doctor-header">
-            <img src="${d.image || 'assets/images/default-doctor.png'}" alt="${d.name}">
-            <div>
-              <h3>${d.name}</h3>
-              <p>${d.specialty}</p>
+      try {
+        const querySnapshot = await getDocs(collection(db, "doctors"));
+        doctorGrid.innerHTML = "";
+
+        if (querySnapshot.empty) {
+          doctorGrid.innerHTML = "<p>No doctors found. Add some in Firestore or via registration form.</p>";
+          return;
+        }
+
+        querySnapshot.forEach((doc) => {
+          const d = doc.data();
+          const card = document.createElement("div");
+          card.className = "doctor-card";
+          card.innerHTML = `
+            <div class="doctor-header">
+              <img src="${d.image}" alt="${d.name}">
+              <div>
+                <h3>${d.name}</h3>
+                <p>${d.specialty}</p>
+              </div>
             </div>
-          </div>
-          <p class="status ${d.status}">${d.status === 'available' ? '✔ Available' : '✖ Busy'}</p>
-          <div style="display:flex;gap:10px;margin-top:10px;">
-            <a href="appointment.html?doctor=${encodeURIComponent(d.name)}" class="btn">Book Appointment</a>
-          </div>
-        `;
-        doctorGrid.appendChild(card);
-      });
+            <p class="status ${d.status}">${d.status === 'available' ? '✔ Available' : '✖ Busy'}</p>
+            <a href="appointment.html?doctor=${encodeURIComponent(d.name)}" class="btn ${d.status === 'busy' ? 'disabled' : ''}">
+              ${d.status === 'busy' ? 'Not Available' : 'Book Appointment'}
+            </a>
+          `;
+          doctorGrid.appendChild(card);
+        });
+      } catch (err) {
+        console.error(err);
+        doctorGrid.innerHTML = "<p>⚠️ Error loading doctors. Check Firestore connection.</p>";
+      }
     }
 
-    // 🔍 Filter functionality (works after doctors load)
+    // Search + Filter
     const searchInput = document.getElementById("searchDoctor");
     const filterSelect = document.getElementById("filterSpecialty");
 
@@ -286,6 +298,19 @@
     filterSelect.addEventListener("change", filterDoctors);
 
     document.addEventListener("DOMContentLoaded", loadDoctors);
+  </script>
+
+  <!-- Hamburger Menu -->
+  <script>
+    const hamburger = document.getElementById("hamburger");
+    const navLinks = document.getElementById("nav-links");
+
+    if (hamburger && navLinks) {
+      hamburger.addEventListener("click", () => {
+        navLinks.classList.toggle("show");
+        hamburger.classList.toggle("active");
+      });
+    }
   </script>
 </body>
 </html>
