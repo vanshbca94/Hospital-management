@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Doctors - Hospital Management System</title>
   <link rel="stylesheet" href="css/style.css">
+
   <style>
     body {
       margin: 0;
@@ -23,6 +24,7 @@
       from { opacity: 0; transform: translateY(-30px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
     .hero h1 {
       font-size: 2.4rem;
       font-weight: 700;
@@ -140,6 +142,7 @@
       transform: scale(1.05);
       box-shadow: 0 10px 25px rgba(167,139,250,0.4);
     }
+
     .btn.disabled {
       background: rgba(255,255,255,0.1);
       color: #9ca3af;
@@ -154,8 +157,27 @@
       color: #94a3b8;
       margin-top: 40px;
     }
+
+    .register-btn {
+      display: block;
+      width: fit-content;
+      margin: 0 auto;
+      padding: 12px 24px;
+      background: linear-gradient(90deg, #3b82f6, #a78bfa);
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.3s, background 0.3s;
+    }
+
+    .register-btn:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg, #06b6d4, #3b82f6);
+    }
   </style>
 </head>
+
 <body>
   <header class="navbar">
     <div class="logo">🏥 <span>HMS</span></div>
@@ -176,6 +198,7 @@
   <section class="hero">
     <h1>Our Doctors</h1>
     <p>Meet our specialists and book appointments with available professionals instantly.</p>
+    <a href="doctor_register.html" class="register-btn">➕ Register New Doctor</a>
   </section>
 
   <div class="search-filter">
@@ -189,80 +212,81 @@
     </select>
   </div>
 
-  <section class="doctor-grid" id="doctorGrid">
-    <div class="doctor-card" data-name="Dr. Ayesha Singh" data-specialty="Cardiologist" data-status="available">
-      <div class="doctor-header">
-        <img src="assets/images/doctor1.jpg.JPG" alt="Dr. Ayesha Singh">
-        <div>
-          <h3>Dr. Ayesha Singh</h3>
-          <p>Cardiologist</p>
-        </div>
-      </div>
-      <p class="status available">✔ Available</p>
-      <a href="appointment.html?doctor=Dr.%20Ayesha%20Singh" class="btn">Book Appointment</a>
-    </div>
-
-    <div class="doctor-card" data-name="Dr. Raj Mehta" data-specialty="Neurologist" data-status="busy">
-      <div class="doctor-header">
-        <img src="assets/images/doctor2.jpg.JPG" alt="Dr. Raj Mehta">
-        <div>
-          <h3>Dr. Raj Mehta</h3>
-          <p>Neurologist</p>
-        </div>
-      </div>
-      <p class="status busy">✖ Busy</p>
-      <a href="#" class="btn disabled">Not Available</a>
-    </div>
-
-    <div class="doctor-card" data-name="Dr. Priya Kapoor" data-specialty="Pediatrician" data-status="available">
-      <div class="doctor-header">
-        <img src="assets/images/doctor3.jpg.jpg" alt="Dr. Priya Kapoor">
-        <div>
-          <h3>Dr. Priya Kapoor</h3>
-          <p>Pediatrician</p>
-        </div>
-      </div>
-      <p class="status available">✔ Available</p>
-      <a href="appointment.html?doctor=Dr.%20Priya%20Kapoor" class="btn">Book Appointment</a>
-    </div>
-
-    <div class="doctor-card" data-name="Dr. Vikram Sharma" data-specialty="Orthopedic Surgeon" data-status="busy">
-      <div class="doctor-header">
-        <img src="assets/images/doctor4.jpg.jpg" alt="Dr. Vikram Sharma">
-        <div>
-          <h3>Dr. Vikram Sharma</h3>
-          <p>Orthopedic Surgeon</p>
-        </div>
-      </div>
-      <p class="status busy">✖ Busy</p>
-      <a href="#" class="btn disabled">Not Available</a>
-    </div>
-  </section>
+  <section class="doctor-grid" id="doctorGrid"></section>
 
   <footer>
     <p>© 2025 Hospital Management System • Doctors Directory by Vansh</p>
   </footer>
 
-  <script src="js/main.js"></script>
   <script>
+    const doctorGrid = document.getElementById("doctorGrid");
+
+    const defaultDoctors = [
+      {id:1, name:"Dr. Ayesha Singh", specialty:"Cardiologist", status:"available", image:"assets/images/doctor1.jpg.JPG"},
+      {id:2, name:"Dr. Raj Mehta", specialty:"Neurologist", status:"busy", image:"assets/images/doctor2.jpg.JPG"},
+      {id:3, name:"Dr. Priya Kapoor", specialty:"Pediatrician", status:"available", image:"assets/images/doctor3.jpg.jpg"},
+      {id:4, name:"Dr. Vikram Sharma", specialty:"Orthopedic Surgeon", status:"busy", image:"assets/images/doctor4.jpg.jpg"}
+    ];
+
+    if (!localStorage.getItem("doctors")) {
+      localStorage.setItem("doctors", JSON.stringify(defaultDoctors));
+    }
+
+    function loadDoctors() {
+      const doctors = JSON.parse(localStorage.getItem("doctors") || "[]");
+      doctorGrid.innerHTML = "";
+
+      doctors.forEach(d => {
+        const card = document.createElement("div");
+        card.className = "doctor-card";
+        card.innerHTML = `
+          <div class="doctor-header">
+            <img src="${d.image}" alt="${d.name}">
+            <div>
+              <h3>${d.name}</h3>
+              <p>${d.specialty}</p>
+            </div>
+          </div>
+          <p class="status ${d.status}">${d.status === 'available' ? '✔ Available' : '✖ Busy'}</p>
+          <div style="display:flex;gap:10px;margin-top:10px;">
+            <a href="appointment.html?doctor=${encodeURIComponent(d.name)}" class="btn">Book Appointment</a>
+            <button class="btn ghost" onclick="deleteDoctor(${d.id})">🗑 Remove</button>
+          </div>
+        `;
+        doctorGrid.appendChild(card);
+      });
+    }
+
+    function deleteDoctor(id) {
+      if (!confirm("Are you sure you want to remove this doctor?")) return;
+      let doctors = JSON.parse(localStorage.getItem("doctors") || "[]");
+      doctors = doctors.filter(d => d.id !== id);
+      localStorage.setItem("doctors", JSON.stringify(doctors));
+      loadDoctors();
+    }
+
+    // Search + Filter
     const searchInput = document.getElementById("searchDoctor");
     const filterSelect = document.getElementById("filterSpecialty");
-    const doctorCards = document.querySelectorAll(".doctor-card");
 
     function filterDoctors() {
       const search = searchInput.value.toLowerCase();
       const specialty = filterSelect.value;
-      doctorCards.forEach(card => {
-        const name = card.dataset.name.toLowerCase();
-        const spec = card.dataset.specialty;
+      const cards = doctorGrid.querySelectorAll(".doctor-card");
+
+      cards.forEach(card => {
+        const name = card.querySelector("h3").textContent.toLowerCase();
+        const spec = card.querySelector("p").textContent;
         const matchesSearch = name.includes(search);
         const matchesFilter = specialty === "" || spec === specialty;
         card.style.display = (matchesSearch && matchesFilter) ? "block" : "none";
       });
     }
+
     searchInput.addEventListener("input", filterDoctors);
     filterSelect.addEventListener("change", filterDoctors);
-    doctorCards.forEach((card, i) => { card.style.animationDelay = `${i * 0.1}s`; });
+
+    document.addEventListener("DOMContentLoaded", loadDoctors);
   </script>
 </body>
 </html>
