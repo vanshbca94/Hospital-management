@@ -218,30 +218,38 @@
     <p>© 2025 Hospital Management System • Doctors Directory by Vansh</p>
   </footer>
 
+  <!-- --------------- 🔥 FIREBASE SDK (Step 5.1) --------------- -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCjHnNK6pc2KQlY642SqEHXpOMjx0ghfcI",
+      authDomain: "hospital-management-syst-e1875.firebaseapp.com",
+      projectId: "hospital-management-syst-e1875",
+      storageBucket: "hospital-management-syst-e1875.firebasestorage.app",
+      messagingSenderId: "174278534239",
+      appId: "1:174278534239:web:3a9312309aa4e60ea0e7ea",
+      measurementId: "G-2FBFSZE4QB"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
+
+  <!-- --------------- 🔹 FETCH DOCTORS FROM FIRESTORE --------------- -->
   <script>
     const doctorGrid = document.getElementById("doctorGrid");
 
-    const defaultDoctors = [
-      {id:1, name:"Dr. Ayesha Singh", specialty:"Cardiologist", status:"available", image:"assets/images/doctor1.jpg.JPG"},
-      {id:2, name:"Dr. Raj Mehta", specialty:"Neurologist", status:"busy", image:"assets/images/doctor2.jpg.JPG"},
-      {id:3, name:"Dr. Priya Kapoor", specialty:"Pediatrician", status:"available", image:"assets/images/doctor3.jpg.jpg"},
-      {id:4, name:"Dr. Vikram Sharma", specialty:"Orthopedic Surgeon", status:"busy", image:"assets/images/doctor4.jpg.jpg"}
-    ];
-
-    if (!localStorage.getItem("doctors")) {
-      localStorage.setItem("doctors", JSON.stringify(defaultDoctors));
-    }
-
-    function loadDoctors() {
-      const doctors = JSON.parse(localStorage.getItem("doctors") || "[]");
+    async function loadDoctors() {
+      doctorGrid.innerHTML = "<p>Loading doctors...</p>";
+      const snapshot = await db.collection("doctors").get();
       doctorGrid.innerHTML = "";
-
-      doctors.forEach(d => {
+      snapshot.forEach(doc => {
+        const d = doc.data();
         const card = document.createElement("div");
         card.className = "doctor-card";
         card.innerHTML = `
           <div class="doctor-header">
-            <img src="${d.image}" alt="${d.name}">
+            <img src="${d.image || 'assets/images/default-doctor.png'}" alt="${d.name}">
             <div>
               <h3>${d.name}</h3>
               <p>${d.specialty}</p>
@@ -250,22 +258,13 @@
           <p class="status ${d.status}">${d.status === 'available' ? '✔ Available' : '✖ Busy'}</p>
           <div style="display:flex;gap:10px;margin-top:10px;">
             <a href="appointment.html?doctor=${encodeURIComponent(d.name)}" class="btn">Book Appointment</a>
-            <button class="btn ghost" onclick="deleteDoctor(${d.id})">🗑 Remove</button>
           </div>
         `;
         doctorGrid.appendChild(card);
       });
     }
 
-    function deleteDoctor(id) {
-      if (!confirm("Are you sure you want to remove this doctor?")) return;
-      let doctors = JSON.parse(localStorage.getItem("doctors") || "[]");
-      doctors = doctors.filter(d => d.id !== id);
-      localStorage.setItem("doctors", JSON.stringify(doctors));
-      loadDoctors();
-    }
-
-    // Search + Filter
+    // 🔍 Filter functionality (works after doctors load)
     const searchInput = document.getElementById("searchDoctor");
     const filterSelect = document.getElementById("filterSpecialty");
 
