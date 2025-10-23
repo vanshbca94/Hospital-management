@@ -13,17 +13,46 @@
       color: #f1f5f9;
       overflow-x: hidden;
     }
-
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 10%;
+      background: rgba(10, 15, 35, 0.8);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+    }
+    .nav-links a {
+      color: #d1d5db;
+      text-decoration: none;
+      transition: color 0.3s ease;
+      font-weight: 500;
+    }
+    .nav-links a:hover {
+      color: #06b6d4;
+    }
+    .hamburger {
+      display: none;
+      cursor: pointer;
+      font-size: 1.6rem;
+      color: #fff;
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; flex-direction: column; background: rgba(0,0,0,0.8); position: absolute; top: 60px; right: 10%; padding: 20px; border-radius: 10px; }
+      .nav-links.show { display: flex; }
+      .hamburger { display: block; }
+    }
     .hero {
       text-align: center;
       padding: 60px 20px 30px;
-      animation: fadeIn 1s ease forwards;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
     .hero h1 {
       font-size: 2.4rem;
       font-weight: 700;
@@ -31,29 +60,22 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .hero p {
-      font-size: 1rem;
-      margin-top: 10px;
-      color: #cbd5e1;
-    }
-
+    .hero p { color: #cbd5e1; }
     .register-btn {
-      display: block;
-      width: fit-content;
-      margin: 15px auto 0;
+      display: inline-block;
+      margin-top: 20px;
       padding: 12px 24px;
       background: linear-gradient(90deg, #3b82f6, #a78bfa);
-      border-radius: 10px;
       color: white;
-      font-weight: 600;
+      border-radius: 10px;
       text-decoration: none;
-      transition: transform 0.3s, background 0.3s;
+      font-weight: 600;
+      transition: 0.3s;
     }
     .register-btn:hover {
       transform: scale(1.05);
       background: linear-gradient(90deg, #06b6d4, #3b82f6);
     }
-
     .search-filter {
       display: flex;
       justify-content: center;
@@ -70,12 +92,7 @@
       background: rgba(255,255,255,0.08);
       color: white;
       font-size: 1rem;
-      transition: all 0.3s;
     }
-    .search-filter input:focus, .search-filter select:focus {
-      box-shadow: 0 0 12px rgba(6,182,212,0.4);
-    }
-
     .doctor-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -84,87 +101,42 @@
       margin: 30px auto;
       padding: 0 20px;
     }
-
     .doctor-card {
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 16px;
       padding: 24px;
-      backdrop-filter: blur(10px);
       box-shadow: 0 0 10px rgba(255,255,255,0.05);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      animation: slideIn 0.6s ease forwards;
-      opacity: 0;
+      text-align: center;
+      transition: 0.3s;
     }
     .doctor-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 10px 25px rgba(6,182,212,0.2);
     }
-    @keyframes slideIn {
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .doctor-header {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-    .doctor-header img {
-      width: 70px;
-      height: 70px;
+    .doctor-card img {
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
       border: 2px solid #06b6d4;
-      object-fit: cover;
-      transition: box-shadow 0.4s ease;
-    }
-    .doctor-header img:hover {
-      box-shadow: 0 0 15px rgba(6,182,212,0.8);
-    }
-    .doctor-header h3 {
-      margin: 0;
-      font-size: 1.1rem;
-      color: #f9fafb;
-    }
-    .doctor-header p {
-      margin: 2px 0 0;
-      font-size: 0.9rem;
-      color: #a5b4fc;
-    }
-
-    .status {
-      margin-top: 10px;
-      font-size: 0.9rem;
-      font-weight: 600;
+      margin-bottom: 10px;
     }
     .status.available { color: #22c55e; }
     .status.busy { color: #ef4444; }
-
-    .doctor-card .btn {
-      margin-top: 15px;
-      display: block;
-      text-align: center;
+    .btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 18px;
       background: linear-gradient(90deg, #06b6d4, #3b82f6, #a78bfa);
-      background-size: 200% auto;
+      border-radius: 8px;
       color: white;
-      padding: 12px;
-      border-radius: 10px;
       text-decoration: none;
-      font-size: 0.95rem;
       font-weight: 600;
-      transition: background-position 0.4s, transform 0.3s;
+      transition: 0.3s;
     }
-    .doctor-card .btn:hover {
-      background-position: right center;
+    .btn:hover {
       transform: scale(1.05);
-      box-shadow: 0 10px 25px rgba(167,139,250,0.4);
     }
-
-    .btn.disabled {
-      background: rgba(255,255,255,0.1);
-      color: #9ca3af;
-      pointer-events: none;
-    }
-
     footer {
       text-align: center;
       padding: 20px;
@@ -175,27 +147,24 @@
     }
   </style>
 </head>
-
 <body>
   <header class="navbar">
     <div class="logo">🏥 <span>HMS</span></div>
-    <div class="nav-right">
-      <nav>
-        <ul class="nav-links" id="nav-links">
-          <li><a href="index.html">Home</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="doctors.html" aria-current="page">Doctors</a></li>
-          <li><a href="appointment.html">Appointments</a></li>
-          <li><a href="attendance.html">Attendance</a></li>
-        </ul>
-      </nav>
-      <div class="hamburger" id="hamburger">☰</div>
-    </div>
+    <nav>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="doctors.html" aria-current="page">Doctors</a></li>
+        <li><a href="appointment.html">Appointments</a></li>
+        <li><a href="attendance.html">Attendance</a></li>
+      </ul>
+    </nav>
+    <div class="hamburger" id="hamburger">☰</div>
   </header>
 
   <section class="hero">
     <h1>Our Doctors</h1>
-    <p>Meet our specialists and book appointments with available professionals instantly.</p>
+    <p>Meet our specialists and book appointments instantly.</p>
     <a href="doctor_register.html" class="register-btn">➕ Register New Doctor</a>
   </section>
 
@@ -218,13 +187,11 @@
     <p>© 2025 Hospital Management System • Doctors Directory by Vansh</p>
   </footer>
 
-  <!-- Firebase SDK -->
+  <!-- ✅ Firebase Firestore Integration -->
   <script type="module">
-    // Import Firebase SDKs
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyCjHnNK6pc2KQlY642SqEHXpOMjx0ghfcI",
       authDomain: "hospital-management-syst-e1875.firebaseapp.com",
@@ -234,83 +201,63 @@
       appId: "1:174278534239:web:3a9312309aa4e60ea0e7ea",
       measurementId: "G-2FBFSZE4QB"
     };
-
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
     const doctorGrid = document.getElementById("doctorGrid");
-
-    async function loadDoctors() {
-      try {
-        const querySnapshot = await getDocs(collection(db, "doctors"));
-        doctorGrid.innerHTML = "";
-
-        if (querySnapshot.empty) {
-          doctorGrid.innerHTML = "<p>No doctors found. Add some in Firestore or via registration form.</p>";
-          return;
-        }
-
-        querySnapshot.forEach((doc) => {
-          const d = doc.data();
-          const card = document.createElement("div");
-          card.className = "doctor-card";
-          card.innerHTML = `
-            <div class="doctor-header">
-              <img src="${d.image}" alt="${d.name}">
-              <div>
-                <h3>${d.name}</h3>
-                <p>${d.specialty}</p>
-              </div>
-            </div>
-            <p class="status ${d.status}">${d.status === 'available' ? '✔ Available' : '✖ Busy'}</p>
-            <a href="appointment.html?doctor=${encodeURIComponent(d.name)}" class="btn ${d.status === 'busy' ? 'disabled' : ''}">
-              ${d.status === 'busy' ? 'Not Available' : 'Book Appointment'}
-            </a>
-          `;
-          doctorGrid.appendChild(card);
-        });
-      } catch (err) {
-        console.error(err);
-        doctorGrid.innerHTML = "<p>⚠️ Error loading doctors. Check Firestore connection.</p>";
-      }
-    }
-
-    // Search + Filter
     const searchInput = document.getElementById("searchDoctor");
     const filterSelect = document.getElementById("filterSpecialty");
 
+    // 🔥 Load Doctors in Realtime
+    const doctorsRef = collection(db, "doctors");
+    const q = query(doctorsRef, orderBy("name"));
+    onSnapshot(q, (snapshot) => {
+      doctorGrid.innerHTML = "";
+      if (snapshot.empty) {
+        doctorGrid.innerHTML = "<p>No doctors found. Add one using Register page.</p>";
+        return;
+      }
+      snapshot.forEach((doc) => {
+        const d = doc.data();
+        const card = document.createElement("div");
+        card.className = "doctor-card";
+        card.innerHTML = `
+          <img src="${d.image || 'https://cdn-icons-png.flaticon.com/512/2966/2966485.png'}" alt="${d.name}">
+          <h3>${d.name}</h3>
+          <p>${d.specialty}</p>
+          <p class="status ${d.status}">${d.status === 'available' ? '✔ Available' : '✖ Busy'}</p>
+          <a href="appointment.html?doctor=${encodeURIComponent(d.name)}" class="btn ${d.status === 'busy' ? 'disabled' : ''}">
+            ${d.status === 'busy' ? 'Not Available' : 'Book Appointment'}
+          </a>
+        `;
+        doctorGrid.appendChild(card);
+      });
+    }, (error) => {
+      console.error("Firestore error:", error);
+      doctorGrid.innerHTML = `<p>⚠️ ${error.message}</p>`;
+    });
+
+    // 🔍 Search + Filter
     function filterDoctors() {
       const search = searchInput.value.toLowerCase();
       const specialty = filterSelect.value;
       const cards = doctorGrid.querySelectorAll(".doctor-card");
-
       cards.forEach(card => {
         const name = card.querySelector("h3").textContent.toLowerCase();
         const spec = card.querySelector("p").textContent;
-        const matchesSearch = name.includes(search);
-        const matchesFilter = specialty === "" || spec === specialty;
-        card.style.display = (matchesSearch && matchesFilter) ? "block" : "none";
+        const matches = name.includes(search) && (specialty === "" || spec === specialty);
+        card.style.display = matches ? "block" : "none";
       });
     }
-
     searchInput.addEventListener("input", filterDoctors);
     filterSelect.addEventListener("change", filterDoctors);
 
-    document.addEventListener("DOMContentLoaded", loadDoctors);
-  </script>
-
-  <!-- Hamburger Menu -->
-  <script>
+    // 🍔 Hamburger Menu
     const hamburger = document.getElementById("hamburger");
     const navLinks = document.getElementById("nav-links");
-
-    if (hamburger && navLinks) {
-      hamburger.addEventListener("click", () => {
-        navLinks.classList.toggle("show");
-        hamburger.classList.toggle("active");
-      });
-    }
+    hamburger.addEventListener("click", () => {
+      navLinks.classList.toggle("show");
+    });
   </script>
 </body>
 </html>
