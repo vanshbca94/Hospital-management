@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="css/style.css" />
 
   <style>
-    /* ---------- Page Animations ---------- */
     body {
       margin: 0;
       font-family: "Poppins", sans-serif;
@@ -24,15 +23,10 @@
       padding: 30px;
       animation: fadeInUp 1s ease forwards;
     }
+
     @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(40px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .title {
@@ -43,6 +37,7 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
+
     .title::after {
       content: "";
       position: absolute;
@@ -54,13 +49,10 @@
       animation: shimmer 2s linear infinite;
       background-size: 200% auto;
     }
+
     @keyframes shimmer {
-      0% {
-        background-position: -200px 0;
-      }
-      100% {
-        background-position: 200px 0;
-      }
+      0% { background-position: -200px 0; }
+      100% { background-position: 200px 0; }
     }
 
     .hero {
@@ -68,7 +60,6 @@
       padding: 60px 20px;
     }
 
-    /* ---------- Form Styling ---------- */
     .form-input {
       width: 100%;
       padding: 12px;
@@ -80,6 +71,7 @@
       font-size: 1rem;
       transition: all 0.3s ease;
     }
+
     .form-input:focus {
       border-color: #06b6d4;
       box-shadow: 0 0 14px rgba(6, 182, 212, 0.5);
@@ -100,32 +92,19 @@
       transition: transform 0.3s ease, background-position 0.5s;
       width: 100%;
     }
+
     .btn.confirm:hover {
       background-position: right center;
       transform: scale(1.07);
       box-shadow: 0 0 30px rgba(167, 139, 250, 0.5);
     }
+
     @keyframes pulseBig {
-      0% {
-        box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.6);
-      }
-      70% {
-        box-shadow: 0 0 0 25px rgba(6, 182, 212, 0);
-      }
-      100% {
-        box-shadow: 0 0 0 0 rgba(6, 182, 212, 0);
-      }
+      0% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.6); }
+      70% { box-shadow: 0 0 0 25px rgba(6, 182, 212, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
     }
 
-    .button-row {
-      display: flex;
-      gap: 24px;
-      margin-top: 25px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    /* ---------- Doctor Banner ---------- */
     .selected-doctor-banner {
       display: none;
       text-align: center;
@@ -137,19 +116,10 @@
       margin-bottom: 20px;
       animation: fadeInDown 0.7s ease forwards;
     }
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
 
-    .card-right {
-      margin-top: 50px;
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     footer {
@@ -164,35 +134,31 @@
 <body>
   <!-- Navbar -->
   <header class="navbar">
-    <div class="logo" tabindex="0" role="link" aria-label="Home link">🏥 <span>HMS</span></div>
-
+    <div class="logo">🏥 <span>HMS</span></div>
     <div class="nav-right">
       <nav>
         <ul class="nav-links" id="nav-links">
           <li><a href="index.html">Home</a></li>
           <li><a href="about.html">About</a></li>
           <li><a href="doctors.html">Doctors</a></li>
-          <li><a href="appointment.html">Appointments</a></li>
-          <li><a href="attendance.html" aria-current="page">Attendance</a></li>
+          <li><a href="appointment.html" aria-current="page">Appointments</a></li>
+          <li><a href="attendance.html">Attendance</a></li>
         </ul>
       </nav>
-      <div class="hamburger" id="hamburger" aria-label="Open menu" role="button" tabindex="0">☰</div>
+      <div class="hamburger" id="hamburger">☰</div>
     </div>
   </header>
 
-  <!-- Appointment Section -->
+  <!-- Appointment Form -->
   <main class="hero">
     <section class="card">
       <h2 class="title">📅 Book an Appointment</h2>
-      <p class="lead">Fill in your details to schedule an appointment with our doctors.</p>
-
-      <!-- Dynamic Doctor Banner -->
+      <p>Fill in your details to schedule an appointment with our doctors.</p>
       <div id="selectedDoctorBanner" class="selected-doctor-banner"></div>
 
       <form id="appointment-form">
         <input type="text" name="name" required placeholder="👤 Full Name" class="form-input" />
         <input type="email" name="email" required placeholder="📧 Email Address" class="form-input" />
-
         <select name="doctor" id="doctor" class="form-input" required>
           <option value="">👨‍⚕️ Choose Doctor</option>
           <option value="Dr. Ayesha Singh">Dr. Ayesha Singh — Cardiology</option>
@@ -200,23 +166,18 @@
           <option value="Dr. Priya Kapoor">Dr. Priya Kapoor — Pediatrics</option>
           <option value="Dr. Vikram Sharma">Dr. Vikram Sharma — Orthopedic</option>
         </select>
-
-        <input type="date" name="date" required class="form-input" placeholder="Choose Date" />
-        <input type="time" name="time" required class="form-input" placeholder="Choose Time" />
+        <input type="date" name="date" required class="form-input" />
+        <input type="time" name="time" required class="form-input" />
         <textarea name="note" class="form-input" placeholder="📝 Notes (optional)"></textarea>
 
-        <div class="button-row">
-          <button class="btn confirm" type="submit">✨ Confirm Appointment</button>
-          <a href="index.html" class="btn ghost">⬅ Back to Home</a>
-        </div>
+        <button class="btn confirm" type="submit">✨ Confirm Appointment</button>
       </form>
     </section>
 
-    <!-- Saved Appointments -->
-    <aside class="card card-right">
+    <aside class="card" style="margin-top: 40px;">
       <h3 class="title">📌 Your Appointments</h3>
-      <div id="appointments-list" style="margin-top:15px">
-        <p class="small">No appointments yet.</p>
+      <div id="appointments-list" style="margin-top:15px;">
+        <p class="small">Loading appointments...</p>
       </div>
     </aside>
   </main>
@@ -225,30 +186,62 @@
     <p>© 2025 Hospital Management System • Appointments Module by Vansh</p>
   </footer>
 
-  <script src="js/main.js"></script>
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
-  <script>
-    // 🔹 Auto-select doctor & banner
-    const urlParams = new URLSearchParams(window.location.search);
-    const doctorName = urlParams.get("doctor");
-    const doctorSelect = document.getElementById("doctor");
-    const banner = document.getElementById("selectedDoctorBanner");
+    const firebaseConfig = {
+      apiKey: "AIzaSyB1F-08xqgsdTR9oGmNqtFzlBJNv86UVpM",
+      authDomain: "hospital-management-5cb17.firebaseapp.com",
+      projectId: "hospital-management-5cb17",
+      storageBucket: "hospital-management-5cb17.firebasestorage.app",
+      messagingSenderId: "1077408582965",
+      appId: "1:1077408582965:web:21668368b4793cf98f107c",
+      measurementId: "G-JEY8DE5FC9"
+    };
 
-    if (doctorName && doctorSelect) {
-      for (let option of doctorSelect.options) {
-        if (option.value === doctorName) {
-          option.selected = true;
-          banner.textContent = "Booking Appointment with " + doctorName;
-          banner.style.display = "block";
-          break;
-        }
-      }
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const form = document.getElementById("appointment-form");
+    const list = document.getElementById("appointments-list");
+
+    async function loadAppointments() {
+      list.innerHTML = "<p>Loading...</p>";
+      const querySnapshot = await getDocs(collection(db, "appointments"));
+      list.innerHTML = "";
+      querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const item = document.createElement("div");
+        item.className = "card-compact";
+        item.innerHTML = `
+          <strong>${data.name}</strong> (${data.email})<br>
+          <span>Doctor: ${data.doctor}</span> • ${data.date} ${data.time}<br>
+          <p>${data.note || "—"}</p>
+        `;
+        list.appendChild(item);
+      });
     }
 
-    // 🔹 Smooth fade for form elements
-    document.querySelectorAll(".form-input").forEach((el, i) => {
-      el.style.animationDelay = i * 0.15 + "s";
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const data = {
+        name: form.name.value,
+        email: form.email.value,
+        doctor: form.doctor.value,
+        date: form.date.value,
+        time: form.time.value,
+        note: form.note.value,
+        createdAt: new Date()
+      };
+      await addDoc(collection(db, "appointments"), data);
+      alert("✅ Appointment Saved Successfully!");
+      form.reset();
+      loadAppointments();
     });
+
+    loadAppointments();
   </script>
 </body>
 </html>
