@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Admin Login</title></head>
+<body>
+  <form id="loginForm">
+    <input id="email" type="email" required placeholder="admin email">
+    <input id="password" type="password" required placeholder="password">
+    <button>Sign in</button>
+  </form>
+  <script type="module">
+    import { signIn } from './js/auth.js';
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const res = await signIn(email.value, password.value);
+        alert('Signed in as: ' + res.role);
+        window.location.href = 'admin_panel.html'; // create later
+      } catch (err) {
+        alert('Login failed: ' + err.message);
+      }
+    });
+  </script>
+</body>
+</html>
