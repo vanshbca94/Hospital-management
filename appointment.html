@@ -36,21 +36,6 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .title::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      bottom: -6px;
-      height: 3px;
-      width: 100%;
-      background: linear-gradient(90deg, #06b6d4, #a78bfa);
-      animation: shimmer 2s linear infinite;
-      background-size: 200% auto;
-    }
-    @keyframes shimmer {
-      0% { background-position: -200px 0; }
-      100% { background-position: 200px 0; }
-    }
 
     .hero {
       text-align: center;
@@ -76,19 +61,30 @@
       background: rgba(255, 255, 255, 0.08);
     }
 
-    /* Placeholder simulation for date/time */
-    input[type="date"]::before,
-    input[type="time"]::before {
-      content: attr(data-placeholder);
-      color: #9ca3af;
-    }
-    input[type="date"]:focus::before,
-    input[type="date"]:valid::before,
-    input[type="time"]:focus::before,
-    input[type="time"]:valid::before {
-      content: "" !important;
+    /* ✅ Properly aligned placeholders for date/time */
+    .input-wrapper {
+      position: relative;
     }
 
+    .input-placeholder {
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      pointer-events: none;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    input:focus + .input-placeholder,
+    input:not(:placeholder-shown) + .input-placeholder {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-1rem);
+    }
+
+    /* Confirm button */
     .btn.confirm {
       padding: 16px 36px;
       font-size: 1.1rem;
@@ -103,11 +99,13 @@
       transition: transform 0.3s ease, background-position 0.5s;
       width: 100%;
     }
+
     .btn.confirm:hover {
       background-position: right center;
       transform: scale(1.07);
       box-shadow: 0 0 30px rgba(167, 139, 250, 0.5);
     }
+
     @keyframes pulseBig {
       0% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.6); }
       70% { box-shadow: 0 0 0 25px rgba(6, 182, 212, 0); }
@@ -126,11 +124,6 @@
       animation: fadeInDown 0.7s ease forwards;
     }
 
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
     footer {
       text-align: center;
       padding: 20px;
@@ -139,14 +132,13 @@
       margin-top: 40px;
     }
 
-    /* Responsive navbar fix */
     .nav-links.show {
       display: flex !important;
       flex-direction: column;
-      background: rgba(0,0,0,0.85);
+      background: rgba(0,0,0,0.9);
       position: absolute;
-      right: 0;
       top: 70px;
+      right: 0;
       width: 100%;
       text-align: center;
       padding: 20px 0;
@@ -189,8 +181,18 @@
           <option value="Dr. Priya Kapoor">Dr. Priya Kapoor — Pediatrics</option>
           <option value="Dr. Vikram Sharma">Dr. Vikram Sharma — Orthopedic</option>
         </select>
-        <input type="date" name="date" required class="form-input" data-placeholder="Choose Date" />
-        <input type="time" name="time" required class="form-input" data-placeholder="Choose Time" />
+
+        <!-- ✅ Fixed alignment wrappers -->
+        <div class="input-wrapper">
+          <input type="date" name="date" id="date" class="form-input" required placeholder=" " />
+          <span class="input-placeholder">📅 Choose Date</span>
+        </div>
+
+        <div class="input-wrapper">
+          <input type="time" name="time" id="time" class="form-input" required placeholder=" " />
+          <span class="input-placeholder">⏰ Choose Time</span>
+        </div>
+
         <textarea name="note" class="form-input" placeholder="📝 Notes (optional)"></textarea>
         <button class="btn confirm" type="submit">✨ Confirm Appointment</button>
       </form>
@@ -208,7 +210,7 @@
     <p>© 2025 Hospital Management System • Appointments Module by Vansh</p>
   </footer>
 
-  <!-- Firebase + Firestore -->
+  <!-- Firebase Integration -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
@@ -266,17 +268,15 @@
     loadAppointments();
   </script>
 
-  <!-- Navbar hamburger fix -->
+  <!-- Navbar hamburger -->
   <script>
     const hamburger = document.getElementById("hamburger");
     const navLinks = document.getElementById("nav-links");
 
-    if (hamburger && navLinks) {
-      hamburger.addEventListener("click", () => {
-        navLinks.classList.toggle("show");
-        hamburger.classList.toggle("active");
-      });
-    }
+    hamburger.addEventListener("click", () => {
+      navLinks.classList.toggle("show");
+      hamburger.classList.toggle("active");
+    });
   </script>
 </body>
 </html>
