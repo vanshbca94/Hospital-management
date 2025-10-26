@@ -23,7 +23,6 @@
       padding: 30px;
       animation: fadeInUp 1s ease forwards;
     }
-
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(40px); }
       to { opacity: 1; transform: translateY(0); }
@@ -37,7 +36,6 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
     .title::after {
       content: "";
       position: absolute;
@@ -49,7 +47,6 @@
       animation: shimmer 2s linear infinite;
       background-size: 200% auto;
     }
-
     @keyframes shimmer {
       0% { background-position: -200px 0; }
       100% { background-position: 200px 0; }
@@ -70,12 +67,26 @@
       color: white;
       font-size: 1rem;
       transition: all 0.3s ease;
+      position: relative;
     }
 
     .form-input:focus {
       border-color: #06b6d4;
       box-shadow: 0 0 14px rgba(6, 182, 212, 0.5);
       background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Placeholder simulation for date/time */
+    input[type="date"]::before,
+    input[type="time"]::before {
+      content: attr(data-placeholder);
+      color: #9ca3af;
+    }
+    input[type="date"]:focus::before,
+    input[type="date"]:valid::before,
+    input[type="time"]:focus::before,
+    input[type="time"]:valid::before {
+      content: "" !important;
     }
 
     .btn.confirm {
@@ -92,13 +103,11 @@
       transition: transform 0.3s ease, background-position 0.5s;
       width: 100%;
     }
-
     .btn.confirm:hover {
       background-position: right center;
       transform: scale(1.07);
       box-shadow: 0 0 30px rgba(167, 139, 250, 0.5);
     }
-
     @keyframes pulseBig {
       0% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.6); }
       70% { box-shadow: 0 0 0 25px rgba(6, 182, 212, 0); }
@@ -129,8 +138,22 @@
       color: #9ca3af;
       margin-top: 40px;
     }
+
+    /* Responsive navbar fix */
+    .nav-links.show {
+      display: flex !important;
+      flex-direction: column;
+      background: rgba(0,0,0,0.85);
+      position: absolute;
+      right: 0;
+      top: 70px;
+      width: 100%;
+      text-align: center;
+      padding: 20px 0;
+    }
   </style>
 </head>
+
 <body>
   <!-- Navbar -->
   <header class="navbar">
@@ -149,7 +172,7 @@
     </div>
   </header>
 
-  <!-- Appointment Form -->
+  <!-- Appointment Section -->
   <main class="hero">
     <section class="card">
       <h2 class="title">📅 Book an Appointment</h2>
@@ -166,10 +189,9 @@
           <option value="Dr. Priya Kapoor">Dr. Priya Kapoor — Pediatrics</option>
           <option value="Dr. Vikram Sharma">Dr. Vikram Sharma — Orthopedic</option>
         </select>
-        <input type="date" name="date" required class="form-input" />
-        <input type="time" name="time" required class="form-input" />
+        <input type="date" name="date" required class="form-input" data-placeholder="Choose Date" />
+        <input type="time" name="time" required class="form-input" data-placeholder="Choose Time" />
         <textarea name="note" class="form-input" placeholder="📝 Notes (optional)"></textarea>
-
         <button class="btn confirm" type="submit">✨ Confirm Appointment</button>
       </form>
     </section>
@@ -186,7 +208,7 @@
     <p>© 2025 Hospital Management System • Appointments Module by Vansh</p>
   </footer>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase + Firestore -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
@@ -242,6 +264,19 @@
     });
 
     loadAppointments();
+  </script>
+
+  <!-- Navbar hamburger fix -->
+  <script>
+    const hamburger = document.getElementById("hamburger");
+    const navLinks = document.getElementById("nav-links");
+
+    if (hamburger && navLinks) {
+      hamburger.addEventListener("click", () => {
+        navLinks.classList.toggle("show");
+        hamburger.classList.toggle("active");
+      });
+    }
   </script>
 </body>
 </html>
