@@ -60,6 +60,7 @@
       cursor: pointer;
       font-size: 1.6rem;
       color: #fff;
+      user-select: none;
     }
 
     /* ---------- Hero Section ---------- */
@@ -124,6 +125,10 @@
       background-size: 200% auto;
       transition: transform 0.4s ease, background-position 0.6s;
       box-shadow: 0 6px 18px rgba(6,182,212,0.35);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
     .cta-buttons a:hover {
       background-position: right center;
@@ -175,6 +180,19 @@
       font-size: 0.95rem;
     }
 
+    /* small responsive fix for nav when shown */
+    .nav-links.show {
+      display:flex !important;
+      flex-direction: column;
+      position: absolute;
+      right: 10%;
+      top: 64px;
+      background: rgba(2,6,23,0.9);
+      padding: 12px;
+      gap: 12px;
+      border-radius: 8px;
+    }
+
     /* ---------- Footer ---------- */
     footer {
       text-align: center;
@@ -206,33 +224,33 @@
           <li><a href="attendance.html">Attendance</a></li>
         </ul>
       </nav>
-      <div class="hamburger" id="hamburger">☰</div>
+      <div class="hamburger" id="hamburger" aria-label="Open menu" role="button" tabindex="0">☰</div>
     </div>
   </header>
 
   <!-- Hero Section -->
   <section class="hero">
     <h1>Smart Hospital Management System</h1>
-    <div class="typing" id="typed"></div>
+    <div class="typing" id="typed" aria-hidden="true"></div>
     <p style="margin-top:10px; color:#cbd5e1; max-width:650px;">
       A modern, fully animated, responsive hospital management portal that connects doctors, patients, and admin all in one system.
     </p>
 
     
 <div class="cta-buttons" id="home-ctas">
-  <a class="btn" id="btn-appointment" data-target="appointment.html" role="button">✨ Book Appointment</a>
-  <a class="btn" id="btn-doctors" data-target="doctors.html" role="button">👨‍⚕️ View Doctors</a>
-  <a class="btn" id="btn-attendance" data-target="attendance.html" role="button" data-require-role="doctor">🩺 Doctor Attendance</a>
+  <a class="btn" id="btn-appointment" data-target="appointment.html" role="button" tabindex="0">✨ Book Appointment</a>
+  <a class="btn" id="btn-doctors" data-target="doctors.html" role="button" tabindex="0">👨‍⚕️ View Doctors</a>
+  <a class="btn" id="btn-attendance" data-target="attendance.html" role="button" data-require-role="doctor" tabindex="0">🩺 Doctor Attendance</a>
 </div>
 
-    <div class="illustration">
+    <div class="illustration" aria-hidden="true">
       <img src="https://cdn-icons-png.flaticon.com/512/2966/2966485.png" width="280" alt="Hospital Illustration"
            style="filter:drop-shadow(0 0 16px rgba(167,139,250,0.5));border-radius:50%;">
     </div>
   </section>
 
   <!-- Feature Cards -->
-  <section class="features">
+  <section class="features" aria-label="features">
     <div class="feature-card">
       <h4>🧾 Appointment Scheduling</h4>
       <p>Quickly book and manage patient appointments with animated confirmations and real-time updates.</p>
@@ -255,18 +273,20 @@
   <footer>
     <p>© 2025 HMS by Vansh • Advanced Animated Interface</p>
   </footer>
-   <!-- Firebase (compat) SDKs for easy global 'firebase' API -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-<!-- Your auth logic -->
-<script src="js/firebase-auth.js"></script>
+  <!-- Firebase (compat) SDKs kept for backwards compatibility -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-<!-- Your existing main.js -->
+  <!-- Your auth logic placeholder (if you use it) -->
+  <script src="js/firebase-auth.js"></script>
+
+  <!-- main.js (shared UI logic) -->
   <script src="js/main.js"></script>
+
   <script>
-    // Auto typing animation for tagline
+    // Typing animation (robust)
     const lines = ["Manage Patients 👨‍⚕️", "Track Attendance 🩺", "Book Appointments 💊"];
     let lineIndex = 0, charIndex = 0;
     const typingEl = document.getElementById("typed");
@@ -282,10 +302,91 @@
           lineIndex = (lineIndex + 1) % lines.length;
           charIndex = 0;
           typeEffect();
-        }, 1600);
+        }, 1400);
       }
     }
     typeEffect();
+
+    // Hamburger toggle (keyboard + click)
+    (function setupHamburger(){
+      const hamburger = document.getElementById('hamburger');
+      const navLinks = document.getElementById('nav-links');
+      if(!hamburger || !navLinks) return;
+      hamburger.addEventListener('click', () => {
+        navLinks.classList.toggle('show');
+        hamburger.classList.toggle('active');
+      });
+      hamburger.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          navLinks.classList.toggle('show');
+          hamburger.classList.toggle('active');
+        }
+      });
+    })();
+
+    // CTA buttons behavior: navigate to data-target with small burst animation
+    (function setupCTAs(){
+      const container = document.getElementById('home-ctas');
+      if(!container) return;
+
+      // helper burst animation (small confetti)
+      function burst() {
+        for (let i = 0; i < 18; i++) {
+          const p = document.createElement('div');
+          p.style.position = 'fixed';
+          p.style.left = (50 + Math.random()*30 - 15) + '%';
+          p.style.top = (35 + Math.random()*20) + '%';
+          p.style.width = '8px';
+          p.style.height = '8px';
+          p.style.borderRadius = '3px';
+          p.style.background = ['#06b6d4','#a78bfa','#34d399','#f472b6'][Math.floor(Math.random()*4)];
+          p.style.opacity = '0.95';
+          p.style.zIndex = 9999;
+          document.body.appendChild(p);
+          const dx = (Math.random()*400 - 200);
+          const dy = (Math.random()*600);
+          p.animate([
+            { transform: 'translate(0,0)', opacity: 1 },
+            { transform: `translate(${dx}px,${dy}px)`, opacity: 0 }
+          ], { duration: 900 + Math.random()*600, easing: 'ease-out' });
+          setTimeout(()=> p.remove(), 1600);
+        }
+      }
+
+      // click handler for any element with data-target
+      container.addEventListener('click', (e) => {
+        const a = e.target.closest('a[data-target]');
+        if(!a) return;
+        e.preventDefault();
+        const target = a.dataset.target;
+        if(!target) return;
+        // play burst and navigate after a short delay for UX
+        burst();
+        setTimeout(()=> {
+          // allow plain navigation if href is present, else set location
+          if (a.href && a.getAttribute('href')) {
+            // if anchor has href attribute, follow (keeps relative or absolute)
+            window.location.href = a.href;
+          } else {
+            window.location.href = target;
+          }
+        }, 500);
+      });
+
+      // keyboard support (Enter on focused link)
+      container.querySelectorAll('a[data-target]').forEach(el => {
+        el.addEventListener('keydown', (e) => {
+          if(e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            el.click();
+          }
+        });
+        // make focus visible
+        el.addEventListener('focus', () => el.style.outline = '3px solid rgba(6,182,212,0.25)');
+        el.addEventListener('blur', () => el.style.outline = 'none');
+      });
+    })();
   </script>
 </body>
 </html>
