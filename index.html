@@ -37,6 +37,8 @@
       letter-spacing: 1px;
     }
 
+    .nav-right { display:flex; align-items:center; gap:16px; }
+
     .nav-links {
       list-style: none;
       display: flex;
@@ -60,7 +62,21 @@
       cursor: pointer;
       font-size: 1.6rem;
       color: #fff;
+      user-select:none;
     }
+
+    /* small user badge */
+    #userBadge {
+      font-size:0.9rem;
+      color: #cbd5e1;
+      padding:6px 10px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,0.03);
+      display:none;
+    }
+
+    /* show nav on mobile when toggled */
+    .nav-links.show { display:flex !important; flex-direction:column; gap:12px; position:absolute; top:64px; right:10%; background: rgba(2,6,23,0.85); padding:16px; border-radius:10px; }
 
     /* ---------- Hero Section ---------- */
     .hero {
@@ -124,6 +140,9 @@
       background-size: 200% auto;
       transition: transform 0.4s ease, background-position 0.6s;
       box-shadow: 0 6px 18px rgba(6,182,212,0.35);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
     }
     .cta-buttons a:hover {
       background-position: right center;
@@ -206,33 +225,33 @@
           <li><a href="attendance.html">Attendance</a></li>
         </ul>
       </nav>
-      <div class="hamburger" id="hamburger">☰</div>
+      <div id="userBadge" aria-hidden="true"></div>
+      <div class="hamburger" id="hamburger" aria-label="Open menu">☰</div>
     </div>
   </header>
 
   <!-- Hero Section -->
-  <section class="hero">
+  <section class="hero" role="main">
     <h1>Smart Hospital Management System</h1>
-    <div class="typing" id="typed"></div>
+    <div class="typing" id="typed" aria-hidden="true"></div>
     <p style="margin-top:10px; color:#cbd5e1; max-width:650px;">
       A modern, fully animated, responsive hospital management portal that connects doctors, patients, and admin all in one system.
     </p>
 
-    
-<div class="cta-buttons" id="home-ctas">
-  <a class="btn" id="btn-appointment" data-target="appointment.html" role="button">✨ Book Appointment</a>
-  <a class="btn" id="btn-doctors" data-target="doctors.html" role="button">👨‍⚕️ View Doctors</a>
-  <a class="btn" id="btn-attendance" data-target="attendance.html" role="button" data-require-role="doctor">🩺 Doctor Attendance</a>
-</div>
+    <div class="cta-buttons" id="home-ctas" role="navigation" aria-label="Primary actions">
+      <a class="btn" id="btn-appointment" data-target="appointment.html" role="button">✨ Book Appointment</a>
+      <a class="btn" id="btn-doctors" data-target="doctors.html" role="button">👨‍⚕️ View Doctors</a>
+      <a class="btn" id="btn-attendance" data-target="attendance.html" role="button" data-require-role="doctor">🩺 Doctor Attendance</a>
+    </div>
 
-    <div class="illustration">
+    <div class="illustration" aria-hidden="true">
       <img src="https://cdn-icons-png.flaticon.com/512/2966/2966485.png" width="280" alt="Hospital Illustration"
            style="filter:drop-shadow(0 0 16px rgba(167,139,250,0.5));border-radius:50%;">
     </div>
   </section>
 
   <!-- Feature Cards -->
-  <section class="features">
+  <section class="features" aria-label="features">
     <div class="feature-card">
       <h4>🧾 Appointment Scheduling</h4>
       <p>Quickly book and manage patient appointments with animated confirmations and real-time updates.</p>
@@ -243,7 +262,7 @@
     </div>
     <div class="feature-card">
       <h4>📊 Admin Analytics</h4>
-      <p>Visual dashboard with data-driven insights, charts, and performance reports — powered by local storage.</p>
+      <p>Visual dashboard with data-driven insights, charts, and performance reports — powered by Firestore.</p>
     </div>
     <div class="feature-card">
       <h4>⚙️ Fully Responsive</h4>
@@ -255,18 +274,63 @@
   <footer>
     <p>© 2025 HMS by Vansh • Advanced Animated Interface</p>
   </footer>
-   <!-- Firebase (compat) SDKs for easy global 'firebase' API -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-<!-- Your auth logic -->
-<script src="js/firebase-auth.js"></script>
+  <!-- Firebase (compat) SDKs for easy global 'firebase' API (kept for any legacy scripts) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-<!-- Your existing main.js -->
+  <!-- Optional: legacy auth initializer (if you still use it); otherwise keep modular js/auth.js -->
+  <script src="js/firebase-auth.js"></script>
+
+  <!-- main shared UI logic (confetti, appointment localStorage fallback etc.) -->
   <script src="js/main.js"></script>
+
+  <!-- auth module + CTA handler (module format) -->
+  <script type="module">
+    // hamburger toggle (works immediately)
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('nav-links');
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('show');
+    });
+
+    // load auth CTA logic (uses your existing js/auth.js)
+    // if js/auth.js & js/auth-cta.js are present, they will handle redirects and user badge updates.
+    import('./js/auth-cta.js')
+      .then(m => {
+        // module loaded
+        // auth-cta will register CTA handlers and react to auth changes
+      })
+      .catch(err => {
+        console.warn('auth-cta not found or failed to load', err);
+        // fallback: normal navigation (keeps UX usable)
+        document.getElementById('home-ctas').addEventListener('click', (e) => {
+          const a = e.target.closest('a[data-target]');
+          if (!a) return;
+          const t = a.dataset.target;
+          if (t) window.location.href = t;
+        });
+      });
+
+    // small user badge update hook (optional)
+    import('./js/auth.js').then(auth => {
+      // show user role/name in badge when signed in
+      auth.onAuthChanged((user, role) => {
+        const badge = document.getElementById('userBadge');
+        if (!user) {
+          badge.style.display = 'none';
+          return;
+        }
+        badge.style.display = 'inline-block';
+        const name = user.displayName || user.email || 'User';
+        badge.textContent = `${name} • ${role || 'user'}`;
+      });
+    }).catch(()=>{/* auth module not present; ignore */});
+  </script>
+
   <script>
-    // Auto typing animation for tagline
+    // Auto typing animation for tagline (keeps original behaviour)
     const lines = ["Manage Patients 👨‍⚕️", "Track Attendance 🩺", "Book Appointments 💊"];
     let lineIndex = 0, charIndex = 0;
     const typingEl = document.getElementById("typed");
@@ -275,14 +339,14 @@
       if(charIndex < lines[lineIndex].length){
         typingEl.textContent += lines[lineIndex].charAt(charIndex);
         charIndex++;
-        setTimeout(typeEffect, 100);
+        setTimeout(typeEffect, 90);
       } else {
         setTimeout(() => {
           typingEl.textContent = "";
           lineIndex = (lineIndex + 1) % lines.length;
           charIndex = 0;
           typeEffect();
-        }, 1600);
+        }, 1400);
       }
     }
     typeEffect();
