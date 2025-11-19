@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HMS — Register</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body{font-family:Poppins,system-ui;background:radial-gradient(circle at 5% 10%, rgba(6,182,212,0.04),transparent), #071229;color:#e6eef8;min-height:100vh;padding:30px}
+    .box{max-width:720px;margin:40px auto;display:grid;grid-template-columns:1fr 360px;gap:24px}
+    .panel{background:rgba(255,255,255,0.02);padding:22px;border-radius:12px}
+    h1{background:linear-gradient(90deg,#06b6d4,#a78bfa);-webkit-background-clip:text;color:transparent}
+    .input{width:100%;padding:10px;border-radius:8px;margin:8px 0;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff}
+    .btn{padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,#06b6d4,#a78bfa);color:#fff;border:none;cursor:pointer}
+    .muted{color:#9ca3af;font-size:0.93rem}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="panel">
+      <h1>Create Account</h1>
+      <p class="muted">Register a local account (saved to browser). For role pick patient/doctor/admin.</p>
+
+      <form id="regForm">
+        <input class="input" id="name" placeholder="Full name" required />
+        <input class="input" id="email" type="email" placeholder="Email" required />
+        <input class="input" id="password" type="password" placeholder="Password" required />
+        <select id="role" class="input" style="padding:12px">
+          <option value="patient">Patient</option>
+          <option value="doctor">Doctor</option>
+          <option value="admin">Admin</option>
+        </select>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn" type="submit">Create account</button>
+          <a class="btn" href="index.html" style="background:transparent;border:1px solid rgba(255,255,255,0.06)">Cancel</a>
+        </div>
+        <div id="msg" style="margin-top:12px;color:#ffb4b4;display:none"></div>
+      </form>
+    </div>
+
+    <aside class="panel" aria-hidden="true">
+      <h3 style="margin-top:0">Why local accounts?</h3>
+      <p class="muted">This stores credentials locally in your browser for quick demos. Use register to create patients / doctors / admins for testing role-based flows.</p>
+      <p class="muted">If you later move to Firestore, you can replace auth-local.js with the firebase module and keep the same UI pages.</p>
+    </aside>
+  </div>
+
+  <script type="module">
+    import { createAccount } from './js/auth-local.js';
+
+    const form = document.getElementById('regForm');
+    const msg = document.getElementById('msg');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msg.style.display = 'none';
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const role = document.getElementById('role').value;
+
+      try {
+        await createAccount({ name, email, password, role });
+        msg.style.color = '#9ee6a0';
+        msg.textContent = 'Account created ✅ — Redirecting to login...';
+        msg.style.display = 'block';
+        setTimeout(()=> location.href = 'patient_login_local.html', 900);
+      } catch (err) {
+        msg.style.color = '#ffb4b4';
+        msg.textContent = err.message || err;
+        msg.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>
