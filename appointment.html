@@ -6,6 +6,9 @@
   <title>Book Appointment - Hospital Management System</title>
   <link rel="stylesheet" href="css/style.css" />
 
+  <!-- Protect page: will redirect to patient_login.html if not signed in -->
+  <script type="module" src="js/auth-guard.js"></script>
+
   <style>
     body {
       margin: 0;
@@ -23,23 +26,12 @@
       padding: 30px;
       animation: fadeInUp 1s ease forwards;
     }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(40px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    .title { font-size: 1.8rem; background: linear-gradient(90deg, #06b6d4, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-    .title {
-      font-size: 1.8rem;
-      background: linear-gradient(90deg, #06b6d4, #a78bfa);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero {
-      text-align: center;
-      padding: 60px 20px;
-    }
+    .hero { text-align: center; padding: 60px 20px; max-width:1120px; margin:30px auto; display:grid; grid-template-columns:1fr 360px; gap:24px; }
+    @media(max-width:980px){ .hero{ grid-template-columns:1fr } }
 
     .form-input {
       width: 100%;
@@ -51,44 +43,47 @@
       color: white;
       font-size: 1rem;
       transition: all 0.3s ease;
+      position: relative;
     }
 
-    .form-input::placeholder {
-      color: #9ca3af;
-    }
+    .form-input::placeholder { color: #9ca3af; opacity:0.95; }
 
     .form-input:focus {
       border-color: #06b6d4;
-      box-shadow: 0 0 14px rgba(6, 182, 212, 0.5);
-      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 14px rgba(6, 182, 212, 0.45);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .input-wrap { position: relative; }
+    .overlay-placeholder {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: #9ca3af;
+      font-size: 0.98rem;
+      transition: all 0.18s;
+      opacity: 1;
+    }
+    .input-wrap input:not(:placeholder-shown) + .overlay-placeholder,
+    .input-wrap input:focus + .overlay-placeholder,
+    .input-wrap select:not([value=""]) + .overlay-placeholder {
+      transform: translateY(-140%);
+      opacity: 0;
     }
 
     .btn.confirm {
       padding: 16px 36px;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 700;
       border-radius: 14px;
       background: linear-gradient(90deg, #06b6d4, #3b82f6, #a78bfa);
-      background-size: 200% auto;
       color: white;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      animation: pulseBig 2s infinite;
-      transition: transform 0.3s ease, background-position 0.5s;
       width: 100%;
+      margin-top:8px;
     }
-
-    .btn.confirm:hover {
-      background-position: right center;
-      transform: scale(1.07);
-      box-shadow: 0 0 30px rgba(167, 139, 250, 0.5);
-    }
-
-    @keyframes pulseBig {
-      0% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.6); }
-      70% { box-shadow: 0 0 0 25px rgba(6, 182, 212, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
-    }
+    .btn.confirm:hover { transform: scale(1.03); }
 
     .selected-doctor-banner {
       display: none;
@@ -101,30 +96,18 @@
       margin-bottom: 20px;
       animation: fadeInDown 0.7s ease forwards;
     }
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-    footer {
-      text-align: center;
-      padding: 20px;
-      font-size: 0.85rem;
-      color: #9ca3af;
-      margin-top: 40px;
-    }
+    .card-compact { background: rgba(255,255,255,0.03); padding:12px; border-radius:10px; margin-bottom:12px; }
 
-    .nav-links.show {
-      display: flex !important;
-      flex-direction: column;
-      background: rgba(0, 0, 0, 0.9);
-      position: absolute;
-      top: 70px;
-      right: 0;
-      width: 100%;
-      text-align: center;
-      padding: 20px 0;
-    }
+    footer { text-align: center; padding: 20px; font-size: 0.85rem; color: #9ca3af; margin-top: 40px; }
+
+    /* navbar mobile show */
+    .nav-links.show { display:flex !important; flex-direction:column; background: rgba(2,6,23,0.95); position:absolute; top:70px; right:0; width:100%; padding:16px; }
   </style>
 </head>
 
-<body>
+<body data-require-role="">
   <header class="navbar">
     <div class="logo">🏥 <span>HMS</span></div>
     <div class="nav-right">
@@ -137,7 +120,7 @@
           <li><a href="attendance.html">Attendance</a></li>
         </ul>
       </nav>
-      <div class="hamburger" id="hamburger">☰</div>
+      <div class="hamburger" id="hamburger" aria-label="Open menu">☰</div>
     </div>
   </header>
 
@@ -147,25 +130,34 @@
       <p>Fill in your details to schedule an appointment with our doctors.</p>
       <div id="selectedDoctorBanner" class="selected-doctor-banner"></div>
 
-      <form id="appointment-form">
-        <input type="text" name="name" required placeholder="👤 Full Name" class="form-input" />
-        <input type="email" name="email" required placeholder="📧 Email Address" class="form-input" />
+      <form id="appointment-form" autocomplete="off">
+        <input id="name" type="text" name="name" required placeholder="👤 Full Name" class="form-input" />
+        <input id="email" type="email" name="email" required placeholder="📧 Email Address" class="form-input" />
 
-        <select name="doctor" id="doctor" class="form-input" required>
-          <option value="">👨‍⚕️ Loading available doctors...</option>
-        </select>
+        <div class="input-wrap">
+          <select name="doctor" id="doctor" class="form-input" required>
+            <option value="">👨‍⚕️ Loading available doctors...</option>
+          </select>
+          <span class="overlay-placeholder" aria-hidden="true">Choose Doctor</span>
+        </div>
 
-        <!-- fixed placeholders -->
-        <input type="date" name="date" required class="form-input" placeholder="📅 Choose Date" />
-        <input type="time" name="time" required class="form-input" placeholder="⏰ Choose Time" />
+        <div class="input-wrap">
+          <input id="date" type="date" name="date" required class="form-input" placeholder=" " />
+          <span class="overlay-placeholder">Choose Date</span>
+        </div>
 
-        <textarea name="note" class="form-input" placeholder="📝 Notes (optional)"></textarea>
+        <div class="input-wrap">
+          <input id="time" type="time" name="time" required class="form-input" placeholder=" " />
+          <span class="overlay-placeholder">Choose Time</span>
+        </div>
+
+        <textarea id="note" name="note" class="form-input" placeholder="📝 Notes (optional)"></textarea>
 
         <button class="btn confirm" type="submit">✨ Confirm Appointment</button>
       </form>
     </section>
 
-    <aside class="card" style="margin-top: 40px;">
+    <aside class="card">
       <h3 class="title">📌 Your Appointments</h3>
       <div id="appointments-list" style="margin-top:15px;">
         <p class="small">Loading appointments...</p>
@@ -177,86 +169,118 @@
     <p>© 2025 Hospital Management System • Appointments Module by Vansh</p>
   </footer>
 
-  <!-- Firebase -->
+  <!-- module: uses the auth + firestore helpers -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+    // Firebase config + Firestore operations are done via js/auth.js helpers
+    import { fetchDoctors, saveAppointment, fetchAppointments, onAuthChanged, getCurrentUser } from './js/auth.js';
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyB1F-08xqgsdTR9oGmNqtFzlBJNv86UVpM",
-      authDomain: "hospital-management-5cb17.firebaseapp.com",
-      projectId: "hospital-management-5cb17",
-      storageBucket: "hospital-management-5cb17.firebasestorage.app",
-      messagingSenderId: "1077408582965",
-      appId: "1:1077408582965:web:21668368b4793cf98f107c",
-      measurementId: "G-JEY8DE5FC9"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    // hamburger
+    const hamburger = document.getElementById("hamburger");
+    const navLinks = document.getElementById("nav-links");
+    hamburger.addEventListener("click", () => { navLinks.classList.toggle("show"); hamburger.classList.toggle("active"); });
 
     const doctorSelect = document.getElementById("doctor");
     const form = document.getElementById("appointment-form");
     const list = document.getElementById("appointments-list");
+    const banner = document.getElementById("selectedDoctorBanner");
 
-    async function loadAvailableDoctors() {
-      const q = query(collection(db, "doctors"), where("status", "==", "available"));
-      const snapshot = await getDocs(q);
-      doctorSelect.innerHTML = `<option value="">👨‍⚕️ Choose Doctor</option>`;
-      snapshot.forEach((docSnap) => {
-        const d = docSnap.data();
-        doctorSelect.innerHTML += `<option value="${d.name}">${d.name} — ${d.specialty}</option>`;
-      });
-      if (snapshot.empty) {
-        doctorSelect.innerHTML = `<option value="">❌ No available doctors currently</option>`;
+    async function loadAvailableDoctors(){
+      doctorSelect.innerHTML = `<option value="">👨‍⚕️ Loading available doctors...</option>`;
+      try {
+        const docs = await fetchDoctors(); // fetches all doctors (module does ordering)
+        const available = docs.filter(d => (d.status || 'available') === 'available');
+        doctorSelect.innerHTML = `<option value="">👨‍⚕️ Choose Doctor</option>`;
+        if (available.length === 0) {
+          doctorSelect.innerHTML = `<option value="">❌ No available doctors currently</option>`;
+          return;
+        }
+        available.forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d.name || d.id;
+          opt.textContent = `${d.name} — ${d.specialty || ''}`;
+          opt.dataset.id = d.id;
+          doctorSelect.appendChild(opt);
+        });
+      } catch (e) {
+        console.error('loadAvailableDoctors', e);
+        doctorSelect.innerHTML = `<option value="">Error loading doctors</option>`;
       }
     }
 
-    async function loadAppointments() {
+    async function loadAppointments(){
       list.innerHTML = "<p>Loading...</p>";
-      const querySnapshot = await getDocs(collection(db, "appointments"));
-      list.innerHTML = "";
-      querySnapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        const item = document.createElement("div");
-        item.className = "card-compact";
-        item.innerHTML = `
-          <strong>${data.name}</strong> (${data.email})<br>
-          <span>Doctor: ${data.doctor}</span> • ${data.date} ${data.time}<br>
-          <p>${data.note || "—"}</p>
-        `;
-        list.appendChild(item);
-      });
+      try {
+        const apps = await fetchAppointments(); // module returns array
+        if (!apps.length) { list.innerHTML = '<p class="small">No appointments yet.</p>'; return; }
+        list.innerHTML = '';
+        apps.forEach(a => {
+          const el = document.createElement('div');
+          el.className = 'card-compact';
+          const date = a.date || '';
+          const time = a.time || '';
+          el.innerHTML = `<strong>${a.name}</strong> <span class="small">(${a.email})</span><br>
+            <span class="small">Doctor: ${a.doctor} • ${date} ${time}</span>
+            <p class="small">${a.note || '—'}</p>`;
+          list.appendChild(el);
+        });
+      } catch (e) {
+        console.error('loadAppointments', e);
+        list.innerHTML = '<p>Error loading appointments</p>';
+      }
     }
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const data = {
-        name: form.name.value,
-        email: form.email.value,
-        doctor: form.doctor.value,
-        date: form.date.value,
-        time: form.time.value,
-        note: form.note.value,
-        createdAt: new Date()
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const payload = {
+        name: document.getElementById('name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        doctor: doctorSelect.value,
+        date: document.getElementById('date').value,
+        time: document.getElementById('time').value,
+        note: document.getElementById('note').value.trim(),
+        createdBy: getCurrentUser() ? getCurrentUser().uid : null
       };
-      await addDoc(collection(db, "appointments"), data);
-      alert("✅ Appointment Saved Successfully!");
-      form.reset();
-      loadAppointments();
+      if (!payload.doctor) { alert('Please choose a doctor'); return; }
+      try {
+        await saveAppointment(payload);
+        alert('✅ Appointment Saved Successfully!');
+        form.reset();
+        // hide banner
+        banner.style.display = 'none';
+        loadAppointments();
+      } catch (e) {
+        console.error(e);
+        alert('Failed to save appointment: ' + (e.message || e));
+      }
     });
 
-    loadAvailableDoctors();
-    loadAppointments();
-  </script>
-
-  <script>
-    const hamburger = document.getElementById("hamburger");
-    const navLinks = document.getElementById("nav-links");
-    hamburger.addEventListener("click", () => {
-      navLinks.classList.toggle("show");
-      hamburger.classList.toggle("active");
+    // Auto-select doctor from ?doctor param (if given)
+    const urlDoctor = new URLSearchParams(window.location.search).get('doctor');
+    onAuthChanged((user) => {
+      // prefill name/email if user logged in
+      if (user) {
+        if (user.displayName) document.getElementById('name').value = user.displayName;
+        if (user.email) document.getElementById('email').value = user.email;
+      }
     });
+
+    // Initialize
+    await loadAvailableDoctors();
+    await loadAppointments();
+
+    if (urlDoctor) {
+      // try to select once options rendered
+      setTimeout(() => {
+        for (let opt of doctorSelect.options) {
+          if (opt.value === urlDoctor) {
+            opt.selected = true;
+            banner.textContent = 'Booking Appointment with ' + urlDoctor;
+            banner.style.display = 'block';
+            break;
+          }
+        }
+      }, 300);
+    }
   </script>
 </body>
 </html>
