@@ -1,7 +1,28 @@
 // js/auth.js
+// Modular Firebase (v10+) - Auth + Firestore helper module
+// Exports: signIn(email,password), signOutUser(), onAuthChanged(cb), getCurrentUser(), getCurrentRole()
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  serverTimestamp,
+  deleteDoc
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB1F-08xqgsdTR9oGmNqtFzlBJNv86UVpM",
@@ -17,39 +38,86 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let cachedRole = null;
-let currentUser = null;
+let _cachedRole = null;
+let _currentUser = null;
 
-export function onAuthChanged(cb) {
+export function getCurrentUser(){ return _currentUser; }
+export function getCurrentRole(){ return _cachedRole; }
+
+export function onAuthChanged(cb){
   onAuthStateChanged(auth, async (user) => {
-    currentUser = user;
-    cachedRole = null;
+    _currentUser = user;
+    _cachedRole = null;
     if (user) {
-      // fetch role doc
       try {
-        const uDoc = await getDoc(doc(db, "users", user.uid));
-        if (uDoc.exists()) cachedRole = uDoc.data().role || null;
-      } catch (e) {
-        console.error("Failed to fetch role:", e);
+        const uref = doc(db, "users", user.uid);
+        const snap = await getDoc(uref);
+        if (snap.exists()) _cachedRole = snap.data().role || null;
+      } catch (err) {
+        console.error("error fetching role:", err);
       }
     }
-    cb(user, cachedRole);
+    cb(user, _cachedRole);
   });
 }
 
-export async function signIn(email, password) {
+export async function signIn(email, password){
   const cred = await signInWithEmailAndPassword(auth, email, password);
-  const uDoc = await getDoc(doc(db, "users", cred.user.uid));
-  const role = uDoc.exists() ? uDoc.data().role : null;
-  cachedRole = role;
-  currentUser = cred.user;
-  return { user: cred.user, role };
+  _currentUser = cred.user;
+  _cachedRole = null;
+  try {
+    const uref = doc(db, "users", cred.user.uid);
+    const snap = await getDoc(uref);
+    if (snap.exists()) _cachedRole = snap.data().role || null;
+  } catch (e) {
+    console.error("role fetch error after signIn", e);
+  }
+  return { user: cred.user, role: _cachedRole };
 }
 
-export function signOutUser() {
-  cachedRole = null;
+export function signOutUser(){
+  _cachedRole = null;
   return signOut(auth);
 }
 
-export function getCurrentRole() { return cachedRole; }
-export function getCurrentUser() { return currentUser; }
+// ---------- Helper APIs used by other pages ----------
+
+// Add a doctor (admin only) - stores in 'doctors' collection
+export async function addDoctor(doctor) {
+  // doctor = { name, specialty, status, image }
+  return await addDoc(collection(db, "doctors"), {
+    ...doctor,
+    createdAt: serverTimestamp()
+  });
+}
+
+// Delete doctor by docId (admin only)
+export async function deleteDoctorById(docId){
+  return await deleteDoc(doc(db, "doctors", docId));
+}
+
+// Fetch doctors list
+export async function fetchDoctors(){
+  const q = query(collection(db, "doctors"), orderBy("createdAt", "desc"));
+  const snap = await getDocs(q);
+  const arr = [];
+  snap.forEach(d => arr.push({ id: d.id, ...d.data() }));
+  return arr;
+}
+
+// Save appointment to Firestore
+export async function saveAppointment(appointment){
+  // appointment: { name, email, doctor, date, time, note, createdBy (optional) }
+  return await addDoc(collection(db, "appointments"), {
+    ...appointment,
+    createdAt: serverTimestamp()
+  });
+}
+
+// Fetch appointments
+export async function fetchAppointments(){
+  const snap = await getDocs(query(collection(db, "appointments"), orderBy("createdAt", "desc")));
+  const arr = [];
+  snap.forEach(d => arr.push({ id: d.id, ...d.data() }));
+  return arr;
+}
