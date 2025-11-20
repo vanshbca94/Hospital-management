@@ -6,30 +6,187 @@
   <title>Register Doctor - HMS</title>
   <link rel="stylesheet" href="css/style.css" />
   <style>
-    body{margin:0;font-family:'Poppins',sans-serif;background:radial-gradient(circle at top,#0f172a,#1e293b);color:#fff;display:flex;align-items:center;justify-content:center;height:100vh}
-    .card{background:rgba(255,255,255,0.04);padding:36px;border-radius:12px;width:100%;max-width:460px;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
-    input,select{width:100%;padding:12px;margin:10px 0;border-radius:8px;border:none;background:rgba(255,255,255,0.06);color:#fff}
-    button{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(90deg,#06b6d4,#3b82f6);color:#fff;font-weight:700}
-    .back{display:block;margin-top:12px;text-align:center;color:#cbd5e1}
+    body{
+      margin:0;
+      font-family:'Poppins',sans-serif;
+      background:radial-gradient(circle at top,#0f172a,#1e293b);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      height:100vh
+    }
+    .card{
+      background:rgba(255,255,255,0.04);
+      padding:36px;
+      border-radius:12px;
+      width:100%;
+      max-width:460px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.6);
+      position:relative;
+      overflow:hidden;
+    }
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      opacity:0.12;
+      background:radial-gradient(circle at top,#06b6d4,#a78bfa,transparent 55%);
+      z-index:-1;
+    }
+    h2{
+      text-align:center;
+      background:linear-gradient(90deg,#06b6d4,#a78bfa);
+      -webkit-background-clip:text;
+      color:transparent;
+      margin-top:0;
+      margin-bottom:6px;
+    }
+    .sub{
+      text-align:center;
+      font-size:0.85rem;
+      color:#cbd5e1;
+      margin-bottom:18px;
+    }
+    input,select{
+      width:100%;
+      padding:12px;
+      margin:10px 0;
+      border-radius:8px;
+      border:none;
+      background:rgba(255,255,255,0.06);
+      color:#fff;
+      font-size:0.95rem;
+      outline:none;
+      transition:box-shadow .2s,border .2s,transform .15s;
+    }
+    input::placeholder{
+      color:#9ca3af;
+    }
+    input:focus,select:focus{
+      box-shadow:0 0 0 1px rgba(6,182,212,0.7),
+                 0 0 18px rgba(6,182,212,0.45);
+      transform:translateY(-1px);
+    }
+    button{
+      width:100%;
+      padding:12px;
+      border-radius:10px;
+      border:none;
+      background:linear-gradient(90deg,#06b6d4,#3b82f6);
+      color:#fff;
+      font-weight:700;
+      font-size:0.98rem;
+      cursor:pointer;
+      box-shadow:0 12px 30px rgba(37,99,235,0.4);
+      transition:transform .18s,box-shadow .18s,background-position .4s;
+      background-size:200% auto;
+    }
+    button:hover{
+      transform:translateY(-2px);
+      box-shadow:0 16px 40px rgba(37,99,235,0.55);
+      background-position:right center;
+    }
+    .back{
+      display:block;
+      margin-top:12px;
+      text-align:center;
+      color:#cbd5e1;
+      font-size:0.9rem;
+      text-decoration:none;
+    }
+    .back:hover{
+      text-decoration:underline;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      font-size:0.75rem;
+      padding:4px 10px;
+      border-radius:999px;
+      background:rgba(15,23,42,0.85);
+      border:1px solid rgba(148,163,184,0.7);
+      color:#e5e7eb;
+      margin-bottom:8px;
+    }
+    .badge span{
+      font-size:0.85rem;
+    }
+    #accessMsg{
+      display:none;
+      margin-bottom:14px;
+      font-size:0.85rem;
+      color:#fecaca;
+      padding:8px 10px;
+      border-radius:8px;
+      background:rgba(127,29,29,0.7);
+      border:1px solid rgba(248,113,113,0.7);
+    }
   </style>
 </head>
 <body>
   <div class="card">
-    <h2 style="text-align:center;background:linear-gradient(90deg,#06b6d4,#a78bfa);-webkit-background-clip:text;color:transparent">Register Doctor</h2>
+    <div class="badge">
+      🔒 <span>Doctor / Admin Only</span>
+    </div>
+    <div id="accessMsg">
+      Access restricted. Only logged-in <strong>doctor</strong> or <strong>admin</strong> can register doctors.
+      Redirecting…
+    </div>
+
+    <h2>Register Doctor</h2>
+    <p class="sub">Doctors added here will appear in <strong>Doctors</strong> page and appointment list.</p>
+
     <form id="registerForm">
-      <input id="name" placeholder="Full name" required />
+      <input id="name" placeholder="Full name (e.g. Dr. Ayesha Singh)" required />
       <input id="specialty" placeholder="Specialty (e.g. Cardiologist)" required />
       <select id="status" required>
         <option value="">Select status</option>
-        <option value="available">available</option>
-        <option value="busy">busy</option>
+        <option value="available">Available</option>
+        <option value="busy">Busy</option>
       </select>
       <input id="image" placeholder="Image URL (optional)" />
       <button type="submit">Register Doctor</button>
     </form>
+
     <a class="back" href="doctors.html">← Back to doctors</a>
   </div>
 
+  <!-- ROLE CHECK (localStorage-based) -->
+  <script>
+    (function enforceRoleAccess(){
+      // expected structure: { email: '...', role: 'patient' | 'doctor' | 'admin' }
+      let role = null;
+      try {
+        const raw = localStorage.getItem('hmsCurrentUser');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          role = parsed && parsed.role;
+        }
+      } catch (e) {
+        console.warn('Could not read hmsCurrentUser from localStorage', e);
+      }
+
+      const allowed = role === 'doctor' || role === 'admin';
+      const msg = document.getElementById('accessMsg');
+      const form = document.getElementById('registerForm');
+
+      if (!allowed) {
+        if (msg) msg.style.display = 'block';
+        if (form) form.style.pointerEvents = 'none';
+        if (form) form.style.opacity = '0.3';
+
+        // gentle redirect after a moment
+        setTimeout(() => {
+          alert('Access denied. Only doctor/admin can open Register Doctor page.');
+          window.location.href = 'index.html';
+        }, 900);
+      }
+    })();
+  </script>
+
+  <!-- Firestore logic (still used to save doctor if you want) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -43,19 +200,44 @@
       appId: "1:1077408582965:web:21668368b4793cf98f107c",
       measurementId: "G-JEY8DE5FC9"
     };
+
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
     const form = document.getElementById("registerForm");
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
+
+      // double check role on submit as well
+      let role = null;
+      try {
+        const raw = localStorage.getItem('hmsCurrentUser');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          role = parsed && parsed.role;
+        }
+      } catch {}
+
+      if (role !== 'doctor' && role !== 'admin') {
+        alert("Access denied. Only doctor/admin can register doctors.");
+        window.location.href = "index.html";
+        return;
+      }
+
       const docData = {
         name: document.getElementById("name").value.trim(),
         specialty: document.getElementById("specialty").value.trim(),
         status: document.getElementById("status").value,
-        image: document.getElementById("image").value || 'https://cdn-icons-png.flaticon.com/512/2966/2966485.png',
-        createdAt: new Date()
+        image: document.getElementById("image").value.trim() || "https://cdn-icons-png.flaticon.com/512/2966/2966485.png",
+        createdAt: new Date().toISOString()
       };
+
+      if (!docData.name || !docData.specialty || !docData.status) {
+        alert("Please fill all required fields.");
+        return;
+      }
+
       try {
         await addDoc(collection(db, "doctors"), docData);
         alert("✅ Doctor registered");
