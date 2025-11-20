@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HMS — Doctor Login</title>
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    :root {
+      --accent1: #06b6d4;
+      --accent2: #a78bfa;
+      --bg: #040a18;
+    }
+    body {
+      margin:0;
+      min-height:100vh;
+      font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+      background: radial-gradient(circle at 5% 10%, rgba(6,182,212,0.06), transparent 8%),
+                  linear-gradient(180deg,#071229 0%, #040a18 100%);
+      color:#e6eef8;
+      -webkit-font-smoothing:antialiased;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .navbar {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:16px 6%;
+      background:rgba(2,6,23,0.7);
+      backdrop-filter:blur(8px);
+      border-bottom:1px solid rgba(255,255,255,0.04);
+    }
+    .logo { font-weight:700; color:#fff; font-size:1.1rem; display:flex; gap:8px; align-items:center; }
+    .nav-links { display:flex; gap:18px; list-style:none; margin:0; padding:0; }
+    .nav-links a { color:#cbd5e1; text-decoration:none; font-weight:600; }
+    .nav-links a:hover { color:var(--accent1);}
+    .hamburger { display:none; cursor:pointer; font-size:1.6rem; }
+    @media(max-width:780px){
+      .nav-links{display:none;}
+      .hamburger{display:block;}
+      .nav-links.show{
+        display:flex;
+        position:absolute;
+        right:6%;
+        top:60px;
+        background:rgba(2,6,23,0.95);
+        flex-direction:column;
+        padding:12px;
+        border-radius:10px;
+      }
+    }
+
+    .shell {
+      max-width:1100px;
+      margin:40px auto;
+      padding:18px;
+      display:grid;
+      grid-template-columns:1fr 420px;
+      gap:28px;
+      align-items:center;
+      flex:1;
+    }
+    @media(max-width:980px){
+      .shell{grid-template-columns:1fr;}
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,0.04);
+      padding:26px;
+      box-shadow:0 18px 50px rgba(2,6,23,0.8);
+      animation:fadeInUp .8s ease both;
+    }
+    @keyframes fadeInUp{
+      from{opacity:0; transform:translateY(20px)}
+      to{opacity:1; transform:none}
+    }
+
+    h1{
+      margin:0 0 6px 0;
+      font-size:1.9rem;
+      background:linear-gradient(90deg,var(--accent1),var(--accent2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    .lead{margin:0 0 16px; color:#9ca3af;}
+
+    .tabs{
+      display:flex;
+      background:rgba(15,23,42,0.9);
+      border-radius:999px;
+      padding:3px;
+      margin-bottom:18px;
+    }
+    .tab{
+      flex:1;
+      text-align:center;
+      padding:8px 0;
+      border-radius:999px;
+      font-size:0.95rem;
+      cursor:pointer;
+      color:#94a3b8;
+      transition:all .25s ease;
+    }
+    .tab.active{
+      background:linear-gradient(90deg,var(--accent1),var(--accent2));
+      color:#fff;
+      font-weight:600;
+      box-shadow:0 8px 24px rgba(6,182,212,0.3);
+    }
+
+    form{display:grid; gap:10px;}
+    .field-group{ text-align:left; }
+    label{font-size:0.86rem; color:#9ca3af; display:block; margin-bottom:2px;}
+
+    .input{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid rgba(148,163,184,0.5);
+      background:rgba(15,23,42,0.9);
+      color:#e5e7eb;
+      outline:none;
+      transition:border-color .2s, box-shadow .2s, transform .15s;
+    }
+    .input:focus{
+      border-color:var(--accent1);
+      box-shadow:0 0 0 1px rgba(6,182,212,0.4);
+      transform:translateY(-1px);
+    }
+
+    .role-pill {
+      display:inline-flex;
+      padding:4px 10px;
+      border-radius:999px;
+      background:rgba(34,197,94,0.08);
+      color:#bbf7d0;
+      font-size:0.78rem;
+      margin-top:4px;
+    }
+
+    .btn{
+      margin-top:6px;
+      padding:11px 16px;
+      border-radius:12px;
+      border:none;
+      background:linear-gradient(90deg,var(--accent1),var(--accent2));
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow:0 14px 40px rgba(6,182,212,0.35);
+      transition:transform .18s, box-shadow .18s, background-position .4s;
+      background-size:200% auto;
+    }
+    .btn:hover{
+      transform:translateY(-3px);
+      background-position:right center;
+      box-shadow:0 20px 50px rgba(167,139,250,0.4);
+    }
+
+    .muted{color:#9ca3af; font-size:0.9rem;}
+    .error{color:#fecaca; font-size:0.9rem; display:none; margin-top:4px;}
+
+    .illustration{display:flex; align-items:center; justify-content:center;}
+    .illustration img{
+      width:260px;
+      border-radius:18px;
+      filter:drop-shadow(0 22px 60px rgba(0,0,0,0.8));
+      animation:floaty 6s ease-in-out infinite alternate;
+    }
+    @keyframes floaty{
+      0%{transform:translateY(0px);}
+      100%{transform:translateY(-16px);}
+    }
+
+    .toast{
+      position:fixed;
+      left:50%; bottom:26px;
+      transform:translateX(-50%) translateY(20px);
+      background:#020617;
+      color:#e5e7eb;
+      padding:10px 16px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,0.5);
+      box-shadow:0 18px 50px rgba(0,0,0,0.7);
+      opacity:0;
+      pointer-events:none;
+      transition:all .25s ease;
+      font-size:0.9rem;
+      z-index:200;
+    }
+    .toast.show{
+      opacity:1;
+      transform:translateX(-50%) translateY(0);
+    }
+
+    footer{text-align:center;padding:20px 0 28px;color:#94a3b8;font-size:0.9rem;}
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">🏥 <span>HMS</span></div>
+    <nav>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </nav>
+    <div class="hamburger" id="hamburger">☰</div>
+  </header>
+
+  <main class="shell">
+    <section class="panel">
+      <h1>Doctor Portal 👨‍⚕️</h1>
+      <p class="lead">
+        Secure access for doctors to mark attendance, view appointments, and manage patient interactions.
+      </p>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <div class="tab active" data-tab="login">Doctor Login</div>
+        <div class="tab" data-tab="signup">Create Doctor Account</div>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <form id="loginForm">
+        <div class="field-group">
+          <label for="login_email">Doctor Email</label>
+          <input id="login_email" class="input" type="email" autocomplete="email" required placeholder="doctor@example.com" />
+        </div>
+        <div class="field-group">
+          <label for="login_password">Password</label>
+          <input id="login_password" class="input" type="password" autocomplete="current-password" required placeholder="••••••••" />
+        </div>
+        <button class="btn" type="submit">Sign In as Doctor</button>
+        <div id="login_error" class="error"></div>
+        <p class="muted" style="margin-top:10px;">
+          Only accounts with the <strong>doctor</strong> role can sign in here.
+          Patients should use the patient login page.
+        </p>
+      </form>
+
+      <!-- SIGNUP FORM (creates DOCTOR only) -->
+      <form id="signupForm" style="display:none">
+        <div class="field-group">
+          <label for="su_name">Doctor Name</label>
+          <input id="su_name" class="input" type="text" required placeholder="Dr. Your Name" />
+        </div>
+        <div class="field-group">
+          <label for="su_email">Doctor Email</label>
+          <input id="su_email" class="input" type="email" required placeholder="doctor@example.com" />
+        </div>
+        <div class="field-group">
+          <label for="su_password">Password</label>
+          <input id="su_password" class="input" type="password" required placeholder="Create a strong password" />
+        </div>
+        <div class="field-group">
+          <label>Role</label>
+          <span class="role-pill">Doctor (fixed)</span>
+        </div>
+        <button class="btn" type="submit">Create Doctor Account</button>
+        <div id="signup_error" class="error"></div>
+        <p class="muted" style="margin-top:10px;">
+          This form only creates <strong>doctor</strong> accounts (stored in localStorage) for project demo use.
+        </p>
+      </form>
+    </section>
+
+    <aside class="panel illustration" aria-hidden="true">
+      <img src="https://cdn-icons-png.flaticon.com/512/2966/2966485.png" alt="Doctor illustration" />
+    </aside>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <footer>© 2025 HMS by Vansh • Doctor Login</footer>
+
+  <script>
+    // Hamburger behaviour
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('nav-links');
+    if (hamburger && navLinks) {
+      hamburger.addEventListener('click', () => navLinks.classList.toggle('show'));
+    }
+
+    // Toast helper
+    const toastEl = document.getElementById('toast');
+    function showToast(msg, ms=2200){
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      setTimeout(()=> toastEl.classList.remove('show'), ms);
+    }
+
+    // Tabs switch
+    const tabs = document.querySelectorAll('.tab');
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+
+    tabs.forEach(tab=>{
+      tab.addEventListener('click', ()=>{
+        tabs.forEach(t=>t.classList.remove('active'));
+        tab.classList.add('active');
+        const mode = tab.dataset.tab;
+        if (mode === 'login') {
+          loginForm.style.display = 'grid';
+          signupForm.style.display = 'none';
+        } else {
+          loginForm.style.display = 'none';
+          signupForm.style.display = 'grid';
+        }
+      });
+    });
+
+    // LocalStorage helpers (same keys as patient system)
+    function getUsers() {
+      try { return JSON.parse(localStorage.getItem('hms_users') || '[]'); }
+      catch(e){ return []; }
+    }
+    function saveUsers(users) {
+      localStorage.setItem('hms_users', JSON.stringify(users));
+    }
+    function setCurrentUser(user) {
+      localStorage.setItem('hms_currentUser', JSON.stringify(user));
+    }
+    function getAfterLoginTarget() {
+      const t = localStorage.getItem('hms_afterLoginTarget');
+      return t || 'attendance.html';
+    }
+    function clearAfterLoginTarget() {
+      localStorage.removeItem('hms_afterLoginTarget');
+    }
+
+    // LOGIN (doctor-only)
+    const loginErr = document.getElementById('login_error');
+    loginForm.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      loginErr.style.display = 'none';
+      const email = document.getElementById('login_email').value.trim().toLowerCase();
+      const password = document.getElementById('login_password').value;
+
+      if (!email || !password) {
+        loginErr.textContent = 'Please enter email and password.';
+        loginErr.style.display = 'block';
+        return;
+      }
+
+      const users = getUsers();
+      const user = users.find(u => u.email === email && u.password === password);
+
+      if (!user) {
+        loginErr.textContent = 'Invalid email or password.';
+        loginErr.style.display = 'block';
+        return;
+      }
+
+      if (user.role !== 'doctor') {
+        loginErr.textContent = `This account is "${user.role}". Only doctor accounts can use this login.`;
+        loginErr.style.display = 'block';
+        return;
+      }
+
+      setCurrentUser({ name:user.name, email:user.email, role:user.role });
+      showToast('Doctor signed in ✅');
+      const target = getAfterLoginTarget();
+      clearAfterLoginTarget();
+      setTimeout(()=> window.location.href = target, 600);
+    });
+
+    // SIGNUP (creates role=doctor)
+    const suErr = document.getElementById('signup_error');
+    signupForm.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      suErr.style.display='none';
+
+      const name = document.getElementById('su_name').value.trim();
+      const email = document.getElementById('su_email').value.trim().toLowerCase();
+      const password = document.getElementById('su_password').value;
+      const role = 'doctor';
+
+      if (!name || !email || !password) {
+        suErr.textContent = 'All fields are required.';
+        suErr.style.display = 'block';
+        return;
+      }
+
+      const users = getUsers();
+      if (users.find(u => u.email === email)) {
+        suErr.textContent = 'An account with this email already exists. Use doctor login.';
+        suErr.style.display = 'block';
+        return;
+      }
+
+      const newUser = { name, email, password, role };
+      users.push(newUser);
+      saveUsers(users);
+      setCurrentUser({ name, email, role });
+
+      showToast('Doctor account created 🎉 Redirecting...');
+      const target = getAfterLoginTarget();
+      clearAfterLoginTarget();
+      setTimeout(()=> window.location.href = target, 700);
+    });
+
+    // If already logged in as doctor, auto-redirect
+    (function autoRedirectIfDoctor(){
+      try {
+        const current = JSON.parse(localStorage.getItem('hms_currentUser') || 'null');
+        if (current && current.email && current.role === 'doctor') {
+          const target = getAfterLoginTarget();
+          clearAfterLoginTarget();
+          showToast('Already logged in as doctor, redirecting…');
+          setTimeout(()=> window.location.href = target, 700);
+        }
+      } catch(e){}
+    })();
+  </script>
+</body>
+</html>
