@@ -3,420 +3,325 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>HMS — Doctor Login</title>
+  <title>HMS — Doctor / Admin Login</title>
 
   <link rel="stylesheet" href="css/style.css">
 
   <style>
-    :root {
-      --accent1: #06b6d4;
-      --accent2: #a78bfa;
-      --bg: #040a18;
+    :root{
+      --accent1:#06b6d4; --accent2:#a78bfa; --muted:#9ca3af; --glass:rgba(255,255,255,0.03);
     }
-    body {
+    *{box-sizing:border-box}
+    body{
       margin:0;
       min-height:100vh;
-      font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+      font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
       background: radial-gradient(circle at 5% 10%, rgba(6,182,212,0.06), transparent 8%),
                   linear-gradient(180deg,#071229 0%, #040a18 100%);
       color:#e6eef8;
       -webkit-font-smoothing:antialiased;
       display:flex;
-      flex-direction:column;
-    }
-
-    .navbar {
-      display:flex;
-      justify-content:space-between;
       align-items:center;
-      padding:16px 6%;
-      background:rgba(2,6,23,0.7);
-      backdrop-filter:blur(8px);
-      border-bottom:1px solid rgba(255,255,255,0.04);
-    }
-    .logo { font-weight:700; color:#fff; font-size:1.1rem; display:flex; gap:8px; align-items:center; }
-    .nav-links { display:flex; gap:18px; list-style:none; margin:0; padding:0; }
-    .nav-links a { color:#cbd5e1; text-decoration:none; font-weight:600; }
-    .nav-links a:hover { color:var(--accent1);}
-    .hamburger { display:none; cursor:pointer; font-size:1.6rem; }
-    @media(max-width:780px){
-      .nav-links{display:none;}
-      .hamburger{display:block;}
-      .nav-links.show{
-        display:flex;
-        position:absolute;
-        right:6%;
-        top:60px;
-        background:rgba(2,6,23,0.95);
-        flex-direction:column;
-        padding:12px;
-        border-radius:10px;
-      }
+      justify-content:center;
+      padding:28px;
     }
 
-    .shell {
-      max-width:1100px;
-      margin:40px auto;
-      padding:18px;
-      display:grid;
-      grid-template-columns:1fr 420px;
-      gap:28px;
-      align-items:center;
-      flex:1;
-    }
-    @media(max-width:980px){
-      .shell{grid-template-columns:1fr;}
-    }
+    .wrap{ width:100%; max-width:980px; display:grid; grid-template-columns:1fr 420px; gap:28px; align-items:center;}
+    @media(max-width:980px){ .wrap{grid-template-columns:1fr; padding:16px} }
 
-    .panel {
+    .panel{
       background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.03);
+      border-radius:14px;
       padding:26px;
-      box-shadow:0 18px 50px rgba(2,6,23,0.8);
-      animation:fadeInUp .8s ease both;
+      box-shadow: 0 12px 40px rgba(2,6,23,0.6);
+      animation: panelIn .7s ease both;
     }
-    @keyframes fadeInUp{
-      from{opacity:0; transform:translateY(20px)}
-      to{opacity:1; transform:none}
-    }
+    @keyframes panelIn { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none } }
 
-    h1{
-      margin:0 0 6px 0;
-      font-size:1.9rem;
-      background:linear-gradient(90deg,var(--accent1),var(--accent2));
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-    }
-    .lead{margin:0 0 16px; color:#9ca3af;}
+    h1{ margin:0 0 8px 0; font-size:1.6rem;
+        background: linear-gradient(90deg,var(--accent1),var(--accent2));
+        -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    p.lead{ margin:0 0 16px 0; color:var(--muted) }
 
-    .tabs{
-      display:flex;
-      background:rgba(15,23,42,0.9);
-      border-radius:999px;
-      padding:3px;
-      margin-bottom:18px;
-    }
-    .tab{
-      flex:1;
-      text-align:center;
-      padding:8px 0;
-      border-radius:999px;
-      font-size:0.95rem;
-      cursor:pointer;
-      color:#94a3b8;
-      transition:all .25s ease;
-    }
-    .tab.active{
-      background:linear-gradient(90deg,var(--accent1),var(--accent2));
-      color:#fff;
-      font-weight:600;
-      box-shadow:0 8px 24px rgba(6,182,212,0.3);
-    }
+    form{ display:grid; gap:10px; }
+    .input{ padding:12px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.04);
+            background:rgba(255,255,255,0.02); color:#e6eef8; outline:none; font-size:0.98rem; }
+    .input:focus{ box-shadow:0 8px 28px rgba(6,182,212,0.08); border-color:var(--accent1) }
 
-    form{display:grid; gap:10px;}
-    .field-group{ text-align:left; }
-    label{font-size:0.86rem; color:#9ca3af; display:block; margin-bottom:2px;}
-
-    .input{
-      width:100%;
-      padding:10px 12px;
-      border-radius:10px;
-      border:1px solid rgba(148,163,184,0.5);
-      background:rgba(15,23,42,0.9);
-      color:#e5e7eb;
-      outline:none;
-      transition:border-color .2s, box-shadow .2s, transform .15s;
-    }
-    .input:focus{
-      border-color:var(--accent1);
-      box-shadow:0 0 0 1px rgba(6,182,212,0.4);
-      transform:translateY(-1px);
-    }
-
-    .role-pill {
-      display:inline-flex;
-      padding:4px 10px;
-      border-radius:999px;
-      background:rgba(34,197,94,0.08);
-      color:#bbf7d0;
-      font-size:0.78rem;
-      margin-top:4px;
-    }
-
+    .row{ display:flex; gap:10px; align-items:center; }
     .btn{
-      margin-top:6px;
-      padding:11px 16px;
-      border-radius:12px;
-      border:none;
-      background:linear-gradient(90deg,var(--accent1),var(--accent2));
-      color:#fff;
-      font-weight:700;
-      cursor:pointer;
-      box-shadow:0 14px 40px rgba(6,182,212,0.35);
-      transition:transform .18s, box-shadow .18s, background-position .4s;
-      background-size:200% auto;
+      padding:11px 14px; border-radius:10px; border:none; cursor:pointer; font-weight:700;
+      background: linear-gradient(90deg,var(--accent1),var(--accent2)); color:#fff;
+      box-shadow:0 10px 30px rgba(6,182,212,0.12);
     }
-    .btn:hover{
-      transform:translateY(-3px);
-      background-position:right center;
-      box-shadow:0 20px 50px rgba(167,139,250,0.4);
-    }
+    .btn.ghost{ background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.04); box-shadow:none; }
+    .small { font-size:0.92rem; color:var(--muted) }
 
-    .muted{color:#9ca3af; font-size:0.9rem;}
-    .error{color:#fecaca; font-size:0.9rem; display:none; margin-top:4px;}
+    .illustration{ display:flex; align-items:center; justify-content:center; }
+    .illustration img{ width:260px; border-radius:12px; filter:drop-shadow(0 18px 40px rgba(0,0,0,0.6)); }
 
-    .illustration{display:flex; align-items:center; justify-content:center;}
-    .illustration img{
-      width:260px;
-      border-radius:18px;
-      filter:drop-shadow(0 22px 60px rgba(0,0,0,0.8));
-      animation:floaty 6s ease-in-out infinite alternate;
-    }
-    @keyframes floaty{
-      0%{transform:translateY(0px);}
-      100%{transform:translateY(-16px);}
-    }
+    .toggle { text-align:center; margin-top:8px; }
+    .linklike{ color:var(--accent2); cursor:pointer; text-decoration:underline; font-weight:600; }
 
     .toast{
-      position:fixed;
-      left:50%; bottom:26px;
-      transform:translateX(-50%) translateY(20px);
-      background:#020617;
-      color:#e5e7eb;
-      padding:10px 16px;
-      border-radius:999px;
-      border:1px solid rgba(148,163,184,0.5);
-      box-shadow:0 18px 50px rgba(0,0,0,0.7);
-      opacity:0;
-      pointer-events:none;
-      transition:all .25s ease;
-      font-size:0.9rem;
-      z-index:200;
+      position:fixed; left:50%; transform:translateX(-50%); bottom:28px; z-index:9999;
+      padding:10px 14px; border-radius:10px; background: #071324; color:#dff7ff; border:1px solid rgba(6,182,212,0.08);
+      display:none; box-shadow:0 12px 32px rgba(2,6,23,0.6);
     }
-    .toast.show{
-      opacity:1;
-      transform:translateX(-50%) translateY(0);
-    }
+    .toast.show{ display:block; animation:pop .35s ease both; }
+    @keyframes pop { from{ opacity:0; transform:translateX(-50%) translateY(6px)} to{opacity:1; transform:translateX(-50%) translateY(0)} }
 
-    footer{text-align:center;padding:20px 0 28px;color:#94a3b8;font-size:0.9rem;}
+    .role-pill { display:inline-block; padding:6px 10px; border-radius:999px; background:rgba(255,255,255,0.02); color:var(--muted); font-weight:600; font-size:0.88rem; }
+    .hint{ margin-top:8px; color:var(--muted); font-size:0.9rem; }
   </style>
 </head>
 <body>
-  <header class="navbar">
-    <div class="logo">🏥 <span>HMS</span></div>
-    <nav>
-      <ul class="nav-links" id="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="about.html">About</a></li>
-      </ul>
-    </nav>
-    <div class="hamburger" id="hamburger">☰</div>
-  </header>
+  <div class="wrap">
+    <section class="panel" aria-labelledby="loginTitle">
+      <h1 id="loginTitle">Doctor / Admin Sign In</h1>
+      <p class="lead">This portal allows doctors and admins to access protected pages (doctor registration, attendance, admin panel). You can also create a local doctor account here.</p>
 
-  <main class="shell">
-    <section class="panel">
-      <h1>Doctor Portal 👨‍⚕️</h1>
-      <p class="lead">
-        Secure access for doctors to mark attendance, view appointments, and manage patient interactions.
-      </p>
+      <form id="loginForm" autocomplete="on" novalidate>
+        <input id="email" class="input" type="email" placeholder="Email" required autocomplete="email" />
+        <input id="password" class="input" type="password" placeholder="Password" required autocomplete="current-password" />
+        <div class="row">
+          <button class="btn" id="signInBtn" type="submit">Sign In</button>
+          <button type="button" class="btn ghost" id="showCreate">Create Account</button>
+        </div>
+        <div id="error" class="small" style="color:#ffb4b4; display:none"></div>
+        <div class="hint">After signing in you'll be redirected to the page you were trying to open (if any).</div>
+      </form>
 
-      <!-- Tabs -->
-      <div class="tabs">
-        <div class="tab active" data-tab="login">Doctor Login</div>
-        <div class="tab" data-tab="signup">Create Doctor Account</div>
+      <div class="toggle" aria-hidden="true">
+        <span class="small">Need to sign in as a patient instead?</span>
+        <a href="patient_login.html" class="linklike" style="margin-left:8px">Patient Login</a>
       </div>
-
-      <!-- LOGIN FORM -->
-      <form id="loginForm">
-        <div class="field-group">
-          <label for="login_email">Doctor Email</label>
-          <input id="login_email" class="input" type="email" autocomplete="email" required placeholder="doctor@example.com" />
-        </div>
-        <div class="field-group">
-          <label for="login_password">Password</label>
-          <input id="login_password" class="input" type="password" autocomplete="current-password" required placeholder="••••••••" />
-        </div>
-        <button class="btn" type="submit">Sign In as Doctor</button>
-        <div id="login_error" class="error"></div>
-        <p class="muted" style="margin-top:10px;">
-          Only accounts with the <strong>doctor</strong> role can sign in here.
-          Patients should use the patient login page.
-        </p>
-      </form>
-
-      <!-- SIGNUP FORM (creates DOCTOR only) -->
-      <form id="signupForm" style="display:none">
-        <div class="field-group">
-          <label for="su_name">Doctor Name</label>
-          <input id="su_name" class="input" type="text" required placeholder="Dr. Your Name" />
-        </div>
-        <div class="field-group">
-          <label for="su_email">Doctor Email</label>
-          <input id="su_email" class="input" type="email" required placeholder="doctor@example.com" />
-        </div>
-        <div class="field-group">
-          <label for="su_password">Password</label>
-          <input id="su_password" class="input" type="password" required placeholder="Create a strong password" />
-        </div>
-        <div class="field-group">
-          <label>Role</label>
-          <span class="role-pill">Doctor (fixed)</span>
-        </div>
-        <button class="btn" type="submit">Create Doctor Account</button>
-        <div id="signup_error" class="error"></div>
-        <p class="muted" style="margin-top:10px;">
-          This form only creates <strong>doctor</strong> accounts (stored in localStorage) for project demo use.
-        </p>
-      </form>
     </section>
 
     <aside class="panel illustration" aria-hidden="true">
-      <img src="https://cdn-icons-png.flaticon.com/512/2966/2966485.png" alt="Doctor illustration" />
+      <img src="https://cdn-icons-png.flaticon.com/512/3048/3048122.png" alt="Doctor Illustration">
+      <div style="height:18px"></div>
+
+      <div style="text-align:center">
+        <div class="role-pill" id="rolePreview">Role: doctor</div>
+        <p class="small" style="margin-top:10px">Tip: Create local accounts only for demo. Admin creation requires a secret code.</p>
+      </div>
     </aside>
-  </main>
+  </div>
 
-  <div id="toast" class="toast"></div>
+  <div id="createModal" style="display:none; position:fixed; inset:0; background:rgba(2,6,23,0.75); align-items:center; justify-content:center; z-index:9999;">
+    <div style="width:100%; max-width:520px; padding:20px; background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01)); border-radius:12px; border:1px solid rgba(255,255,255,0.04);">
+      <h3 style="margin:0 0 10px 0; background:linear-gradient(90deg,var(--accent1),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Create Account</h3>
+      <form id="createForm" autocomplete="on">
+        <input id="c_name" class="input" type="text" placeholder="Full name (Dr. ...)" required />
+        <input id="c_email" class="input" type="email" placeholder="Email" required />
+        <input id="c_password" class="input" type="password" placeholder="Password (min 6)" required />
+        <select id="c_role" class="input">
+          <option value="doctor">Doctor</option>
+          <option value="admin">Admin</option>
+        </select>
+        <input id="adminCode" class="input" placeholder="Admin secret (required for admin)" style="display:none" />
+        <div style="display:flex; gap:8px; margin-top:10px;">
+          <button class="btn" type="submit">Create</button>
+          <button type="button" class="btn ghost" id="cancelCreate">Cancel</button>
+        </div>
+        <div id="createError" class="small" style="color:#ffb4b4; display:none; margin-top:8px"></div>
+      </form>
+    </div>
+  </div>
 
-  <footer>© 2025 HMS by Vansh • Doctor Login</footer>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script>
-    // Hamburger behaviour
-    const hamburger = document.getElementById('hamburger');
-    const navLinks = document.getElementById('nav-links');
-    if (hamburger && navLinks) {
-      hamburger.addEventListener('click', () => navLinks.classList.toggle('show'));
+    // ---- CONFIG ----
+    // admin secret (change before demo if you want)
+    const ADMIN_SECRET = "ADM1N-S3CRET"; // use a strong secret if needed
+
+    // helper UI
+    const toast = document.getElementById('toast');
+    function showToast(msg, t=1800){
+      toast.textContent = msg; toast.classList.add('show');
+      setTimeout(()=> toast.classList.remove('show'), t);
     }
 
-    // Toast helper
-    const toastEl = document.getElementById('toast');
-    function showToast(msg, ms=2200){
-      toastEl.textContent = msg;
-      toastEl.classList.add('show');
-      setTimeout(()=> toastEl.classList.remove('show'), ms);
+    // safe redirect helper (keeps same-origin)
+    function safeRedirect(target){
+      try{
+        const u = new URL(target, location.origin);
+        if(u.origin === location.origin) location.href = u.href;
+        else location.href = 'index.html';
+      }catch(e){
+        location.href = 'index.html';
+      }
     }
 
-    // Tabs switch
-    const tabs = document.querySelectorAll('.tab');
-    const loginForm = document.getElementById('loginForm');
-    const signupForm = document.getElementById('signupForm');
+    // next param (where to redirect after login)
+    function getNext(){ const p = new URLSearchParams(location.search).get('next'); return p ? decodeURIComponent(p) : null; }
 
-    tabs.forEach(tab=>{
-      tab.addEventListener('click', ()=>{
-        tabs.forEach(t=>t.classList.remove('active'));
-        tab.classList.add('active');
-        const mode = tab.dataset.tab;
-        if (mode === 'login') {
-          loginForm.style.display = 'grid';
-          signupForm.style.display = 'none';
-        } else {
-          loginForm.style.display = 'none';
-          signupForm.style.display = 'grid';
-        }
-      });
-    });
+    // ---------- LocalStorage user store helpers ----------
+    // users are stored in localStorage under "hms_users" as array of { email, passwordHash, name, role }
+    // active signed-in user stored as "hms_user" as { email, name, role }
 
-    // LocalStorage helpers (same keys as patient system)
-    function getUsers() {
+    function getUsers(){
       try { return JSON.parse(localStorage.getItem('hms_users') || '[]'); }
       catch(e){ return []; }
     }
-    function saveUsers(users) {
-      localStorage.setItem('hms_users', JSON.stringify(users));
-    }
-    function setCurrentUser(user) {
-      localStorage.setItem('hms_currentUser', JSON.stringify(user));
-    }
-    function getAfterLoginTarget() {
-      const t = localStorage.getItem('hms_afterLoginTarget');
-      return t || 'attendance.html';
-    }
-    function clearAfterLoginTarget() {
-      localStorage.removeItem('hms_afterLoginTarget');
-    }
+    function saveUsers(arr){ localStorage.setItem('hms_users', JSON.stringify(arr)); }
 
-    // LOGIN (doctor-only)
-    const loginErr = document.getElementById('login_error');
-    loginForm.addEventListener('submit', (e)=>{
-      e.preventDefault();
-      loginErr.style.display = 'none';
-      const email = document.getElementById('login_email').value.trim().toLowerCase();
-      const password = document.getElementById('login_password').value;
+    // trivial password hash (NOT secure, demo-only) - simple base64 of string
+    function hashPwd(pwd){ try { return btoa(unescape(encodeURIComponent(pwd))); } catch(e) { return pwd; } }
 
-      if (!email || !password) {
-        loginErr.textContent = 'Please enter email and password.';
-        loginErr.style.display = 'block';
-        return;
-      }
-
+    function findUserByEmail(email){
       const users = getUsers();
-      const user = users.find(u => u.email === email && u.password === password);
+      return users.find(u => u.email.toLowerCase() === (email||'').toLowerCase()) || null;
+    }
 
-      if (!user) {
-        loginErr.textContent = 'Invalid email or password.';
-        loginErr.style.display = 'block';
-        return;
+    function signInLocal(email, password){
+      return new Promise((resolve, reject) => {
+        const u = findUserByEmail(email);
+        if(!u) return reject(new Error('No account found for that email.'));
+        if(u.passwordHash !== hashPwd(password)) return reject(new Error('Incorrect password.'));
+        // store signed in user (public info only)
+        const publicUser = { email: u.email, name: u.name, role: u.role };
+        localStorage.setItem('hms_user', JSON.stringify(publicUser));
+        resolve(publicUser);
+      });
+    }
+
+    function createLocalUser({ name, email, password, role }){
+      return new Promise((resolve, reject) => {
+        if(!email || !password || !name) return reject(new Error('Provide name, email and password.'));
+        if(password.length < 6) return reject(new Error('Password should be at least 6 characters.'));
+        if(findUserByEmail(email)) return reject(new Error('Email is already registered.'));
+        const users = getUsers();
+        users.push({ name, email, passwordHash: hashPwd(password), role });
+        saveUsers(users);
+        resolve({ name, email, role });
+      });
+    }
+
+    // pre-seed a demo admin account if none exists (makes testing easier)
+    (function seedDemo(){
+      const users = getUsers();
+      if(!users.find(u=>u.role==='admin')){
+        users.push({
+          name: 'Admin Vansh',
+          email: 'admin@hms.local',
+          passwordHash: hashPwd('admin123'),
+          role: 'admin'
+        });
+        saveUsers(users);
       }
-
-      if (user.role !== 'doctor') {
-        loginErr.textContent = `This account is "${user.role}". Only doctor accounts can use this login.`;
-        loginErr.style.display = 'block';
-        return;
+      if(!users.find(u=>u.role==='doctor')){
+        users.push({
+          name: 'Dr. Demo',
+          email: 'doctor@hms.local',
+          passwordHash: hashPwd('doctor123'),
+          role: 'doctor'
+        });
+        saveUsers(users);
       }
+    })();
 
-      setCurrentUser({ name:user.name, email:user.email, role:user.role });
-      showToast('Doctor signed in ✅');
-      const target = getAfterLoginTarget();
-      clearAfterLoginTarget();
-      setTimeout(()=> window.location.href = target, 600);
+    // ---------- DOM bindings ----------
+    const loginForm = document.getElementById('loginForm');
+    const errorEl = document.getElementById('error');
+    const createModal = document.getElementById('createModal');
+    const showCreate = document.getElementById('showCreate');
+    const cancelCreate = document.getElementById('cancelCreate');
+    const cRole = document.getElementById('c_role');
+    const adminCodeInput = document.getElementById('adminCode');
+    const rolePreview = document.getElementById('rolePreview');
+
+    // toggle show adminCode if role=admin
+    cRole.addEventListener('change', () => {
+      adminCodeInput.style.display = (cRole.value === 'admin') ? 'block' : 'none';
+      rolePreview.textContent = 'Role: ' + cRole.value;
     });
 
-    // SIGNUP (creates role=doctor)
-    const suErr = document.getElementById('signup_error');
-    signupForm.addEventListener('submit', (e)=>{
-      e.preventDefault();
-      suErr.style.display='none';
-
-      const name = document.getElementById('su_name').value.trim();
-      const email = document.getElementById('su_email').value.trim().toLowerCase();
-      const password = document.getElementById('su_password').value;
-      const role = 'doctor';
-
-      if (!name || !email || !password) {
-        suErr.textContent = 'All fields are required.';
-        suErr.style.display = 'block';
-        return;
-      }
-
-      const users = getUsers();
-      if (users.find(u => u.email === email)) {
-        suErr.textContent = 'An account with this email already exists. Use doctor login.';
-        suErr.style.display = 'block';
-        return;
-      }
-
-      const newUser = { name, email, password, role };
-      users.push(newUser);
-      saveUsers(users);
-      setCurrentUser({ name, email, role });
-
-      showToast('Doctor account created 🎉 Redirecting...');
-      const target = getAfterLoginTarget();
-      clearAfterLoginTarget();
-      setTimeout(()=> window.location.href = target, 700);
+    showCreate.addEventListener('click', () => {
+      createModal.style.display = 'flex';
+      document.getElementById('c_name').focus();
+    });
+    cancelCreate.addEventListener('click', () => {
+      createModal.style.display = 'none';
+      document.getElementById('createError').style.display = 'none';
     });
 
-    // If already logged in as doctor, auto-redirect
-    (function autoRedirectIfDoctor(){
-      try {
-        const current = JSON.parse(localStorage.getItem('hms_currentUser') || 'null');
-        if (current && current.email && current.role === 'doctor') {
-          const target = getAfterLoginTarget();
-          clearAfterLoginTarget();
-          showToast('Already logged in as doctor, redirecting…');
-          setTimeout(()=> window.location.href = target, 700);
+    // create form submit
+    document.getElementById('createForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('c_name').value.trim();
+      const email = document.getElementById('c_email').value.trim();
+      const password = document.getElementById('c_password').value;
+      const role = document.getElementById('c_role').value;
+
+      // admin code validation
+      if(role === 'admin'){
+        const code = document.getElementById('adminCode').value.trim();
+        if(code !== ADMIN_SECRET){
+          const el = document.getElementById('createError');
+          el.style.display = 'block';
+          el.textContent = 'Invalid admin secret. Ask project owner.';
+          return;
         }
-      } catch(e){}
+      }
+
+      try {
+        await createLocalUser({ name, email, password, role });
+        showToast('Account created. Signing you in...');
+        // auto sign-in
+        const user = await signInLocal(email, password);
+        // redirect to next or index
+        const next = getNext();
+        setTimeout(()=> safeRedirect(next || 'index.html'), 800);
+      } catch (err) {
+        const el = document.getElementById('createError');
+        el.style.display = 'block';
+        el.textContent = err.message || err;
+      }
+    });
+
+    // login submit
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorEl.style.display = 'none';
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      try {
+        const user = await signInLocal(email, password);
+        showToast('Signed in as ' + user.role);
+        const next = getNext();
+        setTimeout(()=> safeRedirect(next || 'index.html'), 700);
+      } catch (err) {
+        errorEl.style.display = 'block';
+        errorEl.textContent = err.message || 'Sign in failed';
+      }
+    });
+
+    // If already signed in and visiting login page, redirect away
+    (function redirectIfSignedIn(){
+      try{
+        const cur = JSON.parse(localStorage.getItem('hms_user') || 'null');
+        if(cur && (cur.role === 'doctor' || cur.role === 'admin')){
+          const next = getNext();
+          safeRedirect(next || 'index.html');
+        }
+      }catch(e){}
+    })();
+
+    // accessibility: close create modal on ESC
+    window.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape' && createModal.style.display === 'flex'){
+        createModal.style.display = 'none';
+      }
+    });
+
+    // small hint of demo accounts
+    (function demoHint(){
+      const hint = "Demo accounts seeded:\nAdmin: admin@hms.local / admin123\nDoctor: doctor@hms.local / doctor123\nUse create account to add new doctors.";
+      console.info(hint);
     })();
   </script>
 </body>
