@@ -3,326 +3,135 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>HMS — Doctor / Admin Login</title>
+  <title>HMS — Doctor Login</title>
 
-  <link rel="stylesheet" href="css/style.css">
-
+  <link rel="stylesheet" href="css/style.css" />
   <style>
-    :root{
-      --accent1:#06b6d4; --accent2:#a78bfa; --muted:#9ca3af; --glass:rgba(255,255,255,0.03);
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      min-height:100vh;
-      font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
-      background: radial-gradient(circle at 5% 10%, rgba(6,182,212,0.06), transparent 8%),
-                  linear-gradient(180deg,#071229 0%, #040a18 100%);
-      color:#e6eef8;
-      -webkit-font-smoothing:antialiased;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:28px;
-    }
-
-    .wrap{ width:100%; max-width:980px; display:grid; grid-template-columns:1fr 420px; gap:28px; align-items:center;}
-    @media(max-width:980px){ .wrap{grid-template-columns:1fr; padding:16px} }
-
-    .panel{
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border:1px solid rgba(255,255,255,0.03);
-      border-radius:14px;
-      padding:26px;
-      box-shadow: 0 12px 40px rgba(2,6,23,0.6);
-      animation: panelIn .7s ease both;
-    }
-    @keyframes panelIn { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none } }
-
-    h1{ margin:0 0 8px 0; font-size:1.6rem;
-        background: linear-gradient(90deg,var(--accent1),var(--accent2));
-        -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-    p.lead{ margin:0 0 16px 0; color:var(--muted) }
-
-    form{ display:grid; gap:10px; }
-    .input{ padding:12px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.04);
-            background:rgba(255,255,255,0.02); color:#e6eef8; outline:none; font-size:0.98rem; }
-    .input:focus{ box-shadow:0 8px 28px rgba(6,182,212,0.08); border-color:var(--accent1) }
-
-    .row{ display:flex; gap:10px; align-items:center; }
-    .btn{
-      padding:11px 14px; border-radius:10px; border:none; cursor:pointer; font-weight:700;
-      background: linear-gradient(90deg,var(--accent1),var(--accent2)); color:#fff;
-      box-shadow:0 10px 30px rgba(6,182,212,0.12);
-    }
-    .btn.ghost{ background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.04); box-shadow:none; }
-    .small { font-size:0.92rem; color:var(--muted) }
-
+    :root { --accent1:#06b6d4; --accent2:#a78bfa; }
+    body { margin:0; min-height:100vh; font-family:"Poppins",system-ui; background:radial-gradient(circle at 5% 10%, rgba(6,182,212,0.06), transparent 8%), linear-gradient(180deg,#071229 0%, #040a18 100%); color:#e6eef8; -webkit-font-smoothing:antialiased; display:flex; align-items:center; justify-content:center; padding:24px; }
+    .card { width:100%; max-width:960px; display:grid; grid-template-columns:1fr 420px; gap:28px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:12px; padding:26px; box-shadow:0 12px 40px rgba(0,0,0,0.6); }
+    @media(max-width:980px){ .card{ grid-template-columns:1fr; } }
+    .panel{ padding:18px; }
+    h1{ margin:0 0 8px; font-size:1.6rem; background:linear-gradient(90deg,var(--accent1),var(--accent2)); -webkit-background-clip:text; color:transparent; }
+    p.lead{ color:#9ca3af; margin-top:6px; margin-bottom:18px; }
+    .input { width:100%; padding:12px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.04); background:rgba(255,255,255,0.02); color:#fff; margin-bottom:12px; outline:none; }
+    .btn { padding:12px 14px; border-radius:12px; border:none; background:linear-gradient(90deg,var(--accent1),var(--accent2)); color:#fff; font-weight:700; cursor:pointer; display:inline-block; }
+    .muted { color:#9ca3af; font-size:0.94rem; }
+    .note { font-size:0.9rem; color:#9ca3af; margin-top:10px; }
     .illustration{ display:flex; align-items:center; justify-content:center; }
-    .illustration img{ width:260px; border-radius:12px; filter:drop-shadow(0 18px 40px rgba(0,0,0,0.6)); }
-
-    .toggle { text-align:center; margin-top:8px; }
-    .linklike{ color:var(--accent2); cursor:pointer; text-decoration:underline; font-weight:600; }
-
-    .toast{
-      position:fixed; left:50%; transform:translateX(-50%); bottom:28px; z-index:9999;
-      padding:10px 14px; border-radius:10px; background: #071324; color:#dff7ff; border:1px solid rgba(6,182,212,0.08);
-      display:none; box-shadow:0 12px 32px rgba(2,6,23,0.6);
-    }
-    .toast.show{ display:block; animation:pop .35s ease both; }
-    @keyframes pop { from{ opacity:0; transform:translateX(-50%) translateY(6px)} to{opacity:1; transform:translateX(-50%) translateY(0)} }
-
-    .role-pill { display:inline-block; padding:6px 10px; border-radius:999px; background:rgba(255,255,255,0.02); color:var(--muted); font-weight:600; font-size:0.88rem; }
-    .hint{ margin-top:8px; color:var(--muted); font-size:0.9rem; }
+    .toast{ display:none; position:fixed; left:50%; transform:translateX(-50%); bottom:28px; background:#081026; color:#fff; padding:10px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.04); z-index:9999; }
+    .toast.show{ display:block; animation:pop .28s ease; }
+    @keyframes pop{ from{ transform:translateX(-50%) translateY(6px); opacity:0 } to{ transform:translateX(-50%) translateY(0); opacity:1 } }
+    .small-link{ color:#cbd5e1; text-decoration:none; font-size:0.92rem; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <section class="panel" aria-labelledby="loginTitle">
-      <h1 id="loginTitle">Doctor / Admin Sign In</h1>
-      <p class="lead">This portal allows doctors and admins to access protected pages (doctor registration, attendance, admin panel). You can also create a local doctor account here.</p>
+  <div class="card" role="main">
+    <section class="panel" aria-labelledby="title">
+      <h1 id="title">Doctor / Admin Sign In</h1>
+      <p class="lead">Only accounts with role <strong>doctor</strong> or <strong>admin</strong> can access registration pages.</p>
 
-      <form id="loginForm" autocomplete="on" novalidate>
-        <input id="email" class="input" type="email" placeholder="Email" required autocomplete="email" />
-        <input id="password" class="input" type="password" placeholder="Password" required autocomplete="current-password" />
-        <div class="row">
-          <button class="btn" id="signInBtn" type="submit">Sign In</button>
-          <button type="button" class="btn ghost" id="showCreate">Create Account</button>
+      <form id="loginForm" autocomplete="off">
+        <input id="email" class="input" type="email" placeholder="Email" required />
+        <input id="password" class="input" type="password" placeholder="Password" required />
+        <div style="display:flex;gap:10px;align-items:center;">
+          <button id="submitBtn" class="btn" type="submit">Sign In</button>
+          <button id="demoCreate" type="button" class="btn" style="background:transparent;border:1px solid rgba(255,255,255,0.06);color:#cbd5e1;font-weight:700;">Create Demo Doctor</button>
         </div>
-        <div id="error" class="small" style="color:#ffb4b4; display:none"></div>
-        <div class="hint">After signing in you'll be redirected to the page you were trying to open (if any).</div>
+        <div id="err" class="note" style="color:#ffb4b4;display:none"></div>
       </form>
 
-      <div class="toggle" aria-hidden="true">
-        <span class="small">Need to sign in as a patient instead?</span>
-        <a href="patient_login.html" class="linklike" style="margin-left:8px">Patient Login</a>
-      </div>
+      <p class="note">If you were redirected here, you'll be returned to the original page after login.</p>
     </section>
 
     <aside class="panel illustration" aria-hidden="true">
-      <img src="https://cdn-icons-png.flaticon.com/512/3048/3048122.png" alt="Doctor Illustration">
-      <div style="height:18px"></div>
-
-      <div style="text-align:center">
-        <div class="role-pill" id="rolePreview">Role: doctor</div>
-        <p class="small" style="margin-top:10px">Tip: Create local accounts only for demo. Admin creation requires a secret code.</p>
-      </div>
+      <img src="https://cdn-icons-png.flaticon.com/512/2966/2966485.png" alt="Hospital" width="280" style="border-radius:12px;filter:drop-shadow(0 16px 36px rgba(0,0,0,0.6));">
+      <p style="margin-top:12px" class="muted">Use the demo create button to seed a doctor account locally for testing. In production, admins should create accounts via secure backend.</p>
     </aside>
-  </div>
-
-  <div id="createModal" style="display:none; position:fixed; inset:0; background:rgba(2,6,23,0.75); align-items:center; justify-content:center; z-index:9999;">
-    <div style="width:100%; max-width:520px; padding:20px; background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01)); border-radius:12px; border:1px solid rgba(255,255,255,0.04);">
-      <h3 style="margin:0 0 10px 0; background:linear-gradient(90deg,var(--accent1),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Create Account</h3>
-      <form id="createForm" autocomplete="on">
-        <input id="c_name" class="input" type="text" placeholder="Full name (Dr. ...)" required />
-        <input id="c_email" class="input" type="email" placeholder="Email" required />
-        <input id="c_password" class="input" type="password" placeholder="Password (min 6)" required />
-        <select id="c_role" class="input">
-          <option value="doctor">Doctor</option>
-          <option value="admin">Admin</option>
-        </select>
-        <input id="adminCode" class="input" placeholder="Admin secret (required for admin)" style="display:none" />
-        <div style="display:flex; gap:8px; margin-top:10px;">
-          <button class="btn" type="submit">Create</button>
-          <button type="button" class="btn ghost" id="cancelCreate">Cancel</button>
-        </div>
-        <div id="createError" class="small" style="color:#ffb4b4; display:none; margin-top:8px"></div>
-      </form>
-    </div>
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script>
-    // ---- CONFIG ----
-    // admin secret (change before demo if you want)
-    const ADMIN_SECRET = "ADM1N-S3CRET"; // use a strong secret if needed
+    // small helpers
+    const toast = (t) => { const el = document.getElementById('toast'); el.textContent = t; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2000); };
 
-    // helper UI
-    const toast = document.getElementById('toast');
-    function showToast(msg, t=1800){
-      toast.textContent = msg; toast.classList.add('show');
-      setTimeout(()=> toast.classList.remove('show'), t);
+    // retrieve 'next' query param (so register_doctor.html ?next=.. works)
+    function getNext() {
+      const u = new URL(location.href);
+      return u.searchParams.get('next') ? decodeURIComponent(u.searchParams.get('next')) : null;
     }
 
-    // safe redirect helper (keeps same-origin)
-    function safeRedirect(target){
-      try{
-        const u = new URL(target, location.origin);
-        if(u.origin === location.origin) location.href = u.href;
-        else location.href = 'index.html';
-      }catch(e){
-        location.href = 'index.html';
-      }
-    }
-
-    // next param (where to redirect after login)
-    function getNext(){ const p = new URLSearchParams(location.search).get('next'); return p ? decodeURIComponent(p) : null; }
-
-    // ---------- LocalStorage user store helpers ----------
-    // users are stored in localStorage under "hms_users" as array of { email, passwordHash, name, role }
-    // active signed-in user stored as "hms_user" as { email, name, role }
-
-    function getUsers(){
-      try { return JSON.parse(localStorage.getItem('hms_users') || '[]'); }
-      catch(e){ return []; }
+    // user storage helpers
+    function readUsers(){
+      try { return JSON.parse(localStorage.getItem('hms_users') || '[]'); } catch(e){ console.warn(e); return []; }
     }
     function saveUsers(arr){ localStorage.setItem('hms_users', JSON.stringify(arr)); }
 
-    // trivial password hash (NOT secure, demo-only) - simple base64 of string
-    function hashPwd(pwd){ try { return btoa(unescape(encodeURIComponent(pwd))); } catch(e) { return pwd; } }
-
-    function findUserByEmail(email){
-      const users = getUsers();
-      return users.find(u => u.email.toLowerCase() === (email||'').toLowerCase()) || null;
-    }
-
-    function signInLocal(email, password){
-      return new Promise((resolve, reject) => {
-        const u = findUserByEmail(email);
-        if(!u) return reject(new Error('No account found for that email.'));
-        if(u.passwordHash !== hashPwd(password)) return reject(new Error('Incorrect password.'));
-        // store signed in user (public info only)
-        const publicUser = { email: u.email, name: u.name, role: u.role };
-        localStorage.setItem('hms_user', JSON.stringify(publicUser));
-        resolve(publicUser);
-      });
-    }
-
-    function createLocalUser({ name, email, password, role }){
-      return new Promise((resolve, reject) => {
-        if(!email || !password || !name) return reject(new Error('Provide name, email and password.'));
-        if(password.length < 6) return reject(new Error('Password should be at least 6 characters.'));
-        if(findUserByEmail(email)) return reject(new Error('Email is already registered.'));
-        const users = getUsers();
-        users.push({ name, email, passwordHash: hashPwd(password), role });
-        saveUsers(users);
-        resolve({ name, email, role });
-      });
-    }
-
-    // pre-seed a demo admin account if none exists (makes testing easier)
-    (function seedDemo(){
-      const users = getUsers();
-      if(!users.find(u=>u.role==='admin')){
-        users.push({
-          name: 'Admin Vansh',
-          email: 'admin@hms.local',
-          passwordHash: hashPwd('admin123'),
-          role: 'admin'
-        });
-        saveUsers(users);
+    // ensure there's at least one admin for testing
+    const ensureAdmin = () => {
+      const u = readUsers();
+      if(!u.find(x=>x.email==='admin@hms.test')){
+        u.push({ email:'admin@hms.test', password:'admin123', name:'Admin', role:'admin' });
+        saveUsers(u);
+        console.info('Demo admin seeded: admin@hms.test / admin123');
       }
-      if(!users.find(u=>u.role==='doctor')){
-        users.push({
-          name: 'Dr. Demo',
-          email: 'doctor@hms.local',
-          passwordHash: hashPwd('doctor123'),
-          role: 'doctor'
-        });
-        saveUsers(users);
+    };
+    ensureAdmin();
+
+    // create demo doctor account (for testing)
+    document.getElementById('demoCreate').addEventListener('click', (e) => {
+      const u = readUsers();
+      const email = 'dr.demo@hms.test';
+      if(u.find(x=>x.email === email)){
+        toast('Demo doctor already exists — use dr.demo@hms.test / demo123');
+        return;
       }
-    })();
-
-    // ---------- DOM bindings ----------
-    const loginForm = document.getElementById('loginForm');
-    const errorEl = document.getElementById('error');
-    const createModal = document.getElementById('createModal');
-    const showCreate = document.getElementById('showCreate');
-    const cancelCreate = document.getElementById('cancelCreate');
-    const cRole = document.getElementById('c_role');
-    const adminCodeInput = document.getElementById('adminCode');
-    const rolePreview = document.getElementById('rolePreview');
-
-    // toggle show adminCode if role=admin
-    cRole.addEventListener('change', () => {
-      adminCodeInput.style.display = (cRole.value === 'admin') ? 'block' : 'none';
-      rolePreview.textContent = 'Role: ' + cRole.value;
+      u.push({ email, password:'demo123', name:'Dr Demo', role:'doctor' });
+      saveUsers(u);
+      toast('Demo doctor created: dr.demo@hms.test / demo123');
     });
 
-    showCreate.addEventListener('click', () => {
-      createModal.style.display = 'flex';
-      document.getElementById('c_name').focus();
-    });
-    cancelCreate.addEventListener('click', () => {
-      createModal.style.display = 'none';
-      document.getElementById('createError').style.display = 'none';
-    });
-
-    // create form submit
-    document.getElementById('createForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const name = document.getElementById('c_name').value.trim();
-      const email = document.getElementById('c_email').value.trim();
-      const password = document.getElementById('c_password').value;
-      const role = document.getElementById('c_role').value;
-
-      // admin code validation
-      if(role === 'admin'){
-        const code = document.getElementById('adminCode').value.trim();
-        if(code !== ADMIN_SECRET){
-          const el = document.getElementById('createError');
-          el.style.display = 'block';
-          el.textContent = 'Invalid admin secret. Ask project owner.';
-          return;
-        }
-      }
-
-      try {
-        await createLocalUser({ name, email, password, role });
-        showToast('Account created. Signing you in...');
-        // auto sign-in
-        const user = await signInLocal(email, password);
-        // redirect to next or index
-        const next = getNext();
-        setTimeout(()=> safeRedirect(next || 'index.html'), 800);
-      } catch (err) {
-        const el = document.getElementById('createError');
-        el.style.display = 'block';
-        el.textContent = err.message || err;
-      }
-    });
-
-    // login submit
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      errorEl.style.display = 'none';
-      const email = document.getElementById('email').value.trim();
+    // sign-in logic (localStorage)
+    const form = document.getElementById('loginForm');
+    const err = document.getElementById('err');
+    form.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      err.style.display = 'none';
+      const email = document.getElementById('email').value.trim().toLowerCase();
       const password = document.getElementById('password').value;
-      try {
-        const user = await signInLocal(email, password);
-        showToast('Signed in as ' + user.role);
-        const next = getNext();
-        setTimeout(()=> safeRedirect(next || 'index.html'), 700);
-      } catch (err) {
-        errorEl.style.display = 'block';
-        errorEl.textContent = err.message || 'Sign in failed';
+
+      if(!email || !password){ err.textContent='Enter email & password.'; err.style.display='block'; return; }
+
+      const users = readUsers();
+      const found = users.find(u => u.email.toLowerCase() === email && u.password === password);
+
+      if(!found){
+        err.textContent = 'Invalid credentials. (Hint: use demo account or seed an account)';
+        err.style.display = 'block';
+        return;
       }
+
+      if(found.role !== 'doctor' && found.role !== 'admin'){
+        err.textContent = `This user is role "${found.role}". Use the correct login page.`;
+        err.style.display = 'block';
+        return;
+      }
+
+      // Save canonical current user key that other pages expect:
+      const current = { email: found.email, name: found.name || found.email, role: found.role };
+      localStorage.setItem('hmsCurrentUser', JSON.stringify(current));
+      localStorage.setItem('hms_user', JSON.stringify(current)); // be permissive: write both keys
+
+      toast('Signed in — redirecting...');
+      const next = getNext();
+      setTimeout(() => {
+        if(next) location.href = next;
+        else location.href = 'register_doctor.html';
+      }, 700);
     });
 
-    // If already signed in and visiting login page, redirect away
-    (function redirectIfSignedIn(){
-      try{
-        const cur = JSON.parse(localStorage.getItem('hms_user') || 'null');
-        if(cur && (cur.role === 'doctor' || cur.role === 'admin')){
-          const next = getNext();
-          safeRedirect(next || 'index.html');
-        }
-      }catch(e){}
-    })();
-
-    // accessibility: close create modal on ESC
-    window.addEventListener('keydown', (e) => {
-      if(e.key === 'Escape' && createModal.style.display === 'flex'){
-        createModal.style.display = 'none';
-      }
-    });
-
-    // small hint of demo accounts
-    (function demoHint(){
-      const hint = "Demo accounts seeded:\nAdmin: admin@hms.local / admin123\nDoctor: doctor@hms.local / doctor123\nUse create account to add new doctors.";
-      console.info(hint);
-    })();
+    // Accessibility: enter key on inputs should submit; already default
   </script>
 </body>
 </html>
