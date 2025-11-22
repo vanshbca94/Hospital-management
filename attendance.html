@@ -207,12 +207,9 @@
 
         <form id="attendance-form" class="attendance-form" autocomplete="off" aria-label="Attendance form">
           <div class="field-row">
+            <!-- placeholder only; populated from Firestore module below -->
             <select id="doctor_name" class="input" required aria-label="Doctor name">
-              <option value="">Select Doctor — type to quick select</option>
-              <option>Dr. Ayesha Singh</option>
-              <option>Dr. Raj Mehta</option>
-              <option>Dr. Priya Kapoor</option>
-              <option>Dr. Vikram Sharma</option>
+              <option value="">Loading doctors…</option>
             </select>
 
             <select id="status" class="input" required aria-label="Attendance status">
@@ -281,6 +278,93 @@
       </div>
     </div>
   </div>
+
+  <!-- Firestore doctors loader: populates #doctor_name select -->
+  <script type="module">
+    // Use modular Firebase SDK (v10.x)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB1F-08xqgsdTR9oGmNqtFzlBJNv86UVpM",
+      authDomain: "hospital-management-5cb17.firebaseapp.com",
+      projectId: "hospital-management-5cb17",
+      storageBucket: "hospital-management-5cb17.firebasestorage.app",
+      messagingSenderId: "1077408582965",
+      appId: "1:1077408582965:web:21668368b4793cf98f107c",
+      measurementId: "G-JEY8DE5FC9"
+    };
+
+    const fallbackDoctors = [
+      "Dr. Ayesha Singh",
+      "Dr. Raj Mehta",
+      "Dr. Priya Kapoor",
+      "Dr. Vikram Sharma"
+    ];
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const doctorSelect = document.getElementById("doctor_name");
+
+    async function populateDoctorsFromFirestore(){
+      try {
+        // attempt to load only available doctors, ordered by name
+        const q = query(collection(db, "doctors"), orderBy("name"));
+        const snap = await getDocs(q);
+        const docs = [];
+        snap.forEach(d => {
+          const data = d.data();
+          // include doctor if status available OR if you want all, remove status filter
+          docs.push({
+            name: data.name || data.displayName || data.fullName || ("Doctor " + d.id),
+            specialty: data.specialty || "",
+            status: data.status || ""
+          });
+        });
+
+        // prefer showing available first if present
+        if (docs.length > 0) {
+          // sort: available first, then by name
+          docs.sort((a,b) => {
+            const avA = (a.status === "available") ? 0 : 1;
+            const avB = (b.status === "available") ? 0 : 1;
+            if (avA !== avB) return avA - avB;
+            return (a.name || "").localeCompare(b.name || "");
+          });
+
+          doctorSelect.innerHTML = `<option value="">👨‍⚕️ Choose Doctor</option>`;
+          docs.forEach(d => {
+            const label = d.specialty ? `${d.name} — ${d.specialty}` : d.name;
+            doctorSelect.innerHTML += `<option value="${escapeHtmlAttr(d.name)}">${escapeHtml(label)}</option>`;
+          });
+          return;
+        } else {
+          // no docs returned -> fallback
+          throw new Error("No doctors found in Firestore");
+        }
+      } catch (err) {
+        console.warn("Firestore doctors load failed:", err);
+        // fallback to default list
+        doctorSelect.innerHTML = `<option value="">👨‍⚕️ Choose Doctor</option>`;
+        fallbackDoctors.forEach(n => {
+          doctorSelect.innerHTML += `<option value="${escapeHtmlAttr(n)}">${escapeHtml(n)}</option>`;
+        });
+      }
+    }
+
+    function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function escapeHtmlAttr(s){ return String(s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+    // populate on load
+    populateDoctorsFromFirestore();
+
+    // re-populate on storage change (in case doctors are added/removed in other tabs using Firestore sync)
+    // Noting: Firestore real-time listeners would be ideal; for simplicity we only attempt re-load on window focus
+    window.addEventListener("focus", () => {
+      populateDoctorsFromFirestore();
+    });
+  </script>
 
   <script>
   (function(){
@@ -540,7 +624,8 @@
 
     refreshBtn.addEventListener("click", ()=> render());
     bulkPresent.addEventListener("click", ()=>{
-      const names = ["Dr. Ayesha Singh","Dr. Raj Mehta","Dr. Priya Kapoor","Dr. Vikram Sharma"];
+      const names = Array.from(document.querySelectorAll('#doctor_name option')).map(o=>o.value).filter(Boolean);
+      if(names.length===0) showToast("No doctors available to bulk mark");
       names.forEach(n=> pushRecord({id:"B"+Date.now()+Math.random(), name:n, status:"Present", note:"Auto bulk", time:fmtNow(new Date()), dateKey:todayKey()}));
       showToast("Bulk present added"); render();
     });
