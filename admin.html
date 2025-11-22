@@ -1,4 +1,4 @@
-<!doctype html>
+<<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -17,10 +17,8 @@
       background:linear-gradient(180deg,var(--bg1),var(--bg2));
       color:#e6eef8;-webkit-font-smoothing:antialiased;padding-bottom:60px;
     }
-
     .wrap{max-width:1300px;margin:26px auto;padding:0 20px;display:grid;grid-template-columns:260px 1fr;gap:20px}
     @media(max-width:980px){.wrap{grid-template-columns:1fr}}
-
     .sidebar{
       background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
       border:1px solid rgba(255,255,255,0.04);padding:18px;border-radius:var(--radius);
@@ -31,65 +29,43 @@
     .nav a{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;color:#dbeafe;text-decoration:none;font-weight:600}
     .nav a:hover{background:linear-gradient(90deg,rgba(6,182,212,0.06),rgba(167,139,250,0.03));transform:translateX(6px)}
     .section-title{font-size:.9rem;color:var(--muted);margin-top:16px;margin-bottom:6px}
-
-    .main{
-      display:flex;flex-direction:column;gap:18px;
-    }
-
-    .topbar{
-      display:flex;justify-content:space-between;align-items:center;gap:10px;
-    }
+    .main{display:flex;flex-direction:column;gap:18px;}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;}
     .top-left{display:flex;align-items:center;gap:12px}
     .page-title{font-size:1.4rem;font-weight:800;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
     .top-actions{display:flex;gap:8px;align-items:center}
-
     .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
     @media(max-width:980px){.kpis{grid-template-columns:repeat(2,1fr)}}
-    .kpi{
-      background:var(--glass);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);
-      display:flex;flex-direction:column;gap:6px;
-      transition:transform .22s,box-shadow .22s;
-    }
+    .kpi{background:var(--glass);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;gap:6px;transition:transform .22s,box-shadow .22s;}
     .kpi:hover{transform:translateY(-6px);box-shadow:0 12px 36px rgba(6,182,212,0.06)}
     .kpi .label{color:var(--muted);font-size:.85rem}
     .kpi .num{font-weight:800;font-size:1.35rem}
-
     .grid-two{display:grid;grid-template-columns:1fr 420px;gap:12px;align-items:start}
     @media(max-width:980px){.grid-two{grid-template-columns:1fr}}
-
-    .card{
-      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.04);
-    }
-
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.04);}
     .chart-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
     canvas{display:block;max-width:100%}
-
     .table-wrap{overflow:auto;margin-top:10px}
     table{width:100%;border-collapse:collapse;font-size:.95rem}
     th,td{padding:10px;border-bottom:1px dashed rgba(255,255,255,0.03);text-align:left}
     th{color:var(--muted);font-weight:700;position:sticky;top:0;background:transparent}
-
     .row-actions{display:flex;gap:6px}
     .btn{padding:8px 10px;border-radius:8px;border:none;font-weight:700;cursor:pointer}
     .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
     .btn.primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#031124}
     .small-muted{color:var(--muted);font-size:.9rem}
-
     .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
-
     .modal-back{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:120;opacity:0;pointer-events:none;transition:opacity .18s}
     .modal-back.show{opacity:1;pointer-events:auto}
     .modal{background:linear-gradient(180deg,#021124,#06102a);padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);width:520px;max-width:96%}
     .modal h3{margin:0 0 8px 0}
-
     .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:26px;padding:10px 14px;border-radius:12px;color:#021124;font-weight:700;z-index:220}
-
     .hamb{display:none}
     @media(max-width:700px){.nav{display:none}.hamb{display:block}}
     .confetti{position:fixed;z-index:300;border-radius:3px;pointer-events:none}
-
     footer{margin-top:18px;text-align:center;color:var(--muted);font-size:.85rem}
+    /* small responsive fixes */
+    .input{padding:8px;border-radius:8px;border:none;background:rgba(255,255,255,0.03);color:#fff}
   </style>
 </head>
 <body>
@@ -163,7 +139,7 @@
             <div style="display:flex;justify-content:space-between;align-items:center">
               <strong>Appointments by Doctor</strong>
               <div class="controls">
-                <input id="apptSearch" class="input" placeholder="Search appointments" style="padding:8px;border-radius:8px;border:none;background:rgba(255,255,255,0.03);color:#fff"/>
+                <input id="apptSearch" class="input" placeholder="Search appointments" />
                 <button id="refreshBtn" class="btn ghost">Refresh</button>
                 <button id="addSampleAppt" class="btn ghost">Add Sample</button>
               </div>
@@ -184,7 +160,7 @@
             <div style="display:flex;justify-content:space-between;align-items:center">
               <strong>Attendance (Today)</strong>
               <div class="controls">
-                <input id="attSearch" class="input" placeholder="Search attendance" style="padding:8px;border-radius:8px;border:none;background:rgba(255,255,255,0.03);color:#fff"/>
+                <input id="attSearch" class="input" placeholder="Search attendance" />
                 <button id="exportAtt" class="btn ghost">Export</button>
               </div>
             </div>
@@ -224,7 +200,7 @@
             <p class="small-muted" style="margin-top:8px">You can remove doctors here (Firestore + LocalStorage aware).</p>
             <div style="margin-top:10px">
               <div style="display:flex;gap:8px;margin-bottom:8px">
-                <input id="newDocName" class="input" placeholder="Doctor full name" style="padding:8px;border-radius:8px;border:none;background:rgba(255,255,255,0.03);color:#fff"/>
+                <input id="newDocName" class="input" placeholder="Doctor full name" />
                 <button id="addLocalDoctor" class="btn ghost">Add</button>
               </div>
               <div class="table-wrap" style="max-height:220px;overflow:auto">
@@ -252,9 +228,8 @@
 
   <div id="toastWrap"></div>
 
-  <!-- Firebase optional module. If you don't want Firestore, this will silently fail and the page will use LocalStorage -->
+  <!-- Firestore optional module. If you don't want Firestore, this will silently fail and the page will use LocalStorage -->
   <script type="module">
-    // Initialize Firestore if possible. Errors are caught and page falls back to LocalStorage.
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
     import {
       getFirestore,
@@ -290,7 +265,6 @@
       firestoreAvailable = false;
     }
 
-    // Expose Firestore helpers to main script via window object
     window.__hms_firestore = {
       available: firestoreAvailable,
       db,
@@ -310,11 +284,10 @@
     // Keys
     const APPT_KEY = 'appointments';
     const ATT_KEY = 'hms_attendance_v1';
-    const DOC_KEY = 'doctors'; // local fallback
+    const DOC_KEY = 'doctors_local'; // local doctors key
 
-    // Helpers
+    // Utils
     const $q = s => document.querySelector(s);
-    const $qa = s => Array.from(document.querySelectorAll(s));
     const now = () => new Date();
     const pad = n => String(n).padStart(2,'0');
     const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
@@ -326,33 +299,37 @@
     function load(key){ try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch(e){ return []; } }
     function save(key, arr){ localStorage.setItem(key, JSON.stringify(arr)); }
 
-    function toast(text, tone='') {
-      const t = document.createElement('div');
-      t.className = 'toast';
-      t.textContent = text;
-      t.style.background = 'linear-gradient(90deg,var(--accent1),var(--accent2))';
-      document.body.appendChild(t);
-      setTimeout(()=> t.style.opacity = '0', 2000);
-      setTimeout(()=> t.remove(), 2700);
+    // Ensure items have stable ids (migration)
+    function ensureIdsForAppointments(){
+      const arr = load(APPT_KEY);
+      let changed = false;
+      for(let i=0;i<arr.length;i++){
+        if(!arr[i].id){
+          arr[i].id = 'A' + Date.now() + Math.floor(Math.random()*10000) + '_' + i;
+          changed = true;
+        }
+      }
+      if(changed) save(APPT_KEY, arr);
+    }
+    function ensureIdsForLocalDoctors(){
+      const arr = load(DOC_KEY);
+      let changed = false;
+      for(let i=0;i<arr.length;i++){
+        if(!arr[i].id){
+          arr[i].id = 'D' + Date.now() + Math.floor(Math.random()*10000) + '_' + i;
+          changed = true;
+        }
+      }
+      if(changed) save(DOC_KEY, arr);
     }
 
-    function confirmModal(title, body, cb) {
-      $q('#modalTitle').textContent = title;
-      $q('#modalBody').textContent = body;
-      const modal = $q('#modal');
-      modal.classList.add('show'); modal.setAttribute('aria-hidden','false');
-      const ok = $q('#modalOk'), cancel = $q('#modalCancel');
-      function done() { modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); ok.removeEventListener('click', onOk); cancel.removeEventListener('click', onCancel); }
-      function onOk(){ done(); cb(true); }
-      function onCancel(){ done(); cb(false); }
-      ok.addEventListener('click', onOk);
-      cancel.addEventListener('click', onCancel);
-    }
+    ensureIdsForAppointments();
+    ensureIdsForLocalDoctors();
 
-    // Firestore helpers (if available)
     const F = window.__hms_firestore || { available:false };
 
-    async function fetchDoctorsFromFirestore() {
+    // Fetch Firestore doctors (returns array of { id, name, specialty, status, source:'fire' })
+    async function fetchFirestoreDoctors(){
       if(!F.available) throw new Error('Firestore not available');
       try {
         const q = F.query(F.collection(F.db, 'doctors'), F.orderBy ? F.orderBy('name') : undefined);
@@ -369,45 +346,34 @@
           });
         });
         return out;
-      } catch(err) {
-        console.warn('Firestore fetch doctors error:', err);
+      } catch(err){
+        console.warn('fetchFirestoreDoctors err', err);
         throw err;
       }
     }
 
-    async function deleteDoctorFromFirestore(docId) {
-      if(!F.available) throw new Error('Firestore not available');
-      try {
-        await F.deleteDoc(F.doc(F.db, 'doctors', docId));
-        return true;
-      } catch(err) {
-        console.error('deleteDoctorFromFirestore', err);
-        throw err;
-      }
-    }
-
-    // Local doctors helpers
     function loadLocalDoctors(){ return load(DOC_KEY); }
     function saveLocalDoctors(arr){ save(DOC_KEY, arr); }
 
-    // Render doctors table (merge Firestore + local)
-    async function renderDoctors() {
+    // Render doctors table (fire + local)
+    async function renderDoctors(){
       const tbody = $q('#doctorsTable tbody');
       tbody.innerHTML = '';
 
       let fireDocs = [];
-      try {
-        if(F.available) {
-          fireDocs = await fetchDoctorsFromFirestore();
+      if(F.available){
+        try {
+          fireDocs = await fetchFirestoreDoctors();
+        } catch(e){
+          fireDocs = [];
         }
-      } catch(e){ fireDocs = []; }
+      }
 
-      const localDocs = loadLocalDoctors().map(d => ({ ...d, source:'local' }));
+      const localDocs = loadLocalDoctors().map(d => ({ id: d.id, name: d.name, specialty: d.specialty||'', status: d.status||'', source: 'local' }));
 
-      // Merge: fireDocs first then local
       const combined = [...fireDocs, ...localDocs];
 
-      if(combined.length === 0) {
+      if(combined.length === 0){
         const tr = document.createElement('tr');
         tr.innerHTML = '<td colspan="3" class="small-muted">No doctors found (Firestore/local).</td>';
         tbody.appendChild(tr);
@@ -417,13 +383,13 @@
 
       combined.forEach(doc => {
         const tr = document.createElement('tr');
-        const sourceLabel = doc.source === 'fire' ? 'Firestore' : 'Local';
-        const idAttr = doc.source === 'fire' ? `data-fire-id="${doc.id}"` : '';
         tr.setAttribute('data-source', doc.source);
-        tr.innerHTML = `<td>${escapeHTML(doc.name)}${doc.specialty ? (' — ' + escapeHTML(doc.specialty)) : ''}</td>
+        tr.setAttribute('data-id', doc.id);
+        const sourceLabel = doc.source === 'fire' ? 'Firestore' : 'Local';
+        tr.innerHTML = `<td>${escapeHTML(doc.name)}${doc.specialty ? ' — ' + escapeHTML(doc.specialty) : ''}</td>
                         <td>${sourceLabel}</td>
                         <td><div class="row-actions">
-                          <button class="btn ghost delDoc" ${idAttr} data-name="${escapeHTMLAttr(doc.name)}">Delete</button>
+                          <button class="btn ghost delDoc" data-id="${escapeHTMLAttr(doc.id)}" data-source="${doc.source}" data-name="${escapeHTMLAttr(doc.name)}">Delete</button>
                         </div></td>`;
         tbody.appendChild(tr);
       });
@@ -431,49 +397,52 @@
       $q('#k_doctors').textContent = combined.length;
     }
 
-    function escapeHTML(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-    function escapeHTMLAttr(s){ return String(s||'').replace(/"/g,'&quot;').replace(/'/g,"&#39;"); }
-
-    // Appointments render (localStorage) - similar to previous admin
     function renderAppointments(filter){
-      const appts = load(APPT_KEY);
-      const f = (filter || '').toLowerCase();
+      const arr = load(APPT_KEY).slice(); // copy
       const tbody = $q('#apptTable tbody');
       tbody.innerHTML = '';
-      appts.slice().reverse().forEach((a, idx) => {
+      const q = (filter || '').toLowerCase();
+      const shown = arr.filter(a => {
+        if(!q) return true;
+        return (a.name||'').toLowerCase().includes(q) || (a.doctor||'').toLowerCase().includes(q);
+      });
+      shown.slice().reverse().forEach(appt => {
         const tr = document.createElement('tr');
-        const i = idx;
-        tr.innerHTML = `<td>${escapeHTML(a.name||'—')}</td>
-                        <td>${escapeHTML(a.doctor||'—')}</td>
-                        <td>${escapeHTML(a.date||'—')}</td>
-                        <td>${escapeHTML(a.time||'—')}</td>
+        tr.setAttribute('data-id', appt.id);
+        tr.innerHTML = `<td>${escapeHTML(appt.name||'—')}</td>
+                        <td>${escapeHTML(appt.doctor||'—')}</td>
+                        <td>${escapeHTML(appt.date||'—')}</td>
+                        <td>${escapeHTML(appt.time||'—')}</td>
                         <td><div class="row-actions">
-                          <button data-i="${i}" class="editAppt btn ghost">Edit</button>
-                          <button data-i="${i}" class="delAppt btn ghost">Delete</button>
+                          <button class="btn ghost editAppt" data-id="${escapeHTMLAttr(appt.id)}">Edit</button>
+                          <button class="btn ghost delAppt" data-id="${escapeHTMLAttr(appt.id)}">Delete</button>
                         </div></td>`;
         tbody.appendChild(tr);
       });
-      $q('#k_appointments').textContent = appts.length;
+      $q('#k_appointments').textContent = arr.length;
       chartAppointments();
     }
 
-    // Attendance render and chart reuse from earlier admin code
     function renderAttendance(filter){
-      const atts = load(ATT_KEY);
-      const f = (filter || '').toLowerCase();
+      const arr = load(ATT_KEY).slice();
+      const q = (filter || '').toLowerCase();
       const tbody = $q('#attTable tbody');
       tbody.innerHTML = '';
-      atts.slice().reverse().forEach((a, idx) => {
+      const shown = arr.filter(a => {
+        if(!q) return true;
+        return (a.name||'').toLowerCase().includes(q) || (a.note||'').toLowerCase().includes(q);
+      });
+      shown.slice().reverse().forEach(a => {
         const statusBadge = a.status==='Present' ? '<span style="color:#22c55e;font-weight:700">Present</span>' : '<span style="color:#ef4444;font-weight:700">Absent</span>';
         const tr = document.createElement('tr');
+        tr.setAttribute('data-id', a.id);
         tr.innerHTML = `<td>${escapeHTML(a.name||'—')}</td><td>${statusBadge}</td><td>${escapeHTML(a.note||'—')}</td><td>${escapeHTML(a.time||'—')}</td>
-                        <td><div class="row-actions"><button data-i="${idx}" class="delAtt btn ghost">Delete</button></div></td>`;
+                        <td><div class="row-actions"><button data-id="${escapeHTMLAttr(a.id)}" class="delAtt btn ghost">Delete</button></div></td>`;
         tbody.appendChild(tr);
       });
       chartAttendance();
     }
 
-    // Charts
     function chartAttendance(){
       const ctx = $q('#donutChart').getContext('2d');
       const atts = load(ATT_KEY);
@@ -499,7 +468,7 @@
       const appts = load(APPT_KEY);
       const counts = {};
       appts.forEach(a => { counts[a.doctor] = (counts[a.doctor] || 0) + 1; });
-      const doctors = Object.keys(counts).length ? Object.keys(counts) : (load(DOC_KEY).map(d=>d.name).length ? load(DOC_KEY).map(d=>d.name) : ['Dr. Ayesha Singh','Dr. Raj Mehta','Dr. Priya Kapoor','Dr. Vikram Sharma']);
+      const doctors = Object.keys(counts).length ? Object.keys(counts) : (loadLocalDoctors().length ? loadLocalDoctors().map(d=>d.name) : ['Dr. Ayesha Singh','Dr. Raj Mehta','Dr. Priya Kapoor','Dr. Vikram Sharma']);
       const values = doctors.map(d => counts[d] || 0);
       const w = $q('#barChart').width, h = $q('#barChart').height;
       ctx.clearRect(0,0,w,h);
@@ -520,163 +489,136 @@
       });
     }
 
-    // CRUD actions
-    function deleteLocalDoctorByName(name) {
-      const arr = load(DOC_KEY);
-      const filtered = arr.filter(d => d.name !== name);
-      save(DOC_KEY, filtered);
+    // CRUD handlers (delete by id)
+    async function deleteAppointmentById(id){
+      if(!id) return;
+      const arr = load(APPT_KEY);
+      const idx = arr.findIndex(a => a.id === id);
+      if(idx === -1) { toast('Appointment not found'); return; }
+      const appt = arr[idx];
+      confirmModal('Delete appointment', `Delete appointment for ${appt.name} with ${appt.doctor}?`, async (ok) => {
+        if(!ok) return;
+        // try delete in Firestore if firestoreId present
+        if(appt.firestoreId && F.available){
+          try {
+            await F.deleteDoc(F.doc(F.db, 'appointments', appt.firestoreId));
+            toast('Deleted from Firestore (if existed)');
+          } catch(err){
+            console.warn('Failed to delete appointment from Firestore', err);
+          }
+        }
+        arr.splice(idx, 1);
+        save(APPT_KEY, arr);
+        renderAppointments($q('#apptSearch').value || '');
+        toast('Appointment removed');
+      });
     }
 
-    async function deleteDoctorHandler(button) {
-      const source = button.closest('tr').getAttribute('data-source');
-      const name = button.getAttribute('data-name');
-      if(source === 'fire') {
-        const fireId = button.getAttribute('data-fire-id');
-        confirmModal('Delete doctor', `Delete ${name} from Firestore? This is permanent.`, async (ok) => {
+    async function deleteDoctorByIdAndSource(id, source, name){
+      if(!id) return;
+      if(source === 'fire'){
+        confirmModal('Delete doctor', `Delete ${name} from Firestore? This cannot be undone.`, async (ok) => {
           if(!ok) return;
+          if(!F.available){ toast('Firestore not available'); return; }
           try {
-            await deleteDoctorFromFirestore(fireId);
+            await F.deleteDoc(F.doc(F.db, 'doctors', id));
             toast('Doctor deleted from Firestore');
             await renderDoctors();
-          } catch(err) {
-            toast('Failed to delete doctor (Firestore)');
+          } catch(err){
             console.error(err);
+            toast('Failed to delete doctor from Firestore');
           }
         });
       } else {
-        confirmModal('Delete doctor', `Remove ${name} from local doctors?`, (ok) => {
+        confirmModal('Remove local doctor', `Remove ${name} from local doctors?`, (ok) => {
           if(!ok) return;
-          deleteLocalDoctorByName(name);
+          const arr = loadLocalDoctors().filter(d => d.id !== id);
+          saveLocalDoctors(arr);
           renderDoctors();
           toast('Doctor removed (local)');
         });
       }
     }
 
-    // Appointment deletion - supports localStorage and tries Firestore if appointment has firestoreId
-    async function deleteAppointmentHandler(indexFromReverse) {
-      const arr = load(APPT_KEY);
-      // arr displayed in reverse, so compute actual index
-      const actualIndex = arr.length - 1 - Number(indexFromReverse);
-      const appt = arr[actualIndex];
-      confirmModal('Delete appointment', `Delete appointment for ${appt.name} with ${appt.doctor}?`, async (ok) => {
-        if(!ok) return;
-        // If appointment has firestoreId, try to delete
-        if(appt.firestoreId && F.available) {
-          try {
-            await F.deleteDoc(F.doc(F.db, 'appointments', appt.firestoreId));
-            toast('Deleted from Firestore');
-          } catch(err) {
-            console.warn('Failed to delete appointment from Firestore', err);
-          }
-        }
-        arr.splice(actualIndex,1);
-        save(APPT_KEY, arr);
-        renderAppointments();
-        toast('Appointment deleted');
-      });
-    }
-
-    // Event wiring
-    document.body.addEventListener('click', async (e) => {
-      // Delete doctor
-      if(e.target.matches('.delDoc')) {
-        await deleteDoctorHandler(e.target);
+    // Event delegation for table buttons
+    document.body.addEventListener('click', function(e){
+      if(e.target.matches('.delAppt')){
+        const id = e.target.getAttribute('data-id');
+        deleteAppointmentById(id);
       }
-
-      // Delete appointment
-      if(e.target.matches('.delAppt')) {
-        const idx = e.target.getAttribute('data-i');
-        await deleteAppointmentHandler(idx);
-      }
-
-      // Edit appointment
-      if(e.target.matches('.editAppt')) {
-        const idx = Number(e.target.getAttribute('data-i'));
-        const actualIndex = load(APPT_KEY).length - 1 - idx;
+      if(e.target.matches('.editAppt')){
+        const id = e.target.getAttribute('data-id');
         const arr = load(APPT_KEY);
-        const appt = arr[actualIndex];
+        const idx = arr.findIndex(a => a.id === id);
+        if(idx === -1) { toast('Appointment not found'); return; }
+        const appt = arr[idx];
         const newName = prompt('Patient name', appt.name || '');
         if(newName === null) return;
         appt.name = newName;
-        arr[actualIndex] = appt;
+        arr[idx] = appt;
         save(APPT_KEY, arr);
-        renderAppointments();
+        renderAppointments($q('#apptSearch').value || '');
         toast('Appointment updated');
       }
-
-      // Delete attendance
-      if(e.target.matches('.delAtt')) {
-        const idx = Number(e.target.getAttribute('data-i'));
+      if(e.target.matches('.delAtt')){
+        const id = e.target.getAttribute('data-id');
         const arr = load(ATT_KEY);
-        const actualIndex = arr.length - 1 - idx;
+        const idx = arr.findIndex(a => a.id === id);
+        if(idx === -1) { toast('Attendance not found'); return; }
         confirmModal('Delete attendance','Delete this attendance record?', function(ok){
-          if(ok){ arr.splice(actualIndex,1); save(ATT_KEY,arr); renderAttendance(); toast('Deleted') }
+          if(ok){ arr.splice(idx,1); save(ATT_KEY, arr); renderAttendance($q('#attSearch').value || ''); toast('Deleted') }
         });
       }
-    });
-
-    // UI controls wiring
-    $q('#refreshBtn').addEventListener('click', () => { renderAll(); toast('Refreshed') });
-    $q('#apptSearch').addEventListener('input', function(){ renderAppointments(this.value) });
-    $q('#attSearch').addEventListener('input', function(){ renderAttendance(this.value) });
-    $q('#openAppointments').addEventListener('click', () => { location.href = 'appointment.html' });
-
-    $q('#exportAppointments').addEventListener('click', () => {
-      const arr = load(APPT_KEY);
-      exportCSV(arr, ['name','doctor','date','time','note'], 'appointments_export.csv');
-    });
-    $q('#exportAttendance').addEventListener('click', () => {
-      const arr = load(ATT_KEY);
-      exportCSV(arr, ['id','name','status','time','note','dateKey'], 'attendance_export.csv');
+      if(e.target.matches('.delDoc')){
+        const id = e.target.getAttribute('data-id');
+        const source = e.target.getAttribute('data-source');
+        const name = e.target.getAttribute('data-name');
+        deleteDoctorByIdAndSource(id, source, name);
+      }
     });
 
     // Add local doctor
     $q('#addLocalDoctor').addEventListener('click', () => {
       const name = $q('#newDocName').value.trim();
       if(!name){ toast('Enter doctor name'); return; }
-      const arr = load(DOC_KEY);
-      arr.push({ name, specialty:'', status:'available' });
-      save(DOC_KEY, arr);
+      const arr = loadLocalDoctors();
+      const newDoc = { id: 'D' + Date.now() + '_' + Math.floor(Math.random()*9999), name, specialty:'', status:'available' };
+      arr.push(newDoc);
+      saveLocalDoctors(arr);
       $q('#newDocName').value = '';
       renderDoctors();
       toast('Doctor added locally');
     });
 
-    // Clear buttons
+    // Clear handlers
     $q('#clearAppointments').addEventListener('click', ()=> {
       confirmModal('Clear appointments','Delete all appointments permanently?', function(ok){
-        if(ok){ save(APPT_KEY, []); renderAll(); toast('Appointments cleared'); }
+        if(ok){ save(APPT_KEY, []); renderAppointments(''); toast('Appointments cleared'); }
       });
     });
     $q('#clearAttendance').addEventListener('click', ()=> {
       confirmModal('Clear attendance','Delete all attendance permanently?', function(ok){
-        if(ok){ save(ATT_KEY, []); renderAll(); toast('Attendance cleared'); }
+        if(ok){ save(ATT_KEY, []); renderAttendance(''); toast('Attendance cleared'); }
       });
     });
     $q('#clearAllBtn').addEventListener('click', ()=> {
-      confirmModal('Clear all data','This will clear appointments and attendance and local doctors. Continue?', function(ok){
+      confirmModal('Clear all data','This will clear appointments, attendance and local doctors. Continue?', function(ok){
         if(ok){
-          save(APPT_KEY, []); save(ATT_KEY, []); save(DOC_KEY, []);
-          renderAll(); toast('All storage cleared');
+          save(APPT_KEY, []); save(ATT_KEY, []); save(DOC_KEY, []); renderAll(); toast('All storage cleared');
         }
       });
     });
 
-    // CSV helpers
-    function exportCSV(data, headers, filename) {
+    // CSV import/export functions (same as earlier)
+    function exportCSV(data, headers, filename){
       const rows = [ headers.join(',') ];
-      data.forEach(r => {
-        rows.push(headers.map(h => `"${String(r[h]||'').replace(/"/g,'""')}"`).join(','));
-      });
+      data.forEach(r => rows.push(headers.map(h => `"${String(r[h]||'').replace(/"/g,'""')}"`).join(',')));
       const blob = new Blob([rows.join('\n')], { type:'text/csv' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
       URL.revokeObjectURL(url);
     }
-
-    // Import handler (simple)
-    function importCSVFile(file, key) {
+    function importCSVFileToKey(file, key){
       const r = new FileReader();
       r.onload = (e) => {
         try {
@@ -687,17 +629,17 @@
           lines.forEach(line => {
             const cols = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
             const obj = {};
-            header.forEach((h,i) => obj[h] = (cols[i]||'').replace(/^"|"$/g,''));
+            header.forEach((h,i)=> obj[h] = (cols[i]||'').replace(/^"|"$/g,''));
             if(key === APPT_KEY) {
-              arr.push({ name: obj.name||'Unknown', doctor: obj.doctor||'', date: obj.date||'', time: obj.time||'', note: obj.note||'' });
+              arr.push({ id:'A'+Date.now()+Math.floor(Math.random()*9999), name: obj.name||'Unknown', doctor: obj.doctor||'', date: obj.date||'', time: obj.time||'', note: obj.note||'' });
             } else {
-              arr.push({ id: obj.id || ('I'+Date.now()), name: obj.name || 'Unknown', status: obj.status || 'Present', time: obj.time || fmt(new Date()), note: obj.note || '', dateKey: obj.dateKey || todayKey() });
+              arr.push({ id:'AT'+Date.now()+Math.floor(Math.random()*9999), name: obj.name||'Unknown', status: obj.status||'Present', time: obj.time || fmt(new Date()), note: obj.note||'', dateKey: obj.dateKey || todayKey() });
             }
           });
           save(key, arr);
           renderAll();
           toast('Import completed');
-        } catch(err) {
+        } catch(err){
           console.error(err);
           toast('Import failed');
         }
@@ -705,93 +647,133 @@
       r.readAsText(file);
     }
 
-    // Import buttons
+    // Hook import inputs
     $q('#importAppointmentsBtn').addEventListener('click', ()=> $q('#importAppointmentsFile').click());
-    $q('#importAppointmentsFile').addEventListener('change', function(e){ const f = e.target.files[0]; if(f) importCSVFile(f, APPT_KEY); e.target.value = ''; });
-
+    $q('#importAppointmentsFile').addEventListener('change', function(e){ const f = e.target.files[0]; if(f) importCSVFileToKey(f, APPT_KEY); e.target.value = ''; });
     $q('#importAttendanceBtn').addEventListener('click', ()=> $q('#importAttendanceFile').click());
-    $q('#importAttendanceFile').addEventListener('change', function(e){ const f = e.target.files[0]; if(f) importCSVFile(f, ATT_KEY); e.target.value = ''; });
+    $q('#importAttendanceFile').addEventListener('change', function(e){ const f = e.target.files[0]; if(f) importCSVFileToKey(f, ATT_KEY); e.target.value = ''; });
 
-    // Import all
+    $q('#exportAppointments').addEventListener('click', ()=> { exportCSV(load(APPT_KEY), ['name','doctor','date','time','note'], 'appointments_export.csv'); });
+    $q('#exportAttendance').addEventListener('click', ()=> { exportCSV(load(ATT_KEY), ['id','name','status','time','note','dateKey'], 'attendance_export.csv'); });
+    $q('#exportAllBtn').addEventListener('click', ()=> { $q('#exportAppointments').click(); $q('#exportAttendance').click(); });
+
     $q('#importAllBtn').addEventListener('click', ()=> $q('#importAllFile').click());
-    $q('#importAllFile').addEventListener('change', function(e){ const f = e.target.files[0]; if(!f) return; importCSVFile(f, APPT_KEY); importCSVFile(f, ATT_KEY); e.target.value=''; });
+    $q('#importAllFile').addEventListener('change', function(e){ const f = e.target.files[0]; if(!f) return; importCSVFileToKey(f, APPT_KEY); importCSVFileToKey(f, ATT_KEY); e.target.value=''; });
 
-    // Export all
-    $q('#exportAllBtn').addEventListener('click', ()=> {
-      const a = load(APPT_KEY), b = load(ATT_KEY);
-      exportCSV(a, ['name','doctor','date','time','note'], 'appointments_export.csv');
-      exportCSV(b, ['id','name','status','time','note','dateKey'], 'attendance_export.csv');
-      toast('Exported both datasets');
-    });
-
-    // Theme toggle
-    $q('#themeToggle').addEventListener('click', ()=> {
-      document.documentElement.style.setProperty('--accent1', document.documentElement.style.getPropertyValue('--accent1') === '#06b6d4' ? '#3b82f6' : '#06b6d4');
-      document.documentElement.style.setProperty('--accent2', document.documentElement.style.getPropertyValue('--accent2') === '#a78bfa' ? '#60a5fa' : '#a78bfa');
-      toast('Accent toggled');
-    });
+    // Small confetti and toast helpers
+    function toast(text){
+      const t = document.createElement('div'); t.className='toast'; t.textContent=text; t.style.background='linear-gradient(90deg,var(--accent1),var(--accent2))'; document.body.appendChild(t);
+      setTimeout(()=> t.style.opacity='0',2000); setTimeout(()=> t.remove(),2700);
+    }
+    function burst(){ for(let i=0;i<12;i++){ const p=document.createElement('div'); p.className='confetti'; p.style.left=(20+Math.random()*60)+'%'; p.style.top=(10+Math.random()*20)+'%'; p.style.width=(6+Math.random()*8)+'px'; p.style.height=(8+Math.random()*8)+'px'; p.style.background=['#06b6d4','#a78bfa','#34d399','#f472b6'][Math.floor(Math.random()*4)]; document.body.appendChild(p); const dx=(Math.random()*800-400), dy=(200+Math.random()*400); p.animate([{transform:'translate(0,0) rotate(0deg)',opacity:1},{transform:'translate('+dx+'px,'+dy+'px) rotate('+ (Math.random()*720) +'deg)',opacity:0}],{duration:900+Math.random()*800,easing:'cubic-bezier(.12,.8,.2,1)'}); setTimeout(()=>p.remove(),1800); } }
 
     // Add sample appointment
     $q('#addSampleAppt').addEventListener('click', ()=> {
       const arr = load(APPT_KEY);
       const d = new Date();
       const dt = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-      arr.push({ name: 'Sample Patient '+(arr.length+1), doctor: (load(DOC_KEY)[arr.length%4]||{name:'Dr. Ayesha Singh'}).name, date: dt, time: `${pad(d.getHours())}:00`, note:'Auto sample' });
+      arr.push({ id:'A' + Date.now(), name: 'Sample Patient '+(arr.length+1), doctor: (loadLocalDoctors()[arr.length%4]||{name:'Dr. Ayesha Singh'}).name, date: dt, time: `${pad(d.getHours())}:00`, note:'Auto sample' });
       save(APPT_KEY, arr);
-      renderAll(); toast('Sample appointment added'); burst();
+      renderAppointments('');
+      toast('Sample appointment added');
+      burst();
     });
 
-    // Small confetti
-    function burst(){ for(let i=0;i<12;i++){ const p=document.createElement('div'); p.className='confetti'; p.style.left=(20+Math.random()*60)+'%'; p.style.top=(10+Math.random()*20)+'%'; p.style.width=(6+Math.random()*8)+'px'; p.style.height=(8+Math.random()*8)+'px'; p.style.background=['#06b6d4','#a78bfa','#34d399','#f472b6'][Math.floor(Math.random()*4)]; document.body.appendChild(p); const dx=(Math.random()*800-400), dy=(200+Math.random()*400); p.animate([{transform:'translate(0,0) rotate(0deg)',opacity:1},{transform:'translate('+dx+'px,'+dy+'px) rotate('+ (Math.random()*720) +'deg)',opacity:0}],{duration:900+Math.random()*800,easing:'cubic-bezier(.12,.8,.2,1)'}); setTimeout(()=>p.remove(),1800); } }
-
-    // Clock
-    setInterval(()=> { $q('#nowClock').textContent = new Date().toLocaleTimeString(); }, 1000);
-
-    // Wire deletion from appt table events delegated earlier (click handler)
-    // Also wire table search
-    $q('#apptSearch').addEventListener('keydown', (e)=> { if(e.key==='Escape') { e.target.value=''; renderAppointments(); } });
-
-    // storage listener
-    window.addEventListener('storage', (e)=> {
-      if(e.key === APPT_KEY || e.key === ATT_KEY || e.key === DOC_KEY) renderAll();
+    // Toggle accent
+    $q('#themeToggle').addEventListener('click', ()=> {
+      const cur1 = getComputedStyle(document.documentElement).getPropertyValue('--accent1').trim();
+      document.documentElement.style.setProperty('--accent1', cur1 === '#06b6d4' ? '#3b82f6' : '#06b6d4');
+      const cur2 = getComputedStyle(document.documentElement).getPropertyValue('--accent2').trim();
+      document.documentElement.style.setProperty('--accent2', cur2 === '#a78bfa' ? '#60a5fa' : '#a78bfa');
+      toast('Accent toggled');
     });
+
+    // Search handlers
+    $q('#apptSearch').addEventListener('input', ()=> renderAppointments($q('#apptSearch').value || ''));
+    $q('#attSearch').addEventListener('input', ()=> renderAttendance($q('#attSearch').value || ''));
+
+    // Open appointments page
+    $q('#openAppointments').addEventListener('click', ()=> location.href = 'appointment.html');
+
+    // Render all and KPIs
+    function computeKPIs(){
+      const doctorsSet = new Set();
+      const appts = load(APPT_KEY);
+      appts.forEach(a => { if(a.doctor) doctorsSet.add(a.doctor); });
+      const atts = load(ATT_KEY);
+      const totalDoctors = Math.max(doctorsSet.size, loadLocalDoctors().length);
+      const totalAppts = appts.length;
+      const today = todayKey();
+      const todayAtt = atts.filter(r => (r.dateKey || (r.time && r.time.slice(0,10))) === today);
+      const present = todayAtt.filter(r => r.status === 'Present').length;
+      const percent = todayAtt.length ? Math.round((present / todayAtt.length) * 100) : 0;
+      $q('#k_doctors').textContent = totalDoctors;
+      $q('#k_appointments').textContent = totalAppts;
+      $q('#k_present').textContent = present;
+      $q('#k_percent').textContent = percent + '%';
+    }
 
     function renderAll(){
       renderDoctors();
       renderAppointments($q('#apptSearch').value || '');
       renderAttendance($q('#attSearch').value || '');
+      computeKPIs();
       $q('#lastUpdate').textContent = 'Updated ' + new Date().toLocaleString();
     }
 
-    // initial render
-    renderAll();
+    // Storage listener
+    window.addEventListener('storage', (e)=> {
+      if(e.key === APPT_KEY || e.key === ATT_KEY || e.key === DOC_KEY) renderAll();
+    });
 
-    // delegates for doc/appointment delete/edit are already attached via body click listener above
-
-    // Try to add a Firestore onSnapshot listener to keep the doctors table up-to-date (optional)
-    (async function tryRealtimeDoctors(){
-      if(!F.available) return;
+    // init
+    (function init(){
+      // ensure migration of ids
+      ensureIdsForAppointments();
+      ensureIdsForLocalDoctors();
+      renderAll();
+      // clock
+      setInterval(()=> { $q('#nowClock').textContent = new Date().toLocaleTimeString(); }, 1000);
+      // try to install realtime listener for doctors if Firestore available
       try {
-        // if onSnapshot available, attach it
-        if(F.onSnapshot && F.collection && F.query && F.orderBy) {
+        if(F.available && F.onSnapshot && F.collection && F.orderBy){
           const q = F.query(F.collection(F.db, 'doctors'), F.orderBy('name'));
-          F.onSnapshot(q, (snap) => {
-            // re-render from Firestore + local fallback
-            renderDoctors();
-          });
+          F.onSnapshot(q, snap => { renderDoctors(); });
         }
-      } catch(err){
-        console.warn('onSnapshot not attached or failed:', err);
-      }
+      } catch(e){ console.warn('onSnapshot attach failed', e); }
     })();
 
-    // Expose some functions for debugging
-    window.__admin_renderAll = renderAll;
-    window.__admin_renderDoctors = renderDoctors;
-    window.__admin_renderAppointments = renderAppointments;
+    // small helpers used earlier, ensure present in this scope
+    function ensureIdsForAppointments(){
+      const arr = load(APPT_KEY);
+      let changed = false;
+      for(let i=0;i<arr.length;i++){
+        if(!arr[i].id){
+          arr[i].id = 'A' + Date.now() + Math.floor(Math.random()*10000) + '_' + i;
+          changed = true;
+        }
+      }
+      if(changed) save(APPT_KEY, arr);
+    }
+    function ensureIdsForLocalDoctors(){
+      const arr = load(DOC_KEY);
+      let changed = false;
+      for(let i=0;i<arr.length;i++){
+        if(!arr[i].id){
+          arr[i].id = 'D' + Date.now() + Math.floor(Math.random()*10000) + '_' + i;
+          changed = true;
+        }
+      }
+      if(changed) save(DOC_KEY, arr);
+    }
 
-    // safety: make sure doctors table clickable after initial render
-    setTimeout(()=> renderDoctors(), 600);
+    // Expose renderAll for debugging
+    window.__admin_renderAll = renderAll;
+
+    // small escape helpers
+    function escapeHTML(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function escapeHTMLAttr(s){ return String(s||'').replace(/"/g,'&quot;').replace(/'/g,"&#39;"); }
+
   })();
   </script>
 </body>
