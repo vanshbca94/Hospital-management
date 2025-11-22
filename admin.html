@@ -220,8 +220,17 @@
           </div>
 
           <div style="margin-top:14px">
-            <strong class="small-muted">Quick preview</strong>
-            <p class="small-muted" style="margin-top:8px">Click a row action to edit or delete items. Use Export to download CSVs.</p>
+            <strong class="small-muted">Manage Doctors</strong>
+            <p class="small-muted" style="margin-top:8px">You can remove doctors here (Firestore + LocalStorage aware).</p>
+            <div style="margin-top:10px">
+              <div style="display:flex;gap:8px;margin-bottom:8px">
+                <input id="newDocName" class="input" placeholder="Doctor full name" style="padding:8px;border-radius:8px;border:none;background:rgba(255,255,255,0.03);color:#fff"/>
+                <button id="addLocalDoctor" class="btn ghost">Add</button>
+              </div>
+              <div class="table-wrap" style="max-height:220px;overflow:auto">
+                <table id="doctorsTable"><thead><tr><th>Name</th><th>Source</th><th>Action</th></tr></thead><tbody></tbody></table>
+              </div>
+            </div>
           </div>
         </aside>
       </div>
@@ -243,132 +252,265 @@
 
   <div id="toastWrap"></div>
 
+  <!-- Firebase optional module. If you don't want Firestore, this will silently fail and the page will use LocalStorage -->
+  <script type="module">
+    // Initialize Firestore if possible. Errors are caught and page falls back to LocalStorage.
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      deleteDoc,
+      doc,
+      addDoc,
+      onSnapshot,
+      query,
+      orderBy
+    } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB1F-08xqgsdTR9oGmNqtFzlBJNv86UVpM",
+      authDomain: "hospital-management-5cb17.firebaseapp.com",
+      projectId: "hospital-management-5cb17",
+      storageBucket: "hospital-management-5cb17.firebasestorage.app",
+      messagingSenderId: "1077408582965",
+      appId: "1:1077408582965:web:21668368b4793cf98f107c",
+      measurementId: "G-JEY8DE5FC9"
+    };
+
+    let firestoreAvailable = false;
+    let db = null;
+    try {
+      const app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+      firestoreAvailable = true;
+      console.log("Firestore init OK");
+    } catch (err) {
+      console.warn("Firestore init failed, falling back to LocalStorage:", err);
+      firestoreAvailable = false;
+    }
+
+    // Expose Firestore helpers to main script via window object
+    window.__hms_firestore = {
+      available: firestoreAvailable,
+      db,
+      collection,
+      getDocs,
+      deleteDoc,
+      doc,
+      addDoc,
+      onSnapshot,
+      query,
+      orderBy
+    };
+  </script>
+
   <script>
   (function(){
-    var apptKey = 'appointments';
-    var attKey = 'hms_attendance_v1';
+    // Keys
+    const APPT_KEY = 'appointments';
+    const ATT_KEY = 'hms_attendance_v1';
+    const DOC_KEY = 'doctors'; // local fallback
 
-    function $q(s){return document.querySelector(s)}
-    function $qa(s){return Array.from(document.querySelectorAll(s))}
-    function now(){return new Date()}
-    function fmt(d){var p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds())}
-    function todayKey(d){d=d||new Date(); var p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())}
+    // Helpers
+    const $q = s => document.querySelector(s);
+    const $qa = s => Array.from(document.querySelectorAll(s));
+    const now = () => new Date();
+    const pad = n => String(n).padStart(2,'0');
+    const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    const todayKey = d => {
+      d = d || new Date();
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    };
 
-    function load(key){try{return JSON.parse(localStorage.getItem(key)||'[]')}catch(e){return []}}
-    function save(key,arr){localStorage.setItem(key,JSON.stringify(arr))}
+    function load(key){ try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch(e){ return []; } }
+    function save(key, arr){ localStorage.setItem(key, JSON.stringify(arr)); }
 
-    function toast(text){
-      var t=document.createElement('div');t.className='toast';t.textContent=text;
-      t.style.background='linear-gradient(90deg,var(--accent1),var(--accent2))';document.body.appendChild(t);
-      setTimeout(()=>t.style.opacity='0',2000);setTimeout(()=>t.remove(),2700);
+    function toast(text, tone='') {
+      const t = document.createElement('div');
+      t.className = 'toast';
+      t.textContent = text;
+      t.style.background = 'linear-gradient(90deg,var(--accent1),var(--accent2))';
+      document.body.appendChild(t);
+      setTimeout(()=> t.style.opacity = '0', 2000);
+      setTimeout(()=> t.remove(), 2700);
     }
 
-    function burst(){
-      for(var i=0;i<20;i++){
-        var p=document.createElement('div');p.className='confetti';
-        p.style.left=(20+Math.random()*60)+'%';p.style.top=(10+Math.random()*20)+'%';
-        p.style.width=(6+Math.random()*8)+'px';p.style.height=(8+Math.random()*8)+'px';
-        p.style.background=['#06b6d4','#a78bfa','#34d399','#f472b6'][Math.floor(Math.random()*4)];
-        document.body.appendChild(p);
-        var dx=(Math.random()*800-400),dy=(200+Math.random()*400);
-        p.animate([{transform:'translate(0,0) rotate(0deg)',opacity:1},{transform:'translate('+dx+'px,'+dy+'px) rotate('+ (Math.random()*720) +'deg)',opacity:0}],{duration:900+Math.random()*800,easing:'cubic-bezier(.12,.8,.2,1)'});
-        setTimeout(()=>p.remove(),1800);
+    function confirmModal(title, body, cb) {
+      $q('#modalTitle').textContent = title;
+      $q('#modalBody').textContent = body;
+      const modal = $q('#modal');
+      modal.classList.add('show'); modal.setAttribute('aria-hidden','false');
+      const ok = $q('#modalOk'), cancel = $q('#modalCancel');
+      function done() { modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); ok.removeEventListener('click', onOk); cancel.removeEventListener('click', onCancel); }
+      function onOk(){ done(); cb(true); }
+      function onCancel(){ done(); cb(false); }
+      ok.addEventListener('click', onOk);
+      cancel.addEventListener('click', onCancel);
+    }
+
+    // Firestore helpers (if available)
+    const F = window.__hms_firestore || { available:false };
+
+    async function fetchDoctorsFromFirestore() {
+      if(!F.available) throw new Error('Firestore not available');
+      try {
+        const q = F.query(F.collection(F.db, 'doctors'), F.orderBy ? F.orderBy('name') : undefined);
+        const snap = await F.getDocs ? F.getDocs(q) : await F.getDocs(F.collection(F.db, 'doctors'));
+        const out = [];
+        snap.forEach(d => {
+          const data = d.data();
+          out.push({
+            id: d.id,
+            name: data.name || data.displayName || ('Doctor '+d.id),
+            specialty: data.specialty || '',
+            status: data.status || '',
+            source: 'fire'
+          });
+        });
+        return out;
+      } catch(err) {
+        console.warn('Firestore fetch doctors error:', err);
+        throw err;
       }
     }
 
-    function parseDate(v){if(!v) return null; var d=new Date(v); if(isNaN(d)) d=new Date(v.replace(/-/g,'/')); return d}
-
-    function computeKPIs(){
-      var doctorsSet=new Set();
-      var appts=load(apptKey);
-      appts.forEach(a=>{ if(a.doctor) doctorsSet.add(a.doctor) });
-      var atts=load(attKey);
-      var totalDoctors=doctorsSet.size || getStaticDoctors().length;
-      var totalAppts=appts.length;
-      var today=todayKey();
-      var todayAtt=atts.filter(r=> (r.dateKey|| (r.time && r.time.slice(0,10))) === today);
-      var present=todayAtt.filter(r=>r.status==='Present').length;
-      var percent = todayAtt.length ? Math.round((present/todayAtt.length)*100) : 0;
-      $q('#k_doctors').textContent = totalDoctors;
-      $q('#k_appointments').textContent = totalAppts;
-      $q('#k_present').textContent = present;
-      $q('#k_percent').textContent = percent + '%';
-    }
-
-    function getStaticDoctors(){
-      return ['Dr. Ayesha Singh','Dr. Raj Mehta','Dr. Priya Kapoor','Dr. Vikram Sharma'];
-    }
-
-    function renderAppointments(filter){
-      var appts=load(apptKey);
-      if(filter){
-        var q=filter.toLowerCase();
-        appts=appts.filter(a=>(a.name||'').toLowerCase().includes(q)||(a.doctor||'').toLowerCase().includes(q));
+    async function deleteDoctorFromFirestore(docId) {
+      if(!F.available) throw new Error('Firestore not available');
+      try {
+        await F.deleteDoc(F.doc(F.db, 'doctors', docId));
+        return true;
+      } catch(err) {
+        console.error('deleteDoctorFromFirestore', err);
+        throw err;
       }
-      var tbody=$q('#apptTable tbody'); tbody.innerHTML='';
-      appts.slice().reverse().forEach((a,i)=>{
-        var tr=document.createElement('tr');
-        tr.innerHTML = '<td>'+(escapeHTML(a.name)||'—')+'</td><td>'+escapeHTML(a.doctor||'—')+'</td><td>'+escapeHTML(a.date||'—')+'</td><td>'+escapeHTML(a.time||'—')+'</td><td><div class="row-actions"><button data-i="'+i+'" class="editAppt btn ghost">Edit</button><button data-i="'+i+'" class="delAppt btn ghost">Delete</button></div></td>';
+    }
+
+    // Local doctors helpers
+    function loadLocalDoctors(){ return load(DOC_KEY); }
+    function saveLocalDoctors(arr){ save(DOC_KEY, arr); }
+
+    // Render doctors table (merge Firestore + local)
+    async function renderDoctors() {
+      const tbody = $q('#doctorsTable tbody');
+      tbody.innerHTML = '';
+
+      let fireDocs = [];
+      try {
+        if(F.available) {
+          fireDocs = await fetchDoctorsFromFirestore();
+        }
+      } catch(e){ fireDocs = []; }
+
+      const localDocs = loadLocalDoctors().map(d => ({ ...d, source:'local' }));
+
+      // Merge: fireDocs first then local
+      const combined = [...fireDocs, ...localDocs];
+
+      if(combined.length === 0) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td colspan="3" class="small-muted">No doctors found (Firestore/local).</td>';
+        tbody.appendChild(tr);
+        $q('#k_doctors').textContent = 0;
+        return;
+      }
+
+      combined.forEach(doc => {
+        const tr = document.createElement('tr');
+        const sourceLabel = doc.source === 'fire' ? 'Firestore' : 'Local';
+        const idAttr = doc.source === 'fire' ? `data-fire-id="${doc.id}"` : '';
+        tr.setAttribute('data-source', doc.source);
+        tr.innerHTML = `<td>${escapeHTML(doc.name)}${doc.specialty ? (' — ' + escapeHTML(doc.specialty)) : ''}</td>
+                        <td>${sourceLabel}</td>
+                        <td><div class="row-actions">
+                          <button class="btn ghost delDoc" ${idAttr} data-name="${escapeHTMLAttr(doc.name)}">Delete</button>
+                        </div></td>`;
         tbody.appendChild(tr);
       });
+
+      $q('#k_doctors').textContent = combined.length;
+    }
+
+    function escapeHTML(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function escapeHTMLAttr(s){ return String(s||'').replace(/"/g,'&quot;').replace(/'/g,"&#39;"); }
+
+    // Appointments render (localStorage) - similar to previous admin
+    function renderAppointments(filter){
+      const appts = load(APPT_KEY);
+      const f = (filter || '').toLowerCase();
+      const tbody = $q('#apptTable tbody');
+      tbody.innerHTML = '';
+      appts.slice().reverse().forEach((a, idx) => {
+        const tr = document.createElement('tr');
+        const i = idx;
+        tr.innerHTML = `<td>${escapeHTML(a.name||'—')}</td>
+                        <td>${escapeHTML(a.doctor||'—')}</td>
+                        <td>${escapeHTML(a.date||'—')}</td>
+                        <td>${escapeHTML(a.time||'—')}</td>
+                        <td><div class="row-actions">
+                          <button data-i="${i}" class="editAppt btn ghost">Edit</button>
+                          <button data-i="${i}" class="delAppt btn ghost">Delete</button>
+                        </div></td>`;
+        tbody.appendChild(tr);
+      });
+      $q('#k_appointments').textContent = appts.length;
       chartAppointments();
     }
 
+    // Attendance render and chart reuse from earlier admin code
     function renderAttendance(filter){
-      var atts=load(attKey);
-      if(filter){
-        var q=filter.toLowerCase();
-        atts=atts.filter(a=>(a.name||'').toLowerCase().includes(q)||(a.note||'').toLowerCase().includes(q));
-      }
-      var tbody=$q('#attTable tbody'); tbody.innerHTML='';
-      atts.slice().reverse().forEach((a,i)=>{
-        var tr=document.createElement('tr');
-        var statusBadge = a.status==='Present' ? '<span style="color:#22c55e;font-weight:700">Present</span>' : '<span style="color:#ef4444;font-weight:700">Absent</span>';
-        tr.innerHTML = '<td>'+(escapeHTML(a.name)||'—')+'</td><td>'+statusBadge+'</td><td>'+escapeHTML(a.note||'—')+'</td><td>'+escapeHTML(a.time||'—')+'</td><td><div class="row-actions"><button data-i="'+i+'" class="delAtt btn ghost">Delete</button></div></td>';
+      const atts = load(ATT_KEY);
+      const f = (filter || '').toLowerCase();
+      const tbody = $q('#attTable tbody');
+      tbody.innerHTML = '';
+      atts.slice().reverse().forEach((a, idx) => {
+        const statusBadge = a.status==='Present' ? '<span style="color:#22c55e;font-weight:700">Present</span>' : '<span style="color:#ef4444;font-weight:700">Absent</span>';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${escapeHTML(a.name||'—')}</td><td>${statusBadge}</td><td>${escapeHTML(a.note||'—')}</td><td>${escapeHTML(a.time||'—')}</td>
+                        <td><div class="row-actions"><button data-i="${idx}" class="delAtt btn ghost">Delete</button></div></td>`;
         tbody.appendChild(tr);
       });
       chartAttendance();
     }
 
-    function escapeHTML(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
-
+    // Charts
     function chartAttendance(){
-      var ctx=$q('#donutChart').getContext('2d');
-      var atts=load(attKey);
-      var today=todayKey();
-      var todayAtt=atts.filter(r=> (r.dateKey|| (r.time && r.time.slice(0,10))) === today);
-      var present = todayAtt.filter(r=>r.status==='Present').length;
-      var absent = todayAtt.filter(r=>r.status==='Absent').length;
-      var w=$q('#donutChart').width, h=$q('#donutChart').height;
+      const ctx = $q('#donutChart').getContext('2d');
+      const atts = load(ATT_KEY);
+      const today = todayKey();
+      const todayAtt = atts.filter(r => (r.dateKey || (r.time && r.time.slice(0,10))) === today);
+      const present = todayAtt.filter(r => r.status === 'Present').length;
+      const absent = todayAtt.filter(r => r.status === 'Absent').length;
+      const w = $q('#donutChart').width, h = $q('#donutChart').height;
       ctx.clearRect(0,0,w,h);
-      var total = present+absent || 1;
-      var start = -Math.PI/2;
-      var presentAngle = (present/total)*Math.PI*2;
-      ctx.lineWidth=20;
-      ctx.beginPath(); ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.arc(w/2,h/2,Math.min(w,h)/2 - 22,0,Math.PI*2); ctx.stroke();
-      var g=ctx.createLinearGradient(0,0,w,h); g.addColorStop(0,'#06b6d4'); g.addColorStop(1,'#a78bfa');
-      ctx.beginPath(); ctx.strokeStyle=g; ctx.arc(w/2,h/2,Math.min(w,h)/2 - 22, start, start + presentAngle); ctx.stroke();
-      ctx.fillStyle='#e6eef8'; ctx.font='700 18px Inter, sans-serif'; ctx.textAlign='center'; ctx.fillText(present, w/2, h/2-2);
-      ctx.fillStyle='rgba(255,255,255,0.65)'; ctx.font='400 12px Inter, sans-serif'; ctx.fillText('Present', w/2, h/2+16);
+      const total = present + absent || 1;
+      const start = -Math.PI/2;
+      const presentAngle = (present/total) * Math.PI*2;
+      ctx.lineWidth = 20;
+      ctx.beginPath(); ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.arc(w/2, h/2, Math.min(w,h)/2 - 22, 0, Math.PI*2); ctx.stroke();
+      const g = ctx.createLinearGradient(0,0,w,h); g.addColorStop(0,'#06b6d4'); g.addColorStop(1,'#a78bfa');
+      ctx.beginPath(); ctx.strokeStyle = g; ctx.arc(w/2,h/2, Math.min(w,h)/2 - 22, start, start + presentAngle); ctx.stroke();
+      ctx.fillStyle = '#e6eef8'; ctx.font = '700 18px Inter, sans-serif'; ctx.textAlign = 'center'; ctx.fillText(present, w/2, h/2 - 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.65)'; ctx.font = '400 12px Inter, sans-serif'; ctx.fillText('Present', w/2, h/2 + 16);
     }
 
     function chartAppointments(){
-      var ctx=$q('#barChart').getContext('2d');
-      var appts=load(apptKey);
-      var counts={};
-      appts.forEach(a=>{ counts[a.doctor]=(counts[a.doctor]||0)+1 });
-      var doctors = Object.keys(counts).length ? Object.keys(counts) : getStaticDoctors();
-      var values = doctors.map(d=>counts[d]||0);
-      var w=$q('#barChart').width, h=$q('#barChart').height;
+      const ctx = $q('#barChart').getContext('2d');
+      const appts = load(APPT_KEY);
+      const counts = {};
+      appts.forEach(a => { counts[a.doctor] = (counts[a.doctor] || 0) + 1; });
+      const doctors = Object.keys(counts).length ? Object.keys(counts) : (load(DOC_KEY).map(d=>d.name).length ? load(DOC_KEY).map(d=>d.name) : ['Dr. Ayesha Singh','Dr. Raj Mehta','Dr. Priya Kapoor','Dr. Vikram Sharma']);
+      const values = doctors.map(d => counts[d] || 0);
+      const w = $q('#barChart').width, h = $q('#barChart').height;
       ctx.clearRect(0,0,w,h);
-      var max = Math.max(1, ...values);
-      var pad=40, barW = (w - pad*2) / doctors.length * 0.6;
+      const max = Math.max(1, ...values);
+      const pad = 40, barW = (w - pad*2) / doctors.length * 0.6;
       doctors.forEach(function(d,i){
-        var x = pad + i*((w-pad*2)/doctors.length) + ((w-pad*2)/doctors.length - barW)/2;
-        var bh = (values[i]/max) * (h - 80);
+        const x = pad + i*((w-pad*2)/doctors.length) + ((w-pad*2)/doctors.length - barW)/2;
+        const bh = (values[i]/max) * (h - 80);
         ctx.fillStyle = 'rgba(255,255,255,0.07)';
         ctx.fillRect(x, h-40-bh, barW, bh);
-        var g=ctx.createLinearGradient(0,0,w,h); g.addColorStop(0,'#06b6d4'); g.addColorStop(1,'#a78bfa');
+        const g = ctx.createLinearGradient(0,0,w,h); g.addColorStop(0,'#06b6d4'); g.addColorStop(1,'#a78bfa');
         ctx.fillStyle = g;
         ctx.fillRect(x, h-40-bh, barW, bh*0.95);
         ctx.fillStyle='rgba(255,255,255,0.9)'; ctx.font='700 12px Inter, sans-serif'; ctx.textAlign='center';
@@ -378,149 +520,278 @@
       });
     }
 
-    function exportCSV(data, headers, filename){
-      var q=[headers.join(',')];
-      data.forEach(r=>{ q.push(headers.map(h=>'\"'+String(r[h]||'').replace(/"/g,'""')+'\"').join(',')) });
-      var blob=new Blob([q.join('\n')],{type:'text/csv'}); var url=URL.createObjectURL(blob);
-      var a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    // CRUD actions
+    function deleteLocalDoctorByName(name) {
+      const arr = load(DOC_KEY);
+      const filtered = arr.filter(d => d.name !== name);
+      save(DOC_KEY, filtered);
     }
 
-    function importCSVFile(file, key){
-      var r=new FileReader();
-      r.onload=function(e){
-        try{
-          var text=e.target.result; var lines=text.split(/\r?\n/).filter(Boolean); var header = lines.shift().split(',').map(h=>h.replace(/"/g,'').trim());
-          var arr = load(key);
-          lines.forEach(function(line){
-            var cols=line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
-            var obj={};
-            header.forEach((h,i)=> obj[h]= (cols[i]||'').replace(/^"|"$/g,''));
-            if(key===apptKey){
-              arr.push({name:obj.name||'Unknown', doctor: obj.doctor||'', date: obj.date||'', time: obj.time||'', note: obj.note||''});
-            } else {
-              arr.push({id: obj.id || ('I'+Date.now()), name: obj.name || 'Unknown', status: obj.status || 'Present', time: obj.time || fmt(new Date()), note: obj.note || '', dateKey: obj.dateKey || todayKey()});
-            }
-          });
-          save(key,arr); renderAll(); toast('Import done');
-        }catch(e){ toast('Import failed') }
-      }; r.readAsText(file);
+    async function deleteDoctorHandler(button) {
+      const source = button.closest('tr').getAttribute('data-source');
+      const name = button.getAttribute('data-name');
+      if(source === 'fire') {
+        const fireId = button.getAttribute('data-fire-id');
+        confirmModal('Delete doctor', `Delete ${name} from Firestore? This is permanent.`, async (ok) => {
+          if(!ok) return;
+          try {
+            await deleteDoctorFromFirestore(fireId);
+            toast('Doctor deleted from Firestore');
+            await renderDoctors();
+          } catch(err) {
+            toast('Failed to delete doctor (Firestore)');
+            console.error(err);
+          }
+        });
+      } else {
+        confirmModal('Delete doctor', `Remove ${name} from local doctors?`, (ok) => {
+          if(!ok) return;
+          deleteLocalDoctorByName(name);
+          renderDoctors();
+          toast('Doctor removed (local)');
+        });
+      }
     }
 
-    function confirmModal(title, body, cb){
-      $q('#modalTitle').textContent=title; $q('#modalBody').textContent=body;
-      $q('#modal').classList.add('show'); $q('#modal').setAttribute('aria-hidden','false');
-      var ok = $q('#modalOk'), cancel=$q('#modalCancel');
-      function done(){ $q('#modal').classList.remove('show'); $q('#modal').setAttribute('aria-hidden','true'); ok.removeEventListener('click',onOk); cancel.removeEventListener('click',onCancel) }
-      function onOk(){ done(); cb(true) }
-      function onCancel(){ done(); cb(false) }
-      ok.addEventListener('click', onOk); cancel.addEventListener('click', onCancel);
+    // Appointment deletion - supports localStorage and tries Firestore if appointment has firestoreId
+    async function deleteAppointmentHandler(indexFromReverse) {
+      const arr = load(APPT_KEY);
+      // arr displayed in reverse, so compute actual index
+      const actualIndex = arr.length - 1 - Number(indexFromReverse);
+      const appt = arr[actualIndex];
+      confirmModal('Delete appointment', `Delete appointment for ${appt.name} with ${appt.doctor}?`, async (ok) => {
+        if(!ok) return;
+        // If appointment has firestoreId, try to delete
+        if(appt.firestoreId && F.available) {
+          try {
+            await F.deleteDoc(F.doc(F.db, 'appointments', appt.firestoreId));
+            toast('Deleted from Firestore');
+          } catch(err) {
+            console.warn('Failed to delete appointment from Firestore', err);
+          }
+        }
+        arr.splice(actualIndex,1);
+        save(APPT_KEY, arr);
+        renderAppointments();
+        toast('Appointment deleted');
+      });
     }
 
-    function renderAll(){
-      computeKPIs(); renderAppointments($q('#apptSearch').value||''); renderAttendance($q('#attSearch').value||'');
-      $q('#lastUpdate').textContent = 'Updated ' + new Date().toLocaleString();
-    }
+    // Event wiring
+    document.body.addEventListener('click', async (e) => {
+      // Delete doctor
+      if(e.target.matches('.delDoc')) {
+        await deleteDoctorHandler(e.target);
+      }
 
-    $q('#refreshBtn').addEventListener('click', function(){ renderAll(); toast('Refreshed') });
+      // Delete appointment
+      if(e.target.matches('.delAppt')) {
+        const idx = e.target.getAttribute('data-i');
+        await deleteAppointmentHandler(idx);
+      }
+
+      // Edit appointment
+      if(e.target.matches('.editAppt')) {
+        const idx = Number(e.target.getAttribute('data-i'));
+        const actualIndex = load(APPT_KEY).length - 1 - idx;
+        const arr = load(APPT_KEY);
+        const appt = arr[actualIndex];
+        const newName = prompt('Patient name', appt.name || '');
+        if(newName === null) return;
+        appt.name = newName;
+        arr[actualIndex] = appt;
+        save(APPT_KEY, arr);
+        renderAppointments();
+        toast('Appointment updated');
+      }
+
+      // Delete attendance
+      if(e.target.matches('.delAtt')) {
+        const idx = Number(e.target.getAttribute('data-i'));
+        const arr = load(ATT_KEY);
+        const actualIndex = arr.length - 1 - idx;
+        confirmModal('Delete attendance','Delete this attendance record?', function(ok){
+          if(ok){ arr.splice(actualIndex,1); save(ATT_KEY,arr); renderAttendance(); toast('Deleted') }
+        });
+      }
+    });
+
+    // UI controls wiring
+    $q('#refreshBtn').addEventListener('click', () => { renderAll(); toast('Refreshed') });
     $q('#apptSearch').addEventListener('input', function(){ renderAppointments(this.value) });
     $q('#attSearch').addEventListener('input', function(){ renderAttendance(this.value) });
+    $q('#openAppointments').addEventListener('click', () => { location.href = 'appointment.html' });
 
-    $q('#openAppointments').addEventListener('click', function(){ location.href='appointment.html' });
-
-    $q('#exportAppointments').addEventListener('click', function(){
-      var arr=load(apptKey); exportCSV(arr,['name','doctor','date','time','note'],'appointments_export.csv')
+    $q('#exportAppointments').addEventListener('click', () => {
+      const arr = load(APPT_KEY);
+      exportCSV(arr, ['name','doctor','date','time','note'], 'appointments_export.csv');
     });
-    $q('#exportAttendance').addEventListener('click', function(){
-      var arr=load(attKey); exportCSV(arr,['id','name','status','time','note','dateKey'],'attendance_export.csv')
+    $q('#exportAttendance').addEventListener('click', () => {
+      const arr = load(ATT_KEY);
+      exportCSV(arr, ['id','name','status','time','note','dateKey'], 'attendance_export.csv');
     });
 
-    $q('#importAppointmentsBtn').addEventListener('click', function(){ $q('#importAppointmentsFile').click() });
-    $q('#importAppointmentsFile').addEventListener('change', function(e){ var f=e.target.files[0]; if(f) importCSVFile(f, apptKey); e.target.value=''; });
+    // Add local doctor
+    $q('#addLocalDoctor').addEventListener('click', () => {
+      const name = $q('#newDocName').value.trim();
+      if(!name){ toast('Enter doctor name'); return; }
+      const arr = load(DOC_KEY);
+      arr.push({ name, specialty:'', status:'available' });
+      save(DOC_KEY, arr);
+      $q('#newDocName').value = '';
+      renderDoctors();
+      toast('Doctor added locally');
+    });
 
-    $q('#importAttendanceBtn').addEventListener('click', function(){ $q('#importAttendanceFile').click() });
-    $q('#importAttendanceFile').addEventListener('change', function(e){ var f=e.target.files[0]; if(f) importCSVFile(f, attKey); e.target.value=''; });
-
-    $q('#clearAppointments').addEventListener('click', function(){
+    // Clear buttons
+    $q('#clearAppointments').addEventListener('click', ()=> {
       confirmModal('Clear appointments','Delete all appointments permanently?', function(ok){
-        if(ok){ save(apptKey,[]); renderAll(); toast('Appointments cleared') }
+        if(ok){ save(APPT_KEY, []); renderAll(); toast('Appointments cleared'); }
       });
     });
-    $q('#clearAttendance').addEventListener('click', function(){
+    $q('#clearAttendance').addEventListener('click', ()=> {
       confirmModal('Clear attendance','Delete all attendance permanently?', function(ok){
-        if(ok){ save(attKey,[]); renderAll(); toast('Attendance cleared') }
+        if(ok){ save(ATT_KEY, []); renderAll(); toast('Attendance cleared'); }
+      });
+    });
+    $q('#clearAllBtn').addEventListener('click', ()=> {
+      confirmModal('Clear all data','This will clear appointments and attendance and local doctors. Continue?', function(ok){
+        if(ok){
+          save(APPT_KEY, []); save(ATT_KEY, []); save(DOC_KEY, []);
+          renderAll(); toast('All storage cleared');
+        }
       });
     });
 
-    $q('#exportAllBtn').addEventListener('click', function(){
-      var a=load(apptKey), b=load(attKey);
-      exportCSV(a,['name','doctor','date','time','note'],'appointments_export.csv');
-      exportCSV(b,['id','name','status','time','note','dateKey'],'attendance_export.csv');
-    });
-
-    $q('#importAllBtn').addEventListener('click', function(){ $q('#importAllFile').click() });
-    $q('#importAllFile').addEventListener('change', function(e){
-      var f=e.target.files[0]; if(!f) return; importCSVFile(f, apptKey); importCSVFile(f, attKey); e.target.value='';
-    });
-
-    $q('#clearAllBtn').addEventListener('click', function(){
-      confirmModal('Clear all data','This will clear appointments and attendance. Continue?', function(ok){
-        if(ok){ save(apptKey,[]); save(attKey,[]); renderAll(); toast('All storage cleared') }
+    // CSV helpers
+    function exportCSV(data, headers, filename) {
+      const rows = [ headers.join(',') ];
+      data.forEach(r => {
+        rows.push(headers.map(h => `"${String(r[h]||'').replace(/"/g,'""')}"`).join(','));
       });
+      const blob = new Blob([rows.join('\n')], { type:'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    // Import handler (simple)
+    function importCSVFile(file, key) {
+      const r = new FileReader();
+      r.onload = (e) => {
+        try {
+          const text = e.target.result;
+          const lines = text.split(/\r?\n/).filter(Boolean);
+          const header = lines.shift().split(',').map(h => h.replace(/"/g,'').trim());
+          const arr = load(key);
+          lines.forEach(line => {
+            const cols = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
+            const obj = {};
+            header.forEach((h,i) => obj[h] = (cols[i]||'').replace(/^"|"$/g,''));
+            if(key === APPT_KEY) {
+              arr.push({ name: obj.name||'Unknown', doctor: obj.doctor||'', date: obj.date||'', time: obj.time||'', note: obj.note||'' });
+            } else {
+              arr.push({ id: obj.id || ('I'+Date.now()), name: obj.name || 'Unknown', status: obj.status || 'Present', time: obj.time || fmt(new Date()), note: obj.note || '', dateKey: obj.dateKey || todayKey() });
+            }
+          });
+          save(key, arr);
+          renderAll();
+          toast('Import completed');
+        } catch(err) {
+          console.error(err);
+          toast('Import failed');
+        }
+      };
+      r.readAsText(file);
+    }
+
+    // Import buttons
+    $q('#importAppointmentsBtn').addEventListener('click', ()=> $q('#importAppointmentsFile').click());
+    $q('#importAppointmentsFile').addEventListener('change', function(e){ const f = e.target.files[0]; if(f) importCSVFile(f, APPT_KEY); e.target.value = ''; });
+
+    $q('#importAttendanceBtn').addEventListener('click', ()=> $q('#importAttendanceFile').click());
+    $q('#importAttendanceFile').addEventListener('change', function(e){ const f = e.target.files[0]; if(f) importCSVFile(f, ATT_KEY); e.target.value = ''; });
+
+    // Import all
+    $q('#importAllBtn').addEventListener('click', ()=> $q('#importAllFile').click());
+    $q('#importAllFile').addEventListener('change', function(e){ const f = e.target.files[0]; if(!f) return; importCSVFile(f, APPT_KEY); importCSVFile(f, ATT_KEY); e.target.value=''; });
+
+    // Export all
+    $q('#exportAllBtn').addEventListener('click', ()=> {
+      const a = load(APPT_KEY), b = load(ATT_KEY);
+      exportCSV(a, ['name','doctor','date','time','note'], 'appointments_export.csv');
+      exportCSV(b, ['id','name','status','time','note','dateKey'], 'attendance_export.csv');
+      toast('Exported both datasets');
     });
 
-    $q('#exportAtt').addEventListener('click', function(){
-      var a=load(attKey); exportCSV(a,['id','name','status','time','note','dateKey'],'attendance_export.csv')
-    });
-
-    $q('#addSampleAppt').addEventListener('click', function(){
-      var arr = load(apptKey);
-      var d = new Date(); var dt = (d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'));
-      arr.push({name:'Sample Patient '+(arr.length+1), doctor: getStaticDoctors()[arr.length%4], date: dt, time: String(d.getHours()).padStart(2,'0')+':00', note:'Auto sample'});
-      save(apptKey,arr); renderAll(); toast('Sample appointment added'); burst();
-    });
-
-    $q('#importAllBtn').addEventListener('click', function(){ $q('#importAllFile').click() });
-
-    $q('#exportAllBtn').addEventListener('click', function(){ $q('#exportAllBtn').click() });
-
-    $q('#themeToggle').addEventListener('click', function(){
-      document.documentElement.style.setProperty('--accent1', document.documentElement.style.getPropertyValue('--accent1') === '#06b6d4' ? '#f97316' : '#06b6d4');
-      document.documentElement.style.setProperty('--accent2', document.documentElement.style.getPropertyValue('--accent2') === '#a78bfa' ? '#fb7185' : '#a78bfa');
+    // Theme toggle
+    $q('#themeToggle').addEventListener('click', ()=> {
+      document.documentElement.style.setProperty('--accent1', document.documentElement.style.getPropertyValue('--accent1') === '#06b6d4' ? '#3b82f6' : '#06b6d4');
+      document.documentElement.style.setProperty('--accent2', document.documentElement.style.getPropertyValue('--accent2') === '#a78bfa' ? '#60a5fa' : '#a78bfa');
       toast('Accent toggled');
     });
 
-    document.body.addEventListener('click', function(e){
-      if(e.target.matches('.delAppt')) {
-        var idx = Number(e.target.getAttribute('data-i')); var arr=load(apptKey);
-        var actualIndex = arr.length-1-idx;
-        confirmModal('Delete appointment','Delete this appointment?', function(ok){ if(ok){ arr.splice(actualIndex,1); save(apptKey,arr); renderAll(); toast('Deleted') }});
-      }
-      if(e.target.matches('.editAppt')) {
-        var idx = Number(e.target.getAttribute('data-i')); var arr=load(apptKey);
-        var actualIndex = arr.length-1-idx; var a=arr[actualIndex];
-        var newName = prompt('Patient name', a.name||''); if(newName===null) return;
-        a.name=newName; arr[actualIndex]=a; save(apptKey,arr); renderAll(); toast('Updated');
-      }
-      if(e.target.matches('.delAtt')) {
-        var idx = Number(e.target.getAttribute('data-i')); var arr=load(attKey);
-        var actualIndex = arr.length-1-idx;
-        confirmModal('Delete attendance','Delete this attendance record?', function(ok){ if(ok){ arr.splice(actualIndex,1); save(attKey,arr); renderAll(); toast('Deleted') }});
-      }
+    // Add sample appointment
+    $q('#addSampleAppt').addEventListener('click', ()=> {
+      const arr = load(APPT_KEY);
+      const d = new Date();
+      const dt = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+      arr.push({ name: 'Sample Patient '+(arr.length+1), doctor: (load(DOC_KEY)[arr.length%4]||{name:'Dr. Ayesha Singh'}).name, date: dt, time: `${pad(d.getHours())}:00`, note:'Auto sample' });
+      save(APPT_KEY, arr);
+      renderAll(); toast('Sample appointment added'); burst();
     });
 
-    $q('#importAllFile').addEventListener('change', function(e){
-      var f=e.target.files[0]; if(!f) return;
-      importCSVFile(f, apptKey); importCSVFile(f, attKey); e.target.value='';
+    // Small confetti
+    function burst(){ for(let i=0;i<12;i++){ const p=document.createElement('div'); p.className='confetti'; p.style.left=(20+Math.random()*60)+'%'; p.style.top=(10+Math.random()*20)+'%'; p.style.width=(6+Math.random()*8)+'px'; p.style.height=(8+Math.random()*8)+'px'; p.style.background=['#06b6d4','#a78bfa','#34d399','#f472b6'][Math.floor(Math.random()*4)]; document.body.appendChild(p); const dx=(Math.random()*800-400), dy=(200+Math.random()*400); p.animate([{transform:'translate(0,0) rotate(0deg)',opacity:1},{transform:'translate('+dx+'px,'+dy+'px) rotate('+ (Math.random()*720) +'deg)',opacity:0}],{duration:900+Math.random()*800,easing:'cubic-bezier(.12,.8,.2,1)'}); setTimeout(()=>p.remove(),1800); } }
+
+    // Clock
+    setInterval(()=> { $q('#nowClock').textContent = new Date().toLocaleTimeString(); }, 1000);
+
+    // Wire deletion from appt table events delegated earlier (click handler)
+    // Also wire table search
+    $q('#apptSearch').addEventListener('keydown', (e)=> { if(e.key==='Escape') { e.target.value=''; renderAppointments(); } });
+
+    // storage listener
+    window.addEventListener('storage', (e)=> {
+      if(e.key === APPT_KEY || e.key === ATT_KEY || e.key === DOC_KEY) renderAll();
     });
 
-    $q('#exportAttendance').addEventListener('click', function(){ var a=load(attKey); exportCSV(a,['id','name','status','time','note','dateKey'],'attendance_export.csv') });
+    function renderAll(){
+      renderDoctors();
+      renderAppointments($q('#apptSearch').value || '');
+      renderAttendance($q('#attSearch').value || '');
+      $q('#lastUpdate').textContent = 'Updated ' + new Date().toLocaleString();
+    }
 
-    setInterval(function(){ $q('#nowClock').textContent = new Date().toLocaleTimeString(); }, 1000);
-
+    // initial render
     renderAll();
 
-    window.addEventListener('storage', function(e){ if(e.key===apptKey || e.key===attKey) renderAll() });
+    // delegates for doc/appointment delete/edit are already attached via body click listener above
 
+    // Try to add a Firestore onSnapshot listener to keep the doctors table up-to-date (optional)
+    (async function tryRealtimeDoctors(){
+      if(!F.available) return;
+      try {
+        // if onSnapshot available, attach it
+        if(F.onSnapshot && F.collection && F.query && F.orderBy) {
+          const q = F.query(F.collection(F.db, 'doctors'), F.orderBy('name'));
+          F.onSnapshot(q, (snap) => {
+            // re-render from Firestore + local fallback
+            renderDoctors();
+          });
+        }
+      } catch(err){
+        console.warn('onSnapshot not attached or failed:', err);
+      }
+    })();
+
+    // Expose some functions for debugging
+    window.__admin_renderAll = renderAll;
+    window.__admin_renderDoctors = renderDoctors;
+    window.__admin_renderAppointments = renderAppointments;
+
+    // safety: make sure doctors table clickable after initial render
+    setTimeout(()=> renderDoctors(), 600);
   })();
   </script>
 </body>
